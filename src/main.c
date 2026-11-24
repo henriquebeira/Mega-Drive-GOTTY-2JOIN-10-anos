@@ -27,8 +27,8 @@ int main(bool hard)
         u16 controle = JOY_readJoypad(JOY_1);
         bool movendoAgora = FALSE;
 
-        if (controle & BUTTON_LEFT)  { x -= 2; SPR_setHFlip(player, TRUE);  movendoAgora = TRUE; }
-        if (controle & BUTTON_RIGHT) { x += 2; SPR_setHFlip(player, FALSE); movendoAgora = TRUE; }
+        if (controle & BUTTON_LEFT)  { x -= 2; SPR_setHFlip(player, FALSE); movendoAgora = TRUE; }
+        if (controle & BUTTON_RIGHT) { x += 2; SPR_setHFlip(player, TRUE);  movendoAgora = TRUE; }
         if (controle & BUTTON_UP)    { y -= 2; movendoAgora = TRUE; }
         if (controle & BUTTON_DOWN)  { y += 2; movendoAgora = TRUE; }
 
