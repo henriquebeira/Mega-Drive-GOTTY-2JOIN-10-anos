@@ -2,7 +2,9 @@
 #include "resources.h"
 
 #define MAX_TIROS 4
-#define SFX_TIRO_ID 64 // IDs de efeitos sonoros no driver XGM começam a partir de 64
+#define SFX_TIRO_ID 64
+#define BGM_MENU_ID 65
+#define BGM_JOGO_ID 66
 
 typedef struct {
     Sprite* sprite;
@@ -17,14 +19,37 @@ int main(bool hard)
     JOY_init();
     SPR_init();
 
-    // Registra o efeito sonoro do tiro no canal PCM do Mega Drive
+    // Registra o som do tiro e as duas músicas nos IDs PCM do XGM
     XGM_setPCM(SFX_TIRO_ID, sfx_tiro, sizeof(sfx_tiro));
+    XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
+    XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
 
-    // Pinta a cor 0 do fundo de azul escuro
+    // --- TELA INICIAL (MENU) ---
+    PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
+    VDP_drawText("MEU JOGO MEGA DRIVE", 10, 10);
+    VDP_drawText("PRESS START", 14, 14);
+
+    // Toca a música do menu em loop infinito no Canal 2
+    XGM_setLoopNumber(-1);
+    XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
+
+    // Aguarda apertar START
+    while(TRUE)
+    {
+        u16 controle = JOY_readJoypad(JOY_1);
+        if (controle & BUTTON_START) break;
+        SYS_doVBlankProcess();
+    }
+
+    // Troca a música do menu pela música da fase e limpa a tela
+    XGM_stopPlayPCM(SOUND_PCM_CH2);
+    VDP_clearTextArea(0, 0, 40, 28);
+    XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
+
+    // --- INÍCIO DA FASE ---
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));
-    VDP_drawText("Teste de Sprite!", 12, 2);
+    VDP_drawText("Fase 1!", 16, 2);
 
-    // Carrega a paleta do personagem na PAL1 e a do tiro na PAL2
     PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
     PAL_setPalette(PAL2, spr_tiro.palette->data, DMA);
 
@@ -34,10 +59,8 @@ int main(bool hard)
     bool olhandoDireita = TRUE;
     bool botaoTiroTravado = FALSE;
 
-    // Personagem começa parado (idle) e olhando para a direita (TRUE)
     Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, TRUE));
 
-    // Inicializa a lista de tiros
     Tiro tiros[MAX_TIROS];
     for (u8 i = 0; i < MAX_TIROS; i++) {
         tiros[i].ativo = FALSE;
@@ -49,7 +72,6 @@ int main(bool hard)
         u16 controle = JOY_readJoypad(JOY_1);
         bool movendoAgora = FALSE;
 
-        // Movimento apenas para esquerda e direita
         if (controle & BUTTON_LEFT) {
             x -= 2;
             SPR_setHFlip(player, FALSE);
@@ -63,7 +85,6 @@ int main(bool hard)
             movendoAgora = TRUE;
         }
 
-        // Troca entre parado (idle) e correndo (run)
         if (movendoAgora && !andando) {
             SPR_setDefinition(player, &spr_run);
             andando = TRUE;
@@ -72,7 +93,6 @@ int main(bool hard)
             andando = FALSE;
         }
 
-        // Disparo para cima ao apertar o botão B (ou A)
         if (controle & (BUTTON_B | BUTTON_A)) {
             if (!botaoTiroTravado) {
                 botaoTiroTravado = TRUE;
@@ -90,9 +110,7 @@ int main(bool hard)
                         }
 
                         tiros[i].sprite = SPR_addSprite(&spr_tiro, tiros[i].x, tiros[i].y, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
-                        
-                        // Toca o efeito sonoro no canal PCM 1 (prioridade 1)
-                        XGM_startPlayPCM(SFX_TIRO_ID, 1, SOUND_PCM_CH1);
+                        XGM_startPlayPCM(SFX_TIRO_ID, 10, SOUND_PCM_CH1);
                         break;
                     }
                 }
@@ -101,7 +119,6 @@ int main(bool hard)
             botaoTiroTravado = FALSE;
         }
 
-        // Move os tiros para cima e apaga quando saem do topo da tela
         for (u8 i = 0; i < MAX_TIROS; i++) {
             if (tiros[i].ativo) {
                 tiros[i].y += tiros[i].vy;
@@ -115,7 +132,6 @@ int main(bool hard)
             }
         }
 
-        // Limites laterais do personagem
         if (x < 0)   x = 0;
         if (x > 288) x = 288;
 
