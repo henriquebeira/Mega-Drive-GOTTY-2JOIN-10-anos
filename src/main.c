@@ -15,24 +15,24 @@ int main(bool hard)
     // Carrega a paleta do personagem na Paleta 1
     PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
 
+    // Posição inicial: centro horizontal (144) e parte inferior da tela (180)
     s16 x = 144;
-    s16 y = 96;
-    bool andando = FALSE; // Controla se o personagem está correndo ou parado
+    s16 y = 180;
+    bool andando = FALSE;
 
-    // Cria o sprite começando parado (idle)
-    Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    // Cria o sprite começando parado (idle) e olhando para a direita (TRUE)
+    Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, TRUE));
 
     while(TRUE)
     {
         u16 controle = JOY_readJoypad(JOY_1);
         bool movendoAgora = FALSE;
 
+        // Movimento apenas para esquerda e direita
         if (controle & BUTTON_LEFT)  { x -= 2; SPR_setHFlip(player, FALSE); movendoAgora = TRUE; }
         if (controle & BUTTON_RIGHT) { x += 2; SPR_setHFlip(player, TRUE);  movendoAgora = TRUE; }
-        if (controle & BUTTON_UP)    { y -= 2; movendoAgora = TRUE; }
-        if (controle & BUTTON_DOWN)  { y += 2; movendoAgora = TRUE; }
 
-        // Só troca o sprite se o estado mudou (de parado para andando, ou vice-versa)
+        // Troca entre parado (idle) e correndo (run)
         if (movendoAgora && !andando)
         {
             SPR_setDefinition(player, &spr_run);
@@ -44,11 +44,9 @@ int main(bool hard)
             andando = FALSE;
         }
 
-        // Limites da tela (320x224 descontando 32x32 do sprite)
+        // Limites laterais da tela (320px - 32px do sprite = 288)
         if (x < 0)   x = 0;
         if (x > 288) x = 288;
-        if (y < 0)   y = 0;
-        if (y > 192) y = 192;
 
         SPR_setPosition(player, x, y);
         SPR_update();
