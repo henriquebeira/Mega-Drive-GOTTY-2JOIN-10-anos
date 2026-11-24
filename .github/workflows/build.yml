@@ -12,6 +12,13 @@ jobs:
       - name: Baixar código do repositório
         uses: actions/checkout@v4
 
+      - name: Converter imagens para formato do Mega Drive
+        run: |
+          sudo apt-get update && sudo apt-get install -y imagemagick
+          for img in res/*.png; do
+            [ -f "$img" ] && convert "$img" -colors 16 -type Palette PNG8:"$img"
+          done
+
       - name: Compilar com SGDK
         run: |
           chmod -R 777 "$PWD"
