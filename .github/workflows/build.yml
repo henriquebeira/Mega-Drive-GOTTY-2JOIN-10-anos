@@ -16,7 +16,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y imagemagick
           for img in res/*.png; do
-            convert "$img" -background magenta -alpha background -colors 16 -type Palette PNG8:"$img"
+            convert "$img" -background magenta -alpha remove -alpha off -colors 16 -type Palette PNG8:"$img"
           done
 
       - name: Compilar com SGDK
