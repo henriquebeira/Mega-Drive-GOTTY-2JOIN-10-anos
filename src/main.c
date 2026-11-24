@@ -12,13 +12,15 @@ int main(bool hard)
     // Escreve um texto na tela para confirmar que a ROM iniciou
     VDP_drawText("Teste de Sprite!", 12, 2);
 
-    // Carrega a paleta do sprite na Paleta 1
-    PAL_setPalette(PAL1, spr_player.palette->data, DMA);
+    // Carrega a paleta do sprite idle na Paleta 1
+    PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
 
     s16 x = 144;
     s16 y = 96;
 
-    Sprite* player = SPR_addSprite(&spr_player, x, y, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    // Cria o sprite animado na tela
+    Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+
 
     while(TRUE)
     {
