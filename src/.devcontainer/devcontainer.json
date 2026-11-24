@@ -1,6 +1,0 @@
-{
-  "name": "SGDK Cloud",
-  "image": "://gitlab.com",
-  "workspaceFolder": "/m68k",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/m68k,type=bind"
-}
