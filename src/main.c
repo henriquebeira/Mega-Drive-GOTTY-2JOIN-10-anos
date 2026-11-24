@@ -7,7 +7,7 @@ typedef struct {
     Sprite* sprite;
     s16 x;
     s16 y;
-    s16 vx;
+    s16 vy;
     bool ativo;
 } Tiro;
 
@@ -68,7 +68,7 @@ int main(bool hard)
             andando = FALSE;
         }
 
-        // Disparo ao apertar o botão B (ou A)
+        // Disparo para cima ao apertar o botão B (ou A)
         if (controle & (BUTTON_B | BUTTON_A)) {
             if (!botaoTiroTravado) {
                 botaoTiroTravado = TRUE;
@@ -76,17 +76,16 @@ int main(bool hard)
                 for (u8 i = 0; i < MAX_TIROS; i++) {
                     if (!tiros[i].ativo) {
                         tiros[i].ativo = TRUE;
-                        tiros[i].y = y + 4; // Altura do canhão azul
+                        tiros[i].y = y - 2;  // Sai bem na boca superior do canhão
+                        tiros[i].vy = -5;    // Sobe em direção ao topo da tela
 
                         if (olhandoDireita) {
-                            tiros[i].x = x + 22; // Ponta direita
-                            tiros[i].vx = 5;
+                            tiros[i].x = x + 5;  // Canhão fica à esquerda quando olha para a direita
                         } else {
-                            tiros[i].x = x + 2;  // Ponta esquerda
-                            tiros[i].vx = -5;
+                            tiros[i].x = x + 19; // Canhão fica à direita quando olha para a esquerda
                         }
 
-                        tiros[i].sprite = SPR_addSprite(&spr_tiro, tiros[i].x, tiros[i].y, TILE_ATTR(PAL2, FALSE, FALSE, olhandoDireita));
+                        tiros[i].sprite = SPR_addSprite(&spr_tiro, tiros[i].x, tiros[i].y, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
                         break;
                     }
                 }
@@ -95,12 +94,12 @@ int main(bool hard)
             botaoTiroTravado = FALSE;
         }
 
-        // Move os tiros ativos e apaga quando saem da tela
+        // Move os tiros para cima e apaga quando saem do topo da tela
         for (u8 i = 0; i < MAX_TIROS; i++) {
             if (tiros[i].ativo) {
-                tiros[i].x += tiros[i].vx;
+                tiros[i].y += tiros[i].vy;
 
-                if (tiros[i].x < -8 || tiros[i].x > 320) {
+                if (tiros[i].y < -8) {
                     SPR_releaseSprite(tiros[i].sprite);
                     tiros[i].ativo = FALSE;
                 } else {
