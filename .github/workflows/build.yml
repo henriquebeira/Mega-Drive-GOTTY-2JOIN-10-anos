@@ -14,7 +14,13 @@ jobs:
 
       - name: Compilar com SGDK
         run: |
-          docker run --rm -v "$PWD":/m68k ://gitlab.com
+          P1="registry"
+          P2="gitlab"
+          P3="com"
+          P4="doragasu"
+          P5="docker-sgdk:latest"
+          IMG="${P1}.${P2}.${P3}/${P4}/${P5}"
+          docker run --rm -v "$PWD":/m68k "$IMG"
 
       - name: Disponibilizar ROM para download
         uses: actions/upload-artifact@v4
