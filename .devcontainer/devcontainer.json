@@ -1,6 +1,0 @@
-{
-  "name": "SGDK Cloud",
-  "image": "://gitlab.com",
-  "overrideCommand": true,
-  "remoteUser": "sgdk"
-}
