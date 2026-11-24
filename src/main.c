@@ -1,60 +1,40 @@
 #include <genesis.h>
+#include "resources.h" // Arquivo gerado automaticamente a partir de res/resources.res
 
 int main(bool hard)
 {
-    // Inicializa o sistema de leitura dos controles
     JOY_init();
+    SPR_init();
 
-    // Posição inicial em tiles (a tela do Mega Drive tem 40x28 tiles)
-    s16 x = 18;
-    s16 y = 13;
-    u16 timer = 0;
+    // Carrega as 16 cores do sprite na Paleta 1 (PAL1)
+    PAL_setPalette(PAL1, spr_player.palette->data, DMA);
 
-    VDP_drawText("Use as setas e A/B/C", 10, 2);
-    VDP_drawText("<o>", x, y);
+    // Posição inicial em pixels (centro da tela de 320x224)
+    s16 x = 152;
+    s16 y = 104;
+
+    // Cria o sprite na tela usando a Paleta 1
+    Sprite* player = SPR_addSprite(&spr_player, x, y, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
 
     while(TRUE)
     {
-        // Lê o estado atual do Controle 1
         u16 controle = JOY_readJoypad(JOY_1);
 
-        // Controla a velocidade (move a cada 4 frames para não correr rápido demais)
-        if (timer > 0)
-        {
-            timer--;
-        }
-        else
-        {
-            bool moveu = FALSE;
-            s16 novoX = x;
-            s16 novoY = y;
+        // Move 2 pixels por frame e espelha o sprite ao virar para a esquerda/direita
+        if (controle & BUTTON_LEFT)  { x -= 2; SPR_setHFlip(player, TRUE); }
+        if (controle & BUTTON_RIGHT) { x += 2; SPR_setHFlip(player, FALSE); }
+        if (controle & BUTTON_UP)    { y -= 2; }
+        if (controle & BUTTON_DOWN)  { y += 2; }
 
-            if (controle & BUTTON_LEFT)  { novoX--; moveu = TRUE; }
-            if (controle & BUTTON_RIGHT) { novoX++; moveu = TRUE; }
-            if (controle & BUTTON_UP)    { novoY--; moveu = TRUE; }
-            if (controle & BUTTON_DOWN)  { novoY++; moveu = TRUE; }
+        // Impede o sprite de sair das bordas da tela (320 - 16 = 304 | 224 - 16 = 208)
+        if (x < 0)   x = 0;
+        if (x > 304) x = 304;
+        if (y < 0)   y = 0;
+        if (y > 208) y = 208;
 
-            // Limita o movimento dentro das bordas da tela (40 colunas x 28 linhas)
-            if (novoX < 0)  novoX = 0;
-            if (novoX > 37) novoX = 37; // 40 - 3 caracteres de "<o>"
-            if (novoY < 4)  novoY = 4;  // Evita apagar o texto do topo
-            if (novoY > 27) novoY = 27;
-
-            if (moveu)
-            {
-                // Apaga a posição antiga antes de desenhar na nova
-                VDP_clearTextArea(x, y, 3, 1);
-                x = novoX;
-                y = novoY;
-                VDP_drawText("<o>", x, y);
-                timer = 4;
-            }
-        }
-
-        // Exemplo de leitura dos botões de ação
-        if (controle & BUTTON_A) VDP_drawText("Botao A!", 16, 25);
-        if (controle & BUTTON_B) VDP_drawText("Botao B!", 16, 25);
-        if (controle & BUTTON_C) VDP_clearTextArea(16, 25, 10, 1);
+        // Atualiza a posição e desenha todos os sprites na tela
+        SPR_setPosition(player, x, y);
+        SPR_update();
 
         SYS_doVBlankProcess();
     }
