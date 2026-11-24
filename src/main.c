@@ -2,6 +2,7 @@
 #include "resources.h"
 
 #define MAX_TIROS 4
+#define SFX_TIRO_ID 64 // IDs de efeitos sonoros no driver XGM começam a partir de 64
 
 typedef struct {
     Sprite* sprite;
@@ -15,6 +16,9 @@ int main(bool hard)
 {
     JOY_init();
     SPR_init();
+
+    // Registra o efeito sonoro do tiro no canal PCM do Mega Drive
+    XGM_setPCM(SFX_TIRO_ID, sfx_tiro, sizeof(sfx_tiro));
 
     // Pinta a cor 0 do fundo de azul escuro
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));
@@ -76,16 +80,19 @@ int main(bool hard)
                 for (u8 i = 0; i < MAX_TIROS; i++) {
                     if (!tiros[i].ativo) {
                         tiros[i].ativo = TRUE;
-                        tiros[i].y = y - 2;  // Sai bem na boca superior do canhão
-                        tiros[i].vy = -5;    // Sobe em direção ao topo da tela
+                        tiros[i].y = y - 2;
+                        tiros[i].vy = -5;
 
                         if (olhandoDireita) {
-                            tiros[i].x = x + 5;  // Canhão fica à esquerda quando olha para a direita
+                            tiros[i].x = x + 5;
                         } else {
-                            tiros[i].x = x + 19; // Canhão fica à direita quando olha para a esquerda
+                            tiros[i].x = x + 19;
                         }
 
                         tiros[i].sprite = SPR_addSprite(&spr_tiro, tiros[i].x, tiros[i].y, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+                        
+                        // Toca o efeito sonoro no canal PCM 1 (prioridade 1)
+                        XGM_startPlayPCM(SFX_TIRO_ID, 1, SOUND_PCM_CH1);
                         break;
                     }
                 }
