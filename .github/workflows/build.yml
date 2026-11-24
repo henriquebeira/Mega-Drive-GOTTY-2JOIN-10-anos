@@ -1,0 +1,23 @@
+name: Compilar ROM Mega Drive
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      - name: Compilar com SGDK
+        run: |
+          docker run --rm -v "$PWD":/m68k ://gitlab.com
+
+      - name: Disponibilizar ROM para download
+        uses: actions/upload-artifact@v4
+        with:
+          name: megadrive-rom
+          path: out/rom.bin
