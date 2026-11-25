@@ -44,7 +44,7 @@ int main(bool hard)
         for (u8 i = 0; i < MAX_TIROS; i++) {
             tiros[i].ativo = FALSE;
             tiros[i].vx = 0;
-            tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+            tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
             SPR_setVisibility(tiros[i].sprite, HIDDEN);
         }
 
