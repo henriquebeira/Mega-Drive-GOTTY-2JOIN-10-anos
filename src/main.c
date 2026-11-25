@@ -111,14 +111,14 @@ int main(bool hard)
                 for (u8 i = 0; i < MAX_TIROS; i++) {
                     if (!tiros[i].ativo) {
                         tiros[i].ativo = TRUE;
-                        tiros[i].y = y - 2;
+                        tiros[i].y = y - 8;
                         tiros[i].vy = -5;
 
-                        // Alinha o tiro com o canhão no sprite de 64px (espelhado quando vira à esquerda)
+                        // Alinha o tiro de 16x16 com o canhão no sprite de 64px
                         if (olhandoDireita) {
-                            tiros[i].x = x + 5;
+                            tiros[i].x = x + 1;
                         } else {
-                            tiros[i].x = x + 51;
+                            tiros[i].x = x + 47;
                         }
 
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
@@ -136,7 +136,7 @@ int main(bool hard)
             if (tiros[i].ativo) {
                 tiros[i].y += tiros[i].vy;
 
-                if (tiros[i].y < -8) {
+                if (tiros[i].y < -16) {
                     SPR_setVisibility(tiros[i].sprite, HIDDEN);
                     tiros[i].ativo = FALSE;
                 } else {
