@@ -170,47 +170,49 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
         }
     }
 
-    // 4. Pneu (a partir do 80 2JOIN, quicando no chão da direita para a esquerda)
-    if (edicao >= 80) {
-        if (pneu->ativo) {
-            pneu->x += pneu->vx;
-            pneu->y += pneu->vy;
+ // 4. Pneu (a partir do 80 2JOIN, quicando lentamente no chão da direita para a esquerda)
+ if (edicao >= 80) {
+     if (pneu->ativo) {
+         pneu->x += pneu->vx;
+         pneu->y += pneu->vy;
 
-            pneu->timerTiro++;
-            if (pneu->timerTiro >= 2) {
-                pneu->timerTiro = 0;
-                pneu->vy++;
-            }
+         // Gravidade leve (altera vy a cada 5 frames)
+         pneu->timerTiro++;
+         if (pneu->timerTiro >= 5) {
+             pneu->timerTiro = 0;
+             pneu->vy++;
+         }
 
-            if (pneu->y >= 198) {
-                pneu->y = 198;
-                pneu->vy = -8;
-            }
+         // Quica ao tocar no chão (y = 198) subindo devagar até a altura do Disjuntor (~138)
+         if (pneu->y >= 198) {
+             pneu->y = 198;
+             pneu->vy = -5;
+         }
 
-            if (pneu->x < -32) {
-                pneu->ativo = FALSE;
-                pneu->timerRespawn = 45;
-                SPR_setVisibility(pneu->sprite, HIDDEN);
-            } else {
-                SPR_setPosition(pneu->sprite, pneu->x, pneu->y);
+         if (pneu->x < -32) {
+             pneu->ativo = FALSE;
+             pneu->timerRespawn = 45;
+             SPR_setVisibility(pneu->sprite, HIDDEN);
+         } else {
+             SPR_setPosition(pneu->sprite, pneu->x, pneu->y);
 
-                if (pneu->x + 28 > playerX + 16 && pneu->x + 4 < playerX + 32 &&
-                    pneu->y + 20 > playerY + 16 && pneu->y + 4 < playerY + 32)
-                {
-                    pneu->ativo = FALSE;
-                    pneu->timerRespawn = 45;
-                    SPR_setVisibility(pneu->sprite, HIDDEN);
-                    *timerPiscaDano = 30;
-                }
-            }
-        } else {
-            if (pneu->timerRespawn > 0) {
-                pneu->timerRespawn--;
-            } else {
-                spawnPneu(pneu);
-            }
-        }
-    }
+             if (pneu->x + 28 > playerX + 16 && pneu->x + 4 < playerX + 32 &&
+                 pneu->y + 20 > playerY + 16 && pneu->y + 4 < playerY + 32)
+             {
+                 pneu->ativo = FALSE;
+                 pneu->timerRespawn = 45;
+                 SPR_setVisibility(pneu->sprite, HIDDEN);
+                 *timerPiscaDano = 30;
+             }
+         }
+     } else {
+         if (pneu->timerRespawn > 0) {
+             pneu->timerRespawn--;
+         } else {
+             spawnPneu(pneu);
+         }
+     }
+ }
 
     // 5. Tiros inimigos
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
