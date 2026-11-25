@@ -2,6 +2,7 @@
 #include "resources.h"
 
 #define MAX_TIROS 4
+#define MAX_TIROS_INIMIGO 4
 #define SFX_TIRO_ID 64
 #define BGM_MENU_ID 65
 #define BGM_JOGO_ID 66
@@ -20,6 +21,7 @@ typedef struct {
     s16 y;
     bool ativo;
     u16 timerRespawn;
+    u16 timerTiro;
 } Inimigo;
 
 // Posiciona o inimigo aleatoriamente na metade superior da tela (abaixo de "Fase 1!")
@@ -27,6 +29,7 @@ void spawnInimigo(Inimigo* inimigo) {
     inimigo->x = 16 + (random() % 265); // Entre 16 e 280 (320 - 24 - 16)
     inimigo->y = 28 + (random() % 77);  // Entre 28 e 104 (metade superior)
     inimigo->ativo = TRUE;
+    inimigo->timerTiro = 60;            // Atira 1 segundo (60 frames) após aparecer
     SPR_setPosition(inimigo->sprite, inimigo->x, inimigo->y);
     SPR_setVisibility(inimigo->sprite, VISIBLE);
 }
@@ -83,15 +86,24 @@ int main(bool hard)
     bool andando = FALSE;
     bool olhandoDireita = TRUE;
     bool botaoTiroTravado = FALSE;
+    u16 timerPiscaDano = 0;
 
     Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, TRUE));
 
-    // Pré-aloca os sprites dos tiros para evitar fragmentação de memória
+    // Pré-aloca os sprites dos tiros do jogador
     Tiro tiros[MAX_TIROS];
     for (u8 i = 0; i < MAX_TIROS; i++) {
         tiros[i].ativo = FALSE;
         tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
         SPR_setVisibility(tiros[i].sprite, HIDDEN);
+    }
+
+    // Pré-aloca os sprites dos tiros do inimigo
+    Tiro tirosInimigo[MAX_TIROS_INIMIGO];
+    for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
+        tirosInimigo[i].ativo = FALSE;
+        tirosInimigo[i].sprite = SPR_addSprite(&spr_tiro_inimigo_vertical, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+        SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
     }
 
     // Inicializa o inimigo N64 (24x24) e faz o primeiro aparecer
@@ -145,9 +157,9 @@ int main(bool hard)
 
                         // Alinha o tiro (16x16) com o canhão no sprite de 48x48
                         if (olhandoDireita) {
-                            tiros[i].x = x + 8;
+                            tiros[i].x = x + 14;
                         } else {
-                            tiros[i].x = x + 24;
+                            tiros[i].x = x + 18;
                         }
 
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
@@ -161,7 +173,7 @@ int main(bool hard)
             botaoTiroTravado = FALSE;
         }
 
-        // Atualiza tiros e verifica colisão com o N64
+        // Atualiza tiros do jogador e verifica colisão com o N64
         for (u8 i = 0; i < MAX_TIROS; i++) {
             if (tiros[i].ativo) {
                 tiros[i].y += tiros[i].vy;
@@ -177,7 +189,6 @@ int main(bool hard)
                         tiros[i].x + 14 > n64.x && tiros[i].x + 2 < n64.x + 24 &&
                         tiros[i].y + 14 > n64.y && tiros[i].y + 2 < n64.y + 24)
                     {
-                        // Destrói o tiro e o inimigo
                         tiros[i].ativo = FALSE;
                         SPR_setVisibility(tiros[i].sprite, HIDDEN);
 
@@ -189,13 +200,64 @@ int main(bool hard)
             }
         }
 
-        // Faz o próximo N64 surgir após o anterior ser destruído
-        if (!n64.ativo) {
+        // Lógica do inimigo N64 (disparo a cada 1 segundo e respawn)
+        if (n64.ativo) {
+            if (n64.timerTiro > 0) {
+                n64.timerTiro--;
+            } else {
+                n64.timerTiro = 60; // Reinicia o timer de 1 segundo (60 frames)
+
+                for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
+                    if (!tirosInimigo[i].ativo) {
+                        tirosInimigo[i].ativo = TRUE;
+                        // Alinha o centro do tiro (16x16) com o pino central inferior do N64 (24x24)
+                        tirosInimigo[i].x = n64.x + 4;
+                        tirosInimigo[i].y = n64.y + 20;
+                        tirosInimigo[i].vy = 3; // Velocidade de descida do tiro inimigo
+
+                        SPR_setPosition(tirosInimigo[i].sprite, tirosInimigo[i].x, tirosInimigo[i].y);
+                        SPR_setVisibility(tirosInimigo[i].sprite, VISIBLE);
+                        break;
+                    }
+                }
+            }
+        } else {
             if (n64.timerRespawn > 0) {
                 n64.timerRespawn--;
             } else {
                 spawnInimigo(&n64);
             }
+        }
+
+        // Atualiza tiros do inimigo e verifica colisão com o jogador
+        for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
+            if (tirosInimigo[i].ativo) {
+                tirosInimigo[i].y += tirosInimigo[i].vy;
+
+                if (tirosInimigo[i].y > 224) {
+                    SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
+                    tirosInimigo[i].ativo = FALSE;
+                } else {
+                    SPR_setPosition(tirosInimigo[i].sprite, tirosInimigo[i].x, tirosInimigo[i].y);
+
+                    // Colisão com a hitbox central (16x16) do jogador (48x48)
+                    if (tirosInimigo[i].x + 12 > x + 16 && tirosInimigo[i].x + 4 < x + 32 &&
+                        tirosInimigo[i].y + 12 > y + 16 && tirosInimigo[i].y + 4 < y + 32)
+                    {
+                        tirosInimigo[i].ativo = FALSE;
+                        SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
+                        timerPiscaDano = 30; // Pisca o jogador por 0,5s ao tomar dano
+                    }
+                }
+            }
+        }
+
+        // Efeito visual de piscar quando o jogador leva dano
+        if (timerPiscaDano > 0) {
+            timerPiscaDano--;
+            SPR_setVisibility(player, (timerPiscaDano % 4 < 2) ? HIDDEN : VISIBLE);
+        } else {
+            SPR_setVisibility(player, VISIBLE);
         }
 
         // Limites laterais para sprite de 48px na tela de 320px (320 - 48 = 272)
