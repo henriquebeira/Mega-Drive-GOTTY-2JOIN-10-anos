@@ -15,6 +15,13 @@ void inicializarPlayer(Player* p, Tiro tiros[]) {
         tiros[i].sprite = SPR_addSprite(&spr_tiros, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
         SPR_setVisibility(tiros[i].sprite, HIDDEN);
     }
+
+    p->multiplicador = 1;
+    p->killsNoNivel = 0;
+    p->metaProximoNivel = 4;
+    p->spriteMult = SPR_addSprite(&spr_mult, 288, 44, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+    SPR_setVisibility(p->spriteMult, HIDDEN);
+
 }
 
 void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, u16* pontos) {
