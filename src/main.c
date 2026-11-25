@@ -35,7 +35,7 @@ int main(bool hard)
         s16 y = 174;
         bool andando = FALSE;
         bool olhandoDireita = TRUE;
-        bool botaoTiroTravado = FALSE;
+        u8 cooldownTiro = 0;
         u16 timerPiscaDano = 0;
 
         Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, TRUE));
@@ -94,15 +94,19 @@ int main(bool hard)
 
             u16 controle = JOY_readJoypad(JOY_1);
             bool movendoAgora = FALSE;
+            bool segurandoTiro = (controle & (BUTTON_A | BUTTON_B | BUTTON_C)) != 0;
+
+            // Anda mais devagar (1px/frame) enquanto segura o tiro; velocidade normal (2px/frame) solto
+            s16 velocidadePlayer = segurandoTiro ? 1 : 2;
 
             if (controle & BUTTON_LEFT) {
-                x -= 2;
+                x -= velocidadePlayer;
                 SPR_setHFlip(player, FALSE);
                 olhandoDireita = FALSE;
                 movendoAgora = TRUE;
             }
             if (controle & BUTTON_RIGHT) {
-                x += 2;
+                x += velocidadePlayer;
                 SPR_setHFlip(player, TRUE);
                 olhandoDireita = TRUE;
                 movendoAgora = TRUE;
@@ -118,26 +122,26 @@ int main(bool hard)
                 andando = FALSE;
             }
 
-            if (controle & (BUTTON_A | BUTTON_B | BUTTON_C)) {
-                if (!botaoTiroTravado) {
-                    botaoTiroTravado = TRUE;
+            // Autofire: dispara continuamente a cada 12 frames (~5 tiros/seg) enquanto segura A, B ou C
+            if (cooldownTiro > 0) {
+                cooldownTiro--;
+            }
 
-                    for (u8 i = 0; i < MAX_TIROS; i++) {
-                        if (!tiros[i].ativo) {
-                            tiros[i].ativo = TRUE;
-                            tiros[i].y = y - 2;
-                            tiros[i].vy = -5;
-                            tiros[i].x = olhandoDireita ? (x + 8) : (x + 24);
+            if (segurandoTiro && cooldownTiro == 0) {
+                for (u8 i = 0; i < MAX_TIROS; i++) {
+                    if (!tiros[i].ativo) {
+                        tiros[i].ativo = TRUE;
+                        tiros[i].y = y - 2;
+                        tiros[i].vy = -5;
+                        tiros[i].x = olhandoDireita ? (x + 8) : (x + 24);
 
-                            SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
-                            SPR_setVisibility(tiros[i].sprite, VISIBLE);
-                            XGM_startPlayPCM(SFX_TIRO_ID, 10, SOUND_PCM_CH1);
-                            break;
-                        }
+                        SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
+                        SPR_setVisibility(tiros[i].sprite, VISIBLE);
+                        XGM_startPlayPCM(SFX_TIRO_ID, 10, SOUND_PCM_CH1);
+                        cooldownTiro = 12; // Aumente para atirar mais devagar ou diminua (ex: 10) para mais rápido
+                        break;
                     }
                 }
-            } else {
-                botaoTiroTravado = FALSE;
             }
 
             // Tiros do jogador e acerto nos inimigos
