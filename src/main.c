@@ -29,10 +29,7 @@ int main(bool hard)
         PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
         atualizarContadorEdicao(edicao);
-        atualizarPlacar(pontos);
-     inicializarTilesBarraCombo();
-     inicializarPlayer(&player, tiros);
-     atualizarBarraCombo(&player);        
+        atualizarPlacar(pontos);    
 
         Player player;
         Tiro tiros[MAX_TIROS];
