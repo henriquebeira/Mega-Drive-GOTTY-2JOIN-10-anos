@@ -49,9 +49,9 @@ int main(bool hard)
             mostraTexto = !mostraTexto;
 
             if (mostraTexto) {
-                VDP_drawText("PRESS START 2 JOIN", 11, 18);
+                VDP_drawText("PRESS START 2 JOIN", 11, 15);
             } else {
-                VDP_clearText(11, 18, 18);
+                VDP_clearText(11, 15, 18);
             }
         }
 
