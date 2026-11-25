@@ -28,6 +28,9 @@ int main(bool hard)
 
     // --- TELA INICIAL (ESTÁTICA E NÍTIDA COM TEXTO PISCANDO) ---
     PAL_setPalette(PAL0, img_titulo.palette->data, CPU);
+    // Define a cor de texto da PAL1 (índice 31 = PAL1 cor 15) como branco puro
+    PAL_setColor(31, RGB24_TO_VDPCOLOR(0xFFFFFF));
+    VDP_setTextPalette(PAL1);
     VDP_drawImageEx(BG_B, &img_titulo, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
     XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
 
@@ -63,6 +66,7 @@ int main(bool hard)
     XGM_stopPlayPCM(SOUND_PCM_CH2);
     VDP_clearPlane(BG_B, TRUE);
     VDP_clearTextArea(0, 0, 40, 28);
+    VDP_setTextPalette(PAL0);
     XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
 
     // --- INÍCIO DA FASE ---
