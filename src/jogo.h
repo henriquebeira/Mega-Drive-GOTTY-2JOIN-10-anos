@@ -5,13 +5,14 @@
 #include "resources.h"
 
 #define MAX_TIROS 4
-#define MAX_TIROS_INIMIGO 8
+#define MAX_TIROS_INIMIGO 10
 #define SFX_TIRO_ID 64
 #define BGM_MENU_ID 65
 #define BGM_JOGO_ID 66
 
 #define TIPO_N64 0
 #define TIPO_ARANHA 1
+#define TIPO_DISJUNTOR 2
 
 typedef struct {
     Sprite* sprite;
@@ -29,6 +30,7 @@ typedef struct {
     u8 tipo;
     u8 largura;
     u8 altura;
+    u8 hp;
     bool ativo;
     u16 timerRespawn;
     u16 timerTiro;
@@ -43,6 +45,7 @@ void executarTelaFinal(u16 pontos);
 // Funções de inimigos (src/inimigos.c)
 void spawnN64(Inimigo* n64);
 void spawnAranha(Inimigo* aranha);
-void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao);
+void spawnDisjuntor(Inimigo* disjuntor);
+void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao);
 
 #endif
