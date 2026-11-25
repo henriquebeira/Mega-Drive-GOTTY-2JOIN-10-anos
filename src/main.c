@@ -33,7 +33,6 @@ int main(bool hard)
 
         Player player;
         Tiro tiros[MAX_TIROS];
-        inicializarPlayer(&player, tiros);
      inicializarTilesBarraCombo();
      inicializarPlayer(&player, tiros);
      atualizarBarraCombo(&player);        
