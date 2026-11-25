@@ -111,14 +111,14 @@ int main(bool hard)
                 for (u8 i = 0; i < MAX_TIROS; i++) {
                     if (!tiros[i].ativo) {
                         tiros[i].ativo = TRUE;
-                        tiros[i].y = y - 8;
+                        tiros[i].y = y - 6;
                         tiros[i].vy = -5;
 
                         // Alinha o tiro de 16x16 com o canhão no sprite de 64px
                         if (olhandoDireita) {
-                            tiros[i].x = x + 1;
+                            tiros[i].x = x + 9;
                         } else {
-                            tiros[i].x = x + 47;
+                            tiros[i].x = x + 39;
                         }
 
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
