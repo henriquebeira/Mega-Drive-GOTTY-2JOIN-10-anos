@@ -60,8 +60,8 @@ void spawnPneu(Inimigo* pneu) {
     pneu->hp = 1;
     pneu->x = 320;
     pneu->y = 198;
-    pneu->vx = -2;
-    pneu->vy = -7;
+    pneu->vx = -1; // Travessia horizontal mais lenta (1px por frame)
+    pneu->vy = -4; // Impulso inicial mais suave
     pneu->ativo = TRUE;
     pneu->timerTiro = 0;
     pneu->timerPisca = 0;
