@@ -70,13 +70,8 @@ void spawnN64(Inimigo* n64);
 void spawnAranha(Inimigo* aranha);
 void spawnDisjuntor(Inimigo* disjuntor, s16 playerX);
 void spawnPneu(Inimigo* pneu);
-void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao);
 
 void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao);
-void atualizarBarraCombo(Player* p);
-void registrarAbateCombo(Player* p);
-void resetarCombo(Player* p);
-
 void inicializarTilesBarraCombo(void);
 void atualizarBarraCombo(Player* p);
 void registrarAbateCombo(Player* p);
