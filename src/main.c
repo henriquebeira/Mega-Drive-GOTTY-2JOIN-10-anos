@@ -21,12 +21,15 @@ int main(bool hard)
         u16 timerEdicao = 0;
 
         PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
-        PAL_setPalette(PAL2, spr_tiro.palette->data, DMA);
-        PAL_setPalette(PAL3, spr_n64.palette->data, DMA);
+        PAL_setPalette(PAL2, spr_aranha.palette->data, DMA); // PAL2 exclusiva para a Aranha!
+        PAL_setPalette(PAL3, spr_n64.palette->data, DMA);    // PAL3 exclusiva para o N64!
 
+        // PAL0 guarda o tiro inimigo (laranja/vermelho) + o azul do tiro do jogador
         PAL_setPalette(PAL0, spr_tiro_inimigo_vertical.palette->data, DMA);
-        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));
-        PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));  // Fundo azul escuro
+        PAL_setColor(12, RGB24_TO_VDPCOLOR(0x0088FF)); // Azul médio do tiro do jogador
+        PAL_setColor(13, RGB24_TO_VDPCOLOR(0x66EEFF)); // Azul claro/ciano do tiro do jogador
+        PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF)); // Branco puro (textos e brilho do tiro)
 
         atualizarContadorEdicao(edicao);
         atualizarPlacar(pontos);
@@ -40,11 +43,12 @@ int main(bool hard)
 
         Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, TRUE));
 
+        // Tiros do jogador agora usam PAL0 (liberando a PAL2)
         Tiro tiros[MAX_TIROS];
         for (u8 i = 0; i < MAX_TIROS; i++) {
             tiros[i].ativo = FALSE;
             tiros[i].vx = 0;
-            tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+            tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
             SPR_setVisibility(tiros[i].sprite, HIDDEN);
         }
 
@@ -61,10 +65,11 @@ int main(bool hard)
         n64.sprite = SPR_addSprite(&spr_n64, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
         spawnN64(&n64);
 
+        // Aranha agora usa a PAL2 com todas as suas cores originais!
         Inimigo aranha;
         aranha.ativo = FALSE;
         aranha.timerRespawn = 0;
-        aranha.sprite = SPR_addSprite(&spr_aranha, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+        aranha.sprite = SPR_addSprite(&spr_aranha, 0, -32, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
         SPR_setVisibility(aranha.sprite, HIDDEN);
 
         while(TRUE)
