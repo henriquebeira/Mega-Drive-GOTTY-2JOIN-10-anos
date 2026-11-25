@@ -110,18 +110,17 @@ static const u32 tileCheio[8] = {
 };
 
 void inicializarTilesBarraCombo(void) {
-    // Carrega os 3 blocos da barra nos índices 1, 2 e 3 da VRAM
-    VDP_loadTileData(tileMoldura, 1, 1, CPU);
-    VDP_loadTileData(tileVazio,   2, 1, CPU);
-    VDP_loadTileData(tileCheio,   3, 1, CPU);
+    // Carrega os 3 blocos na área segura de usuário da VRAM (TILE_USER_INDEX)
+    VDP_loadTileData(tileMoldura, TILE_USER_INDEX,     1, CPU);
+    VDP_loadTileData(tileVazio,   TILE_USER_INDEX + 1, 1, CPU);
+    VDP_loadTileData(tileCheio,   TILE_USER_INDEX + 2, 1, CPU);
 
-    // Define cor 1 da PAL0 como cinza escuro (interior vazio) e cor 9 como roxo/magenta vibrante (barra cheia)
+    // Cor 1 da PAL0 = cinza escuro (vazio) | Cor 9 da PAL0 = roxo/magenta vibrante (cheio)
     PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
-    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xAA33EE));
+    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
 }
 
 void atualizarBarraCombo(Player* p) {
-    // Barra vertical na coluna 37, de y=9 até y=20 (12 blocos de altura)
     u8 alturaTotal = 12;
     u8 blocosCheios = 0;
 
@@ -131,14 +130,14 @@ void atualizarBarraCombo(Player* p) {
         blocosCheios = (p->killsNoNivel * alturaTotal) / p->metaProximoNivel;
     }
 
-    // Topo e base da moldura branca
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, 1), 37, 8);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, 1), 37, 21);
+    // Topo e base da moldura branca na coluna 37
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 37, 8);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 37, 21);
 
-    // Preenche de baixo para cima (y=20 até y=9)
+    // Preenche de baixo para cima (y = 20 até y = 9)
     for (u8 i = 0; i < alturaTotal; i++) {
         u8 linhaY = 20 - i;
-        u16 tileIdx = (i < blocosCheios) ? 3 : 2;
+        u16 tileIdx = (i < blocosCheios) ? (TILE_USER_INDEX + 2) : (TILE_USER_INDEX + 1);
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, tileIdx), 37, linhaY);
     }
 
