@@ -24,9 +24,13 @@ int main(bool hard)
         PAL_setPalette(PAL2, spr_aranha.palette->data, DMA); // Aranha
         PAL_setPalette(PAL3, spr_n64.palette->data, DMA);    // N64
 
-     PAL_setPalette(PAL0, spr_tiro.palette->data, DMA); // PAL0 carrega o azul do tiro do jogador!
-     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));     // Mantém o fundo azul escuro
-     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));    // Mantém os textos em branco
+     PAL_setPalette(PAL0, spr_tiro.palette->data, DMA); // Índices 1-4: Azul do tiro do jogador
+     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));     // Índice 0: Fundo azul escuro
+     PAL_setColor(5, RGB24_TO_VDPCOLOR(0xCC0000));     // Índice 5: Vermelho escuro (borda do fogo)
+     PAL_setColor(6, RGB24_TO_VDPCOLOR(0xFF4400));     // Índice 6: Laranja vivo (meio do fogo)
+     PAL_setColor(7, RGB24_TO_VDPCOLOR(0xFFCC00));     // Índice 7: Amarelo (centro do fogo)
+     PAL_setColor(8, RGB24_TO_VDPCOLOR(0xFFFFAA));     // Índice 8: Amarelo claro (brilho)
+     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));    // Índice 15: Branco dos textos
 
         atualizarContadorEdicao(edicao);
         atualizarPlacar(pontos);
@@ -52,7 +56,7 @@ int main(bool hard)
      for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
          tirosInimigo[i].ativo = FALSE;
          tirosInimigo[i].vx = 0;
-         tirosInimigo[i].sprite = SPR_addSprite(&spr_tiro_inimigo_vertical, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+         tirosInimigo[i].sprite = SPR_addSprite(&spr_tiro_inimigo_vertical, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
          SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
      }
 
