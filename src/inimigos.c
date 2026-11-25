@@ -33,8 +33,8 @@ void spawnDisjuntor(Inimigo* disjuntor) {
     disjuntor->largura = 48;
     disjuntor->altura = 32;
     disjuntor->hp = 3; // Leva 3 tiros para ser destruído
-    disjuntor->x = 16 + (random() % 241); // Posição horizontal aleatória no chão
-    disjuntor->y = 174 + 10;              // playerY (174) + 10 = 184 (alinhado no chão com o jogador)
+    disjuntor->x = 16 + (random() % 241); // Posição horizontal aleatória
+    disjuntor->y = 137;                   // Base em 169 (5px acima do canhão em 174)
     disjuntor->ativo = TRUE;
     disjuntor->timerTiro = 0;
 
