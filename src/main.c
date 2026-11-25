@@ -121,7 +121,7 @@ int main(bool hard)
                         if (olhandoDireita) {
                             tiros[i].x = x + 8;
                         } else {
-                            tiros[i].x = x + 22;
+                            tiros[i].x = x + 24;
                         }
 
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
