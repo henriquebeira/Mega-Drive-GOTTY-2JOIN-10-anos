@@ -20,9 +20,9 @@ int main(bool hard)
         u16 edicao = 1;
         u16 timerEdicao = 0;
 
-        PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
-        PAL_setPalette(PAL2, spr_aranha.palette->data, DMA);
-        PAL_setPalette(PAL3, spr_n64.palette->data, DMA);
+     PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
+     PAL_setPalette(PAL2, spr_aranha.palette->data, DMA);
+     PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA); // Carrega o cinza, vermelho e verde do Disjuntor!
 
         PAL_setPalette(PAL0, spr_tiros.palette->data, DMA);
         PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));
@@ -67,11 +67,11 @@ int main(bool hard)
         aranha.sprite = SPR_addSprite(&spr_aranha, 0, -32, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
         SPR_setVisibility(aranha.sprite, HIDDEN);
 
-        Inimigo disjuntor;
-        disjuntor.ativo = FALSE;
-        disjuntor.timerRespawn = 0;
-        disjuntor.sprite = SPR_addSprite(&spr_disjuntor, 0, -32, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
-        SPR_setVisibility(disjuntor.sprite, HIDDEN);
+     Inimigo disjuntor;
+     disjuntor.ativo = FALSE;
+     disjuntor.timerRespawn = 0;
+     disjuntor.sprite = SPR_addSprite(&spr_disjuntor, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+     SPR_setVisibility(disjuntor.sprite, HIDDEN);
 
         while(TRUE)
         {
