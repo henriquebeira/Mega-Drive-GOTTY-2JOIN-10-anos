@@ -67,7 +67,7 @@ int main(bool hard)
         pneu.ativo = FALSE;
         pneu.timerRespawn = 0;
         pneu.timerPisca = 0;
-        pneu.sprite = SPR_addSprite(&spr_pneu, 0, -32, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+        pneu.sprite = SPR_addSprite(&spr_pneu, 0, -32, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
         SPR_setVisibility(pneu.sprite, HIDDEN);
 
         while(TRUE)
