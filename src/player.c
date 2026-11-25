@@ -86,7 +86,7 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
             } else {
                 SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
 
-                // 1. N64 (1 tiro = +1 ponto)
+                // 1. N64 (1 ponto x multiplicador)
                 if (n64->ativo &&
                     tiros[i].x + 14 > n64->x && tiros[i].x + 2 < n64->x + n64->largura &&
                     tiros[i].y + 14 > n64->y && tiros[i].y + 2 < n64->y + n64->altura)
@@ -98,10 +98,11 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                     n64->timerRespawn = 20;
                     SPR_setVisibility(n64->sprite, HIDDEN);
 
-                    (*pontos)++;
+                    *pontos += 1 * p->multiplicador;
                     atualizarPlacar(*pontos);
+                    registrarAbateCombo(p);
                 }
-                // 2. Aranha (2 tiros = +2 pontos)
+                // 2. Aranha (2 pontos x multiplicador)
                 else if (aranha->ativo &&
                     tiros[i].x + 14 > aranha->x && tiros[i].x + 2 < aranha->x + aranha->largura &&
                     tiros[i].y + 14 > aranha->y && tiros[i].y + 2 < aranha->y + aranha->altura)
@@ -118,11 +119,12 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                         aranha->timerRespawn = 30;
                         SPR_setVisibility(aranha->sprite, HIDDEN);
 
-                        *pontos += 2;
+                        *pontos += 2 * p->multiplicador;
                         atualizarPlacar(*pontos);
+                        registrarAbateCombo(p);
                     }
                 }
-                // 3. Disjuntor (3 tiros = +3 pontos)
+                // 3. Disjuntor (3 pontos x multiplicador)
                 else if (disjuntor->ativo &&
                     tiros[i].x + 14 > disjuntor->x && tiros[i].x + 2 < disjuntor->x + disjuntor->largura &&
                     tiros[i].y + 14 > disjuntor->y && tiros[i].y + 2 < disjuntor->y + disjuntor->altura)
@@ -139,11 +141,12 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                         disjuntor->timerRespawn = 45;
                         SPR_setVisibility(disjuntor->sprite, HIDDEN);
 
-                        *pontos += 3;
+                        *pontos += 3 * p->multiplicador;
                         atualizarPlacar(*pontos);
+                        registrarAbateCombo(p);
                     }
                 }
-                // 4. Pneu (1 tiro = +1 ponto)
+                // 4. Pneu (1 ponto x multiplicador)
                 else if (pneu->ativo &&
                     tiros[i].x + 14 > pneu->x && tiros[i].x + 2 < pneu->x + pneu->largura &&
                     tiros[i].y + 14 > pneu->y && tiros[i].y + 2 < pneu->y + pneu->altura)
@@ -156,8 +159,9 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                     pneu->timerRespawn = 45;
                     SPR_setVisibility(pneu->sprite, HIDDEN);
 
-                    (*pontos)++;
+                    *pontos += 1 * p->multiplicador;
                     atualizarPlacar(*pontos);
+                    registrarAbateCombo(p);
                 }
             }
         }
