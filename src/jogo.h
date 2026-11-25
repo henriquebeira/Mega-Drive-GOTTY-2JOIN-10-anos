@@ -23,6 +23,11 @@ typedef struct {
     bool olhandoDireita;
     u8 cooldownTiro;
     u16 timerPiscaDano;
+// Adicione dentro de typedef struct { ... } Player; no src/jogo.h:
+    u8 multiplicador;     // 1 a 8
+    u8 killsNoNivel;      // Quantos inimigos derrotou no nível atual do combo
+    u8 metaProximoNivel;  // 4 para 2x, 6 para 3x, 8 para 4x...
+    Sprite* spriteMult;   // Ícone 2X..8X acima da barra
 } Player;
 
 typedef struct {
@@ -66,5 +71,9 @@ void spawnAranha(Inimigo* aranha);
 void spawnDisjuntor(Inimigo* disjuntor, s16 playerX);
 void spawnPneu(Inimigo* pneu);
 void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao);
+
+void atualizarBarraCombo(Player* p);
+void registrarAbateCombo(Player* p);
+void resetarCombo(Player* p);
 
 #endif
