@@ -98,9 +98,11 @@ int main(bool hard)
         }
 
         if (movendoAgora && !andando) {
+            PAL_setPalette(PAL1, spr_run.palette->data, DMA);
             SPR_setDefinition(player, &spr_run);
             andando = TRUE;
         } else if (!movendoAgora && andando) {
+            PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
             SPR_setDefinition(player, &spr_idle);
             andando = FALSE;
         }
