@@ -94,3 +94,79 @@ void executarTelaFinal(u16 pontos) {
 
     VDP_clearTextArea(0, 0, 40, 28);
 }
+
+// Tiles sólidos coloridos para desenhar a barra vertical no BG_A
+static const u32 tileMoldura[8] = {
+    0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+    0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
+};
+static const u32 tileVazio[8] = {
+    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F,
+    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F
+};
+static const u32 tileCheio[8] = {
+    0xF999999F, 0xF999999F, 0xF999999F, 0xF999999F,
+    0xF999999F, 0xF999999F, 0xF999999F, 0xF999999F
+};
+
+void inicializarTilesBarraCombo(void) {
+    // Carrega os 3 blocos da barra nos índices 1, 2 e 3 da VRAM
+    VDP_loadTileData(tileMoldura, 1, 1, CPU);
+    VDP_loadTileData(tileVazio,   2, 1, CPU);
+    VDP_loadTileData(tileCheio,   3, 1, CPU);
+
+    // Define cor 1 da PAL0 como cinza escuro (interior vazio) e cor 9 como roxo/magenta vibrante (barra cheia)
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
+    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xAA33EE));
+}
+
+void atualizarBarraCombo(Player* p) {
+    // Barra vertical na coluna 37, de y=9 até y=20 (12 blocos de altura)
+    u8 alturaTotal = 12;
+    u8 blocosCheios = 0;
+
+    if (p->multiplicador >= 8) {
+        blocosCheios = alturaTotal;
+    } else {
+        blocosCheios = (p->killsNoNivel * alturaTotal) / p->metaProximoNivel;
+    }
+
+    // Topo e base da moldura branca
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, 1), 37, 8);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, 1), 37, 21);
+
+    // Preenche de baixo para cima (y=20 até y=9)
+    for (u8 i = 0; i < alturaTotal; i++) {
+        u8 linhaY = 20 - i;
+        u16 tileIdx = (i < blocosCheios) ? 3 : 2;
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, tileIdx), 37, linhaY);
+    }
+
+    // Atualiza o ícone 2X..8X acima da barra (x = 288, y = 44)
+    if (p->multiplicador >= 2) {
+        SPR_setAnim(p->spriteMult, p->multiplicador - 2);
+        SPR_setVisibility(p->spriteMult, VISIBLE);
+    } else {
+        SPR_setVisibility(p->spriteMult, HIDDEN);
+    }
+}
+
+void registrarAbateCombo(Player* p) {
+    if (p->multiplicador < 8) {
+        p->killsNoNivel++;
+        if (p->killsNoNivel >= p->metaProximoNivel) {
+            p->multiplicador++;
+            p->killsNoNivel = 0;
+            // Meta sobe de 2 em 2: 4 (para 2x), 6 (para 3x), 8 (para 4x)...
+            p->metaProximoNivel = 4 + (p->multiplicador - 1) * 2;
+        }
+    }
+    atualizarBarraCombo(p);
+}
+
+void resetarCombo(Player* p) {
+    p->multiplicador = 1;
+    p->killsNoNivel = 0;
+    p->metaProximoNivel = 4;
+    atualizarBarraCombo(p);
+}
