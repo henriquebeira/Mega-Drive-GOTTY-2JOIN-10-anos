@@ -31,7 +31,7 @@ jobs:
           docker run --rm -v "$PWD":/m68k "$IMG"
 
       - name: Renomear ROM
-        run: mv out/rom.bin "out/GOTTY 2JOIN 10 anos.bin"
+        run: sudo mv out/rom.bin "out/GOTTY 2JOIN 10 anos.bin"
 
       - name: Upload ROM
         uses: actions/upload-artifact@v4
