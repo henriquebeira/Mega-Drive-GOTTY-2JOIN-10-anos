@@ -33,10 +33,10 @@ void spawnDisjuntor(Inimigo* disjuntor) {
     disjuntor->largura = 48;
     disjuntor->altura = 32;
     disjuntor->hp = 3; // Leva 3 tiros para ser destruído
-    disjuntor->x = 16 + (random() % 241); // Entre 16 e 256 (320 - 48 - 16)
-    disjuntor->y = 28 + (random() % 65);  // Metade superior da tela
+    disjuntor->x = 16 + (random() % 241); // Posição horizontal aleatória no chão
+    disjuntor->y = 174 + 10;              // playerY (174) + 10 = 184 (alinhado no chão com o jogador)
     disjuntor->ativo = TRUE;
-    disjuntor->timerTiro = 90;
+    disjuntor->timerTiro = 0;
 
     SPR_setPosition(disjuntor->sprite, disjuntor->x, disjuntor->y);
     SPR_setVisibility(disjuntor->sprite, VISIBLE);
@@ -139,16 +139,9 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
         }
     }
 
-    // 3. Disjuntor (a partir do 60 2JOIN)
+    // 3. Disjuntor (a partir do 60 2JOIN, parado no chão e sem atirar)
     if (edicao >= 60) {
-        if (disjuntor->ativo) {
-            if (disjuntor->timerTiro > 0) {
-                disjuntor->timerTiro--;
-            } else {
-                disjuntor->timerTiro = 90;
-                dispararTiroInimigo(disjuntor, tirosInimigo, playerX, playerY);
-            }
-        } else {
+        if (!disjuntor->ativo) {
             if (disjuntor->timerRespawn > 0) {
                 disjuntor->timerRespawn--;
             } else {
