@@ -29,13 +29,15 @@ void spawnAranha(Inimigo* aranha) {
     SPR_setVisibility(aranha->sprite, VISIBLE);
 }
 
-void spawnDisjuntor(Inimigo* disjuntor) {
+void spawnDisjuntor(Inimigo* disjuntor, s16 playerX) {
     disjuntor->tipo = TIPO_DISJUNTOR;
     disjuntor->largura = 48;
     disjuntor->altura = 32;
     disjuntor->hp = 3; // Leva 3 tiros para ser destruído
-    disjuntor->x = 16 + (random() % 241); // Posição horizontal aleatória
-    disjuntor->y = 137;                   // Base em 169 (5px acima do canhão em 174)
+    disjuntor->x = playerX; // Nasce exatamente alinhado acima do jogador!
+    if (disjuntor->x < 0) disjuntor->x = 0;
+    if (disjuntor->x > 272) disjuntor->x = 272;
+    disjuntor->y = 137; // 5px acima do canhão do jogador
     disjuntor->ativo = TRUE;
     disjuntor->timerTiro = 0;
     disjuntor->timerPisca = 0;
@@ -148,23 +150,23 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
      }
  }
 
- // 3. Disjuntor (a partir do 60 2JOIN, parado no chão e sem atirar)
- if (edicao >= 60) {
-     if (disjuntor->ativo) {
-         if (disjuntor->timerPisca > 0) {
-             disjuntor->timerPisca--;
-             SPR_setVisibility(disjuntor->sprite, (disjuntor->timerPisca % 4 < 2) ? HIDDEN : VISIBLE);
-         } else {
-             SPR_setVisibility(disjuntor->sprite, VISIBLE);
-         }
-     } else {
-         if (disjuntor->timerRespawn > 0) {
-             disjuntor->timerRespawn--;
-         } else {
-             spawnDisjuntor(disjuntor);
-         }
-     }
- }
+    // 3. Disjuntor (a partir do 60 2JOIN, nasce sempre acima do jogador)
+    if (edicao >= 60) {
+        if (disjuntor->ativo) {
+            if (disjuntor->timerPisca > 0) {
+                disjuntor->timerPisca--;
+                SPR_setVisibility(disjuntor->sprite, (disjuntor->timerPisca % 4 < 2) ? HIDDEN : VISIBLE);
+            } else {
+                SPR_setVisibility(disjuntor->sprite, VISIBLE);
+            }
+        } else {
+            if (disjuntor->timerRespawn > 0) {
+                disjuntor->timerRespawn--;
+            } else {
+                spawnDisjuntor(disjuntor, playerX);
+            }
+        }
+    }
 
     // 4. Movimento dos tiros inimigos e colisão com o jogador
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
