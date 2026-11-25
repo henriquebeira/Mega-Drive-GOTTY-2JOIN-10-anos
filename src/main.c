@@ -1,14 +1,14 @@
 #include "jogo.h"
 
 void atualizarPlacar(u16 pontos) {
-    char textoPontos[12];
+    char textoPontos;
     uintToStr(pontos, textoPontos, 1);
     VDP_drawText(textoPontos, 38 - strlen(textoPontos), 2);
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    char textoEdicao[16];
-    char numStr[8];
+    char textoEdicao;
+    char numStr;
     uintToStr(edicao, numStr, 1);
 
     strcpy(textoEdicao, numStr);
@@ -74,6 +74,7 @@ int main(bool hard)
     Tiro tiros[MAX_TIROS];
     for (u8 i = 0; i < MAX_TIROS; i++) {
         tiros[i].ativo = FALSE;
+        tiros[i].vx = 0;
         tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
         SPR_setVisibility(tiros[i].sprite, HIDDEN);
     }
@@ -81,14 +82,15 @@ int main(bool hard)
     Tiro tirosInimigo[MAX_TIROS_INIMIGO];
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
         tirosInimigo[i].ativo = FALSE;
+        tirosInimigo[i].vx = 0;
         tirosInimigo[i].sprite = SPR_addSprite(&spr_tiro_inimigo_vertical, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
         SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
     }
 
-    Inimigo n64;
-    n64.timerRespawn = 0;
-    n64.sprite = SPR_addSprite(&spr_n64, 0, -24, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
-    spawnInimigo(&n64);
+    Inimigo inimigo;
+    inimigo.timerRespawn = 0;
+    inimigo.sprite = SPR_addSprite(&spr_n64, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+    spawnInimigo(&inimigo, edicao);
 
     while(TRUE)
     {
@@ -102,7 +104,6 @@ int main(bool hard)
             timerEdicao = 0;
             edicao++;
 
-            // Quando chegar no 98, encerra a partida
             if (edicao >= 98) {
                 break;
             }
@@ -158,7 +159,7 @@ int main(bool hard)
             botaoTiroTravado = FALSE;
         }
 
-        // Tiros do jogador e acerto no inimigo
+        // Tiros do jogador e acerto no inimigo (N64 ou Aranha)
         for (u8 i = 0; i < MAX_TIROS; i++) {
             if (tiros[i].ativo) {
                 tiros[i].y += tiros[i].vy;
@@ -169,16 +170,16 @@ int main(bool hard)
                 } else {
                     SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
 
-                    if (n64.ativo &&
-                        tiros[i].x + 14 > n64.x && tiros[i].x + 2 < n64.x + 24 &&
-                        tiros[i].y + 14 > n64.y && tiros[i].y + 2 < n64.y + 24)
+                    if (inimigo.ativo &&
+                        tiros[i].x + 14 > inimigo.x && tiros[i].x + 2 < inimigo.x + inimigo.largura &&
+                        tiros[i].y + 14 > inimigo.y && tiros[i].y + 2 < inimigo.y + inimigo.altura)
                     {
                         tiros[i].ativo = FALSE;
                         SPR_setVisibility(tiros[i].sprite, HIDDEN);
 
-                        n64.ativo = FALSE;
-                        n64.timerRespawn = 20;
-                        SPR_setVisibility(n64.sprite, HIDDEN);
+                        inimigo.ativo = FALSE;
+                        inimigo.timerRespawn = 20;
+                        SPR_setVisibility(inimigo.sprite, HIDDEN);
 
                         pontos++;
                         atualizarPlacar(pontos);
@@ -187,7 +188,7 @@ int main(bool hard)
             }
         }
 
-        atualizarInimigoETiros(&n64, tirosInimigo, x, y, &timerPiscaDano);
+        atualizarInimigoETiros(&inimigo, tirosInimigo, x, y, &timerPiscaDano, edicao);
 
         if (timerPiscaDano > 0) {
             timerPiscaDano--;
@@ -208,9 +209,8 @@ int main(bool hard)
     // --- TELA FINAL (CHEGOU NO 98) ---
     XGM_stopPlayPCM(SOUND_PCM_CH2);
 
-    // Oculta todos os sprites da tela
     SPR_setVisibility(player, HIDDEN);
-    SPR_setVisibility(n64.sprite, HIDDEN);
+    SPR_setVisibility(inimigo.sprite, HIDDEN);
     for (u8 i = 0; i < MAX_TIROS; i++) {
         SPR_setVisibility(tiros[i].sprite, HIDDEN);
     }
@@ -219,12 +219,11 @@ int main(bool hard)
     }
     SPR_update();
 
-    // Limpa os textos anteriores e exibe o resultado
     VDP_clearTextArea(0, 0, 40, 28);
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
 
-    char textoFinal[28];
-    char numFinal[8];
+    char textoFinal;
+    char numFinal;
     uintToStr(pontos, numFinal, 1);
     strcpy(textoFinal, "PONTUACAO FINAL: ");
     strcat(textoFinal, numFinal);
@@ -232,7 +231,6 @@ int main(bool hard)
     VDP_drawText("98 2JOIN - FIM!", 12, 10);
     VDP_drawText(textoFinal, (40 - strlen(textoFinal)) / 2, 13);
 
-    // Mantém a tela final parada
     while(TRUE)
     {
         SYS_doVBlankProcess();
