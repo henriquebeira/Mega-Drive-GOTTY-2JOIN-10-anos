@@ -79,6 +79,10 @@ int main(bool hard)
     PAL_setPalette(PAL2, spr_tiro.palette->data, DMA);
     PAL_setPalette(PAL3, spr_n64.palette->data, DMA);
 
+    PAL_setPalette(PAL0, spr_tiro_inimigo_vertical.palette->data, DMA);
+    PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));  // Mantém o azul de fundo
+    PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF)); // Mantém o texto "Fase 1!" branco
+
     // Centralizado em X: (320 - 48) / 2 = 136
     // Mais próximo da borda inferior: 224 - 48 - 2 = 174
     s16 x = 136;
@@ -102,7 +106,7 @@ int main(bool hard)
     Tiro tirosInimigo[MAX_TIROS_INIMIGO];
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
         tirosInimigo[i].ativo = FALSE;
-        tirosInimigo[i].sprite = SPR_addSprite(&spr_tiro_inimigo_vertical, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+        tirosInimigo[i].sprite = SPR_addSprite(&spr_tiro_inimigo_vertical, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
         SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
     }
 
