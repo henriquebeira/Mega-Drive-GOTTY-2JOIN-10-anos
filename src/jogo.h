@@ -34,6 +34,7 @@ typedef struct {
     bool ativo;
     u16 timerRespawn;
     u16 timerTiro;
+    u16 timerPisca;
 } Inimigo;
 
 // Funções de telas e HUD (src/telas.c)
