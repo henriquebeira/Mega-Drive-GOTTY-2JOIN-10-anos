@@ -32,13 +32,13 @@ static void dispararTiroInimigo(Inimigo* inimigo, Tiro tirosInimigo[], s16 playe
             tirosInimigo[i].ativo = TRUE;
 
             if (inimigo->tipo == TIPO_N64) {
-                SPR_setDefinition(tirosInimigo[i].sprite, &spr_tiro_inimigo_vertical);
+                              SPR_setAnim(tirosInimigo[i].sprite, 1);
                 tirosInimigo[i].x = inimigo->x + 4;
                 tirosInimigo[i].y = inimigo->y + 20;
                 tirosInimigo[i].vx = 0;
                 tirosInimigo[i].vy = 3;
             } else {
-                SPR_setDefinition(tirosInimigo[i].sprite, &spr_tiro_inimigo_bola);
+                              SPR_setAnim(tirosInimigo[i].sprite, 2);
                 tirosInimigo[i].x = inimigo->x + 8;
                 tirosInimigo[i].y = inimigo->y + 24;
 
