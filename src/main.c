@@ -125,21 +125,19 @@ int main(bool hard)
 
         while(TRUE)
         {
+            // Encerra a fase exatamente quando a música de 1m40s terminar por completo
             if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
-                XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
+                break;
             }
 
-            // Incrementa o contador de 0 até 98 (encerra ao atingir 99)
-            timerEdicao++;
-            if (timerEdicao >= 60) {
-                timerEdicao = 0;
-                edicao++;
-
-                if (edicao >= 99) {
-                    break;
+            // Incrementa o contador de 0 até 98 acompanhando os 100 segundos da música
+            if (edicao < 98) {
+                timerEdicao++;
+                if (timerEdicao >= 61) {
+                    timerEdicao = 0;
+                    edicao++;
+                    atualizarContadorEdicao(edicao);
                 }
-
-                atualizarContadorEdicao(edicao);
             }
 
             u16 controle = JOY_readJoypad(JOY_1);
