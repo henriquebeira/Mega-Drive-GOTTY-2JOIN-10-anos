@@ -66,12 +66,14 @@ int main(bool hard)
         aranha.timerRespawn = 0;
         aranha.sprite = SPR_addSprite(&spr_aranha, 0, -32, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
         SPR_setVisibility(aranha.sprite, HIDDEN);
+        aranha.timerPisca = 0;
 
      Inimigo disjuntor;
      disjuntor.ativo = FALSE;
      disjuntor.timerRespawn = 0;
      disjuntor.sprite = SPR_addSprite(&spr_disjuntor, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
      SPR_setVisibility(disjuntor.sprite, HIDDEN);
+     disjuntor.timerPisca = 0;
 
         while(TRUE)
         {
