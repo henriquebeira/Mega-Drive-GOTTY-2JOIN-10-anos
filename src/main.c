@@ -24,13 +24,9 @@ int main(bool hard)
         PAL_setPalette(PAL2, spr_aranha.palette->data, DMA); // Aranha
         PAL_setPalette(PAL3, spr_n64.palette->data, DMA);    // N64
 
-     PAL_setPalette(PAL0, spr_tiro.palette->data, DMA); // Índices 1-4: Azul do tiro do jogador
-     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));     // Índice 0: Fundo azul escuro
-     PAL_setColor(5, RGB24_TO_VDPCOLOR(0xCC0000));     // Índice 5: Vermelho escuro (borda do fogo)
-     PAL_setColor(6, RGB24_TO_VDPCOLOR(0xFF4400));     // Índice 6: Laranja vivo (meio do fogo)
-     PAL_setColor(7, RGB24_TO_VDPCOLOR(0xFFCC00));     // Índice 7: Amarelo (centro do fogo)
-     PAL_setColor(8, RGB24_TO_VDPCOLOR(0xFFFFAA));     // Índice 8: Amarelo claro (brilho)
-     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));    // Índice 15: Branco dos textos
+      PAL_setPalette(PAL0, spr_tiros.palette->data, DMA);
+      PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));  // Fundo azul escuro
+      PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF)); // Textos em branco
 
         atualizarContadorEdicao(edicao);
         atualizarPlacar(pontos);
@@ -44,21 +40,21 @@ int main(bool hard)
 
         Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, TRUE));
 
-        Tiro tiros[MAX_TIROS];
-        for (u8 i = 0; i < MAX_TIROS; i++) {
-            tiros[i].ativo = FALSE;
-            tiros[i].vx = 0;
-            tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
-            SPR_setVisibility(tiros[i].sprite, HIDDEN);
-        }
+      Tiro tiros[MAX_TIROS];
+      for (u8 i = 0; i < MAX_TIROS; i++) {
+          tiros[i].ativo = FALSE;
+          tiros[i].vx = 0;
+          tiros[i].sprite = SPR_addSprite(&spr_tiros, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+          SPR_setVisibility(tiros[i].sprite, HIDDEN);
+      }
 
-     Tiro tirosInimigo[MAX_TIROS_INIMIGO];
-     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
-         tirosInimigo[i].ativo = FALSE;
-         tirosInimigo[i].vx = 0;
-         tirosInimigo[i].sprite = SPR_addSprite(&spr_tiro_inimigo_vertical, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
-         SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
-     }
+      Tiro tirosInimigo[MAX_TIROS_INIMIGO];
+      for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
+          tirosInimigo[i].ativo = FALSE;
+          tirosInimigo[i].vx = 0;
+          tirosInimigo[i].sprite = SPR_addSprite(&spr_tiros, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
+          SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
+      }
 
         Inimigo n64;
         n64.timerRespawn = 0;
