@@ -164,7 +164,7 @@ int main(bool hard)
                             pontos++;
                             atualizarPlacar(pontos);
                         }
-                        // Acerto na Aranha
+                        // Acerto na Aranha (leva 2 tiros e vale 2 pontos)
                         else if (aranha.ativo &&
                             tiros[i].x + 14 > aranha.x && tiros[i].x + 2 < aranha.x + aranha.largura &&
                             tiros[i].y + 14 > aranha.y && tiros[i].y + 2 < aranha.y + aranha.altura)
@@ -172,12 +172,16 @@ int main(bool hard)
                             tiros[i].ativo = FALSE;
                             SPR_setVisibility(tiros[i].sprite, HIDDEN);
 
-                            aranha.ativo = FALSE;
-                            aranha.timerRespawn = 30;
-                            SPR_setVisibility(aranha.sprite, HIDDEN);
+                            if (aranha.hp > 1) {
+                                aranha.hp--;
+                            } else {
+                                aranha.ativo = FALSE;
+                                aranha.timerRespawn = 30;
+                                SPR_setVisibility(aranha.sprite, HIDDEN);
 
-                            pontos++;
-                            atualizarPlacar(pontos);
+                                pontos += 2;
+                                atualizarPlacar(pontos);
+                            }
                         }
                         // Acerto no Disjuntor (leva 3 tiros e vale 3 pontos)
                         else if (disjuntor.ativo &&
