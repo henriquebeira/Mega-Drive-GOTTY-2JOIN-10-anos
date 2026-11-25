@@ -166,44 +166,48 @@ int main(bool hard)
                             pontos++;
                             atualizarPlacar(pontos);
                         }
-                        // Acerto na Aranha (leva 2 tiros e vale 2 pontos)
-                        else if (aranha.ativo &&
-                            tiros[i].x + 14 > aranha.x && tiros[i].x + 2 < aranha.x + aranha.largura &&
-                            tiros[i].y + 14 > aranha.y && tiros[i].y + 2 < aranha.y + aranha.altura)
-                        {
-                            tiros[i].ativo = FALSE;
-                            SPR_setVisibility(tiros[i].sprite, HIDDEN);
+                     // Acerto na Aranha (leva 2 tiros e vale 2 pontos)
+                     else if (aranha.ativo &&
+                         tiros[i].x + 14 > aranha.x && tiros[i].x + 2 < aranha.x + aranha.largura &&
+                         tiros[i].y + 14 > aranha.y && tiros[i].y + 2 < aranha.y + aranha.altura)
+                     {
+                         tiros[i].ativo = FALSE;
+                         SPR_setVisibility(tiros[i].sprite, HIDDEN);
 
-                            if (aranha.hp > 1) {
-                                aranha.hp--;
-                            } else {
-                                aranha.ativo = FALSE;
-                                aranha.timerRespawn = 30;
-                                SPR_setVisibility(aranha.sprite, HIDDEN);
+                         if (aranha.hp > 1) {
+                             aranha.hp--;
+                             aranha.timerPisca = 16; // Pisca ao levar o 1º tiro
+                         } else {
+                             aranha.ativo = FALSE;
+                             aranha.timerPisca = 0;
+                             aranha.timerRespawn = 30;
+                             SPR_setVisibility(aranha.sprite, HIDDEN);
 
-                                pontos += 2;
-                                atualizarPlacar(pontos);
-                            }
-                        }
-                        // Acerto no Disjuntor (leva 3 tiros e vale 3 pontos)
-                        else if (disjuntor.ativo &&
-                            tiros[i].x + 14 > disjuntor.x && tiros[i].x + 2 < disjuntor.x + disjuntor.largura &&
-                            tiros[i].y + 14 > disjuntor.y && tiros[i].y + 2 < disjuntor.y + disjuntor.altura)
-                        {
-                            tiros[i].ativo = FALSE;
-                            SPR_setVisibility(tiros[i].sprite, HIDDEN);
+                             pontos += 2;
+                             atualizarPlacar(pontos);
+                         }
+                     }
+                     // Acerto no Disjuntor (leva 3 tiros e vale 3 pontos)
+                     else if (disjuntor.ativo &&
+                         tiros[i].x + 14 > disjuntor.x && tiros[i].x + 2 < disjuntor.x + disjuntor.largura &&
+                         tiros[i].y + 14 > disjuntor.y && tiros[i].y + 2 < disjuntor.y + disjuntor.altura)
+                     {
+                         tiros[i].ativo = FALSE;
+                         SPR_setVisibility(tiros[i].sprite, HIDDEN);
 
-                            if (disjuntor.hp > 1) {
-                                disjuntor.hp--;
-                            } else {
-                                disjuntor.ativo = FALSE;
-                                disjuntor.timerRespawn = 45;
-                                SPR_setVisibility(disjuntor.sprite, HIDDEN);
+                         if (disjuntor.hp > 1) {
+                             disjuntor.hp--;
+                             disjuntor.timerPisca = 16; // Pisca ao levar o 1º e o 2º tiro
+                         } else {
+                             disjuntor.ativo = FALSE;
+                             disjuntor.timerPisca = 0;
+                             disjuntor.timerRespawn = 45;
+                             SPR_setVisibility(disjuntor.sprite, HIDDEN);
 
-                                pontos += 3;
-                                atualizarPlacar(pontos);
-                            }
-                        }
+                             pontos += 3;
+                             atualizarPlacar(pontos);
+                         }
+                     }
                     }
                 }
             }
