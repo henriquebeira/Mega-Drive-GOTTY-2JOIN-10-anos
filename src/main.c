@@ -145,7 +145,7 @@ int main(bool hard)
                         tiros[i].ativo = TRUE;
                         tiros[i].y = y - 2;
                         tiros[i].vy = -5;
-                        tiros[i].x = olhandoDireita ? (x + 10) : (x + 18);
+                        tiros[i].x = olhandoDireita ? (x + 8) : (x + 26);
 
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
                         SPR_setVisibility(tiros[i].sprite, VISIBLE);
