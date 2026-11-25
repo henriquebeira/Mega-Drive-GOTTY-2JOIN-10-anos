@@ -32,8 +32,8 @@ int main(bool hard)
         &img_titulo_05, &img_titulo_06, &img_titulo_07, &img_titulo_08
     };
 
-    // Usa a paleta do quadro 2 (que já contém o logo amarelo e o texto branco)
-    PAL_setPalette(PAL0, framesTitulo[1]->palette->data, CPU);
+    // Carrega a paleta e a imagem do primeiro quadro
+    PAL_setPalette(PAL0, framesTitulo[0]->palette->data, CPU);
     VDP_drawImageEx(BG_B, framesTitulo[0], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
     XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
 
@@ -48,7 +48,7 @@ int main(bool hard)
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
         }
 
-        // Sobrescreve o mesmo espaço da VRAM usando CPU (sem estourar memória nem DMA)
+        // Troca o quadro e aplica a paleta exata daquele quadro usando CPU
         timerAnimTitulo++;
         if (timerAnimTitulo >= 8) {
             timerAnimTitulo = 0;
@@ -56,6 +56,7 @@ int main(bool hard)
             if (frameAtual >= 8) {
                 frameAtual = 0;
             }
+            PAL_setPalette(PAL0, framesTitulo[frameAtual]->palette->data, CPU);
             VDP_drawImageEx(BG_B, framesTitulo[frameAtual], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
         }
 
@@ -66,20 +67,6 @@ int main(bool hard)
     // Limpa a tela inicial antes de começar a fase
     XGM_stopPlayPCM(SOUND_PCM_CH2);
     VDP_clearPlane(BG_B, TRUE);
-    VDP_clearTextArea(0, 0, 40, 28);
-    XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
-
-    while(TRUE)
-    {
-        random();
-        if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
-            XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
-        }
-        if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
-        SYS_doVBlankProcess();
-    }
-
-    XGM_stopPlayPCM(SOUND_PCM_CH2);
     VDP_clearTextArea(0, 0, 40, 28);
     XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
 
