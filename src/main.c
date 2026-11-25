@@ -70,7 +70,7 @@ int main(bool hard)
         Inimigo disjuntor;
         disjuntor.ativo = FALSE;
         disjuntor.timerRespawn = 0;
-        disjuntor.sprite = SPR_addSprite(&spr_disjuntor, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+        disjuntor.sprite = SPR_addSprite(&spr_disjuntor, 0, -32, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
         SPR_setVisibility(disjuntor.sprite, HIDDEN);
 
         while(TRUE)
