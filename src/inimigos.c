@@ -110,14 +110,14 @@ static void dispararTiroInimigo(Inimigo* inimigo, Tiro tirosInimigo[], s16 playe
     }
 }
 
-void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao) {
+void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao) {
     // 1. N64 (sempre ativo)
     if (n64->ativo) {
         if (n64->timerTiro > 0) {
             n64->timerTiro--;
         } else {
             n64->timerTiro = 60;
-            dispararTiroInimigo(n64, tirosInimigo, playerX, playerY);
+            dispararTiroInimigo(n64, tirosInimigo, player->x, player->y);
         }
     } else {
         if (n64->timerRespawn > 0) {
@@ -141,7 +141,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
                 aranha->timerTiro--;
             } else {
                 aranha->timerTiro = 75;
-                dispararTiroInimigo(aranha, tirosInimigo, playerX, playerY);
+                dispararTiroInimigo(aranha, tirosInimigo, player->x, player->y);
             }
         } else {
             if (aranha->timerRespawn > 0) {
@@ -165,56 +165,56 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
             if (disjuntor->timerRespawn > 0) {
                 disjuntor->timerRespawn--;
             } else {
-                spawnDisjuntor(disjuntor, playerX);
+                spawnDisjuntor(disjuntor, player->x);
             }
         }
     }
 
- // 4. Pneu (a partir do 80 2JOIN, quicando lentamente no chão da direita para a esquerda)
- if (edicao >= 80) {
-     if (pneu->ativo) {
-         pneu->x += pneu->vx;
-         pneu->y += pneu->vy;
+    // 4. Pneu (a partir do 80 2JOIN, quicando no chão da direita para a esquerda)
+    if (edicao >= 80) {
+        if (pneu->ativo) {
+            pneu->x += pneu->vx;
+            pneu->y += pneu->vy;
 
-         // Gravidade leve (altera vy a cada 5 frames)
-         pneu->timerTiro++;
-         if (pneu->timerTiro >= 5) {
-             pneu->timerTiro = 0;
-             pneu->vy++;
-         }
+            pneu->timerTiro++;
+            if (pneu->timerTiro >= 5) {
+                pneu->timerTiro = 0;
+                pneu->vy++;
+            }
 
-         // Quica ao tocar no chão (y = 198) subindo devagar até a altura do Disjuntor (~138)
-         if (pneu->y >= 198) {
-             pneu->y = 198;
-             pneu->vy = -5;
-         }
+            if (pneu->y >= 198) {
+                pneu->y = 198;
+                pneu->vy = -5;
+            }
 
-         if (pneu->x < -32) {
-             pneu->ativo = FALSE;
-             pneu->timerRespawn = 45;
-             SPR_setVisibility(pneu->sprite, HIDDEN);
-         } else {
-             SPR_setPosition(pneu->sprite, pneu->x, pneu->y);
+            if (pneu->x < -32) {
+                pneu->ativo = FALSE;
+                pneu->timerRespawn = 45;
+                SPR_setVisibility(pneu->sprite, HIDDEN);
+            } else {
+                SPR_setPosition(pneu->sprite, pneu->x, pneu->y);
 
-             if (pneu->x + 28 > playerX + 16 && pneu->x + 4 < playerX + 32 &&
-                 pneu->y + 20 > playerY + 16 && pneu->y + 4 < playerY + 32)
-             {
-                 pneu->ativo = FALSE;
-                 pneu->timerRespawn = 45;
-                 SPR_setVisibility(pneu->sprite, HIDDEN);
-                 *timerPiscaDano = 30;
-             }
-         }
-     } else {
-         if (pneu->timerRespawn > 0) {
-             pneu->timerRespawn--;
-         } else {
-             spawnPneu(pneu);
-         }
-     }
- }
+                // Encostou no jogador: Pneu morre sem dar pontos, jogador toma dano e perde o combo
+                if (pneu->x + 28 > player->x + 16 && pneu->x + 4 < player->x + 32 &&
+                    pneu->y + 20 > player->y + 16 && pneu->y + 4 < player->y + 32)
+                {
+                    pneu->ativo = FALSE;
+                    pneu->timerRespawn = 45;
+                    SPR_setVisibility(pneu->sprite, HIDDEN);
+                    player->timerPiscaDano = 30;
+                    resetarCombo(player);
+                }
+            }
+        } else {
+            if (pneu->timerRespawn > 0) {
+                pneu->timerRespawn--;
+            } else {
+                spawnPneu(pneu);
+            }
+        }
+    }
 
-    // 5. Tiros inimigos
+    // 5. Tiros inimigos e colisão com o jogador
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
         if (tirosInimigo[i].ativo) {
             tirosInimigo[i].x += tirosInimigo[i].vx;
@@ -226,12 +226,13 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
             } else {
                 SPR_setPosition(tirosInimigo[i].sprite, tirosInimigo[i].x, tirosInimigo[i].y);
 
-                if (tirosInimigo[i].x + 12 > playerX + 16 && tirosInimigo[i].x + 4 < playerX + 32 &&
-                    tirosInimigo[i].y + 12 > playerY + 16 && tirosInimigo[i].y + 4 < playerY + 32)
+                if (tirosInimigo[i].x + 12 > player->x + 16 && tirosInimigo[i].x + 4 < player->x + 32 &&
+                    tirosInimigo[i].y + 12 > player->y + 16 && tirosInimigo[i].y + 4 < player->y + 32)
                 {
                     tirosInimigo[i].ativo = FALSE;
                     SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
-                    *timerPiscaDano = 30;
+                    player->timerPiscaDano = 30;
+                    resetarCombo(player);
                 }
             }
         }
