@@ -119,9 +119,9 @@ int main(bool hard)
 
                         // Alinha o tiro (16x16) com o canhão no sprite de 48x48
                         if (olhandoDireita) {
-                            tiros[i].x = x + 10;
+                            tiros[i].x = x + 14;
                         } else {
-                            tiros[i].x = x + 22;
+                            tiros[i].x = x + 18;
                         }
 
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
