@@ -26,17 +26,30 @@ int main(bool hard)
     XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
     XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
 
-    // --- TELA INICIAL (MENU ANIMADO COM 8 QUADROS) ---
-    const Image* framesTitulo[8] = {
+    // --- TELA INICIAL (MENU ANIMADO SEM CORROMPER DMA) ---
+    const Image* framesTitulo[] = {
         &img_titulo_01, &img_titulo_02, &img_titulo_03, &img_titulo_04,
         &img_titulo_05, &img_titulo_06, &img_titulo_07, &img_titulo_08
     };
+    u16 indiceVRAM[8];
+    u16 posVRAM = TILE_USER_INDEX;
+
+    // Carrega a paleta do primeiro quadro (que já tem o logo amarelo e o texto)
+    PAL_setPalette(PAL0, framesTitulo[0]->palette->data, CPU);
+
+    // Pré-carrega os tiles dos 8 quadros na VRAM antes de iniciar o loop
+    for (u8 i = 0; i < 8; i++) {
+        indiceVRAM[i] = posVRAM;
+        VDP_loadTileSet(framesTitulo[i]->tileset, posVRAM, CPU);
+        posVRAM += framesTitulo[i]->tileset->numTile;
+    }
+
+    // Desenha o primeiro quadro na tela
+    VDP_setTileMapEx(BG_B, framesTitulo[0]->tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, indiceVRAM[0]), 0, 0, 0, 0, 40, 28, CPU);
+    XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
+
     u8 frameAtual = 0;
     u8 timerAnimTitulo = 0;
-
-    // Desenha o primeiro quadro e carrega a paleta
-    VDP_drawImageEx(BG_B, framesTitulo[0], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, TRUE, TRUE);
-    XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
 
     while(TRUE)
     {
@@ -46,7 +59,7 @@ int main(bool hard)
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
         }
 
-        // Troca o quadro a cada 7 frames (~8,5 FPS, ótimo ritmo para os raios e texto piscando)
+        // Troca apenas o mapa de tiles (super leve, zero corrupção gráfica)
         timerAnimTitulo++;
         if (timerAnimTitulo >= 7) {
             timerAnimTitulo = 0;
@@ -54,7 +67,7 @@ int main(bool hard)
             if (frameAtual >= 8) {
                 frameAtual = 0;
             }
-            VDP_drawImageEx(BG_B, framesTitulo[frameAtual], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, TRUE, DMA);
+            VDP_setTileMapEx(BG_B, framesTitulo[frameAtual]->tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, indiceVRAM[frameAtual]), 0, 0, 0, 0, 40, 28, CPU);
         }
 
         if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
