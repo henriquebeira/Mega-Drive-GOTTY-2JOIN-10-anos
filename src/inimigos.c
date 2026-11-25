@@ -4,10 +4,11 @@ void spawnN64(Inimigo* n64) {
     n64->tipo = TIPO_N64;
     n64->largura = 24;
     n64->altura = 24;
-    n64->x = 16 + (random() % 265); // Entre 16 e 280
-    n64->y = 28 + (random() % 77);  // Metade superior da tela
+    n64->hp = 1;
+    n64->x = 16 + (random() % 265);
+    n64->y = 28 + (random() % 77);
     n64->ativo = TRUE;
-    n64->timerTiro = 60;            // Atira a cada 1 segundo (60 frames)
+    n64->timerTiro = 60;
 
     SPR_setPosition(n64->sprite, n64->x, n64->y);
     SPR_setVisibility(n64->sprite, VISIBLE);
@@ -17,28 +18,65 @@ void spawnAranha(Inimigo* aranha) {
     aranha->tipo = TIPO_ARANHA;
     aranha->largura = 32;
     aranha->altura = 32;
-    aranha->x = 16 + (random() % 257); // Entre 16 e 272
-    aranha->y = 28 + (random() % 69);  // Metade superior da tela
+    aranha->hp = 1;
+    aranha->x = 16 + (random() % 257);
+    aranha->y = 28 + (random() % 69);
     aranha->ativo = TRUE;
-    aranha->timerTiro = 75;            // Cadência intercalada com o N64
+    aranha->timerTiro = 75;
 
     SPR_setPosition(aranha->sprite, aranha->x, aranha->y);
     SPR_setVisibility(aranha->sprite, VISIBLE);
 }
 
+void spawnDisjuntor(Inimigo* disjuntor) {
+    disjuntor->tipo = TIPO_DISJUNTOR;
+    disjuntor->largura = 48;
+    disjuntor->altura = 32;
+    disjuntor->hp = 3; // Leva 3 tiros para ser destruído
+    disjuntor->x = 16 + (random() % 241); // Entre 16 e 256 (320 - 48 - 16)
+    disjuntor->y = 28 + (random() % 65);  // Metade superior da tela
+    disjuntor->ativo = TRUE;
+    disjuntor->timerTiro = 90;
+
+    SPR_setPosition(disjuntor->sprite, disjuntor->x, disjuntor->y);
+    SPR_setVisibility(disjuntor->sprite, VISIBLE);
+}
+
 static void dispararTiroInimigo(Inimigo* inimigo, Tiro tirosInimigo[], s16 playerX, s16 playerY) {
+    if (inimigo->tipo == TIPO_DISJUNTOR) {
+        // Disjuntor dispara 2 bolas de fogo em leque (esquerda e direita)
+        s8 direcoesVx[2] = { -1, 1 };
+        u8 disparados = 0;
+
+        for (u8 i = 0; i < MAX_TIROS_INIMIGO && disparados < 2; i++) {
+            if (!tirosInimigo[i].ativo) {
+                tirosInimigo[i].ativo = TRUE;
+                SPR_setAnim(tirosInimigo[i].sprite, 2);
+                tirosInimigo[i].x = inimigo->x + 16;
+                tirosInimigo[i].y = inimigo->y + 24;
+                tirosInimigo[i].vx = direcoesVx[disparados];
+                tirosInimigo[i].vy = 3;
+
+                SPR_setPosition(tirosInimigo[i].sprite, tirosInimigo[i].x, tirosInimigo[i].y);
+                SPR_setVisibility(tirosInimigo[i].sprite, VISIBLE);
+                disparados++;
+            }
+        }
+        return;
+    }
+
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
         if (!tirosInimigo[i].ativo) {
             tirosInimigo[i].ativo = TRUE;
 
             if (inimigo->tipo == TIPO_N64) {
-                              SPR_setAnim(tirosInimigo[i].sprite, 1);
+                SPR_setAnim(tirosInimigo[i].sprite, 1);
                 tirosInimigo[i].x = inimigo->x + 4;
                 tirosInimigo[i].y = inimigo->y + 20;
                 tirosInimigo[i].vx = 0;
                 tirosInimigo[i].vy = 3;
             } else {
-                              SPR_setAnim(tirosInimigo[i].sprite, 2);
+                SPR_setAnim(tirosInimigo[i].sprite, 2);
                 tirosInimigo[i].x = inimigo->x + 8;
                 tirosInimigo[i].y = inimigo->y + 24;
 
@@ -66,8 +104,8 @@ static void dispararTiroInimigo(Inimigo* inimigo, Tiro tirosInimigo[], s16 playe
     }
 }
 
-void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao) {
-    // 1. Lógica do N64
+void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao) {
+    // 1. N64 (sempre ativo)
     if (n64->ativo) {
         if (n64->timerTiro > 0) {
             n64->timerTiro--;
@@ -83,7 +121,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Tiro tirosInimigo[],
         }
     }
 
-    // 2. Lógica da Aranha (após 30 2JOIN)
+    // 2. Aranha (após 30 2JOIN)
     if (edicao > 30) {
         if (aranha->ativo) {
             if (aranha->timerTiro > 0) {
@@ -101,7 +139,25 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Tiro tirosInimigo[],
         }
     }
 
-    // 3. Movimento dos tiros inimigos e colisão com o jogador
+    // 3. Disjuntor (a partir do 60 2JOIN)
+    if (edicao >= 60) {
+        if (disjuntor->ativo) {
+            if (disjuntor->timerTiro > 0) {
+                disjuntor->timerTiro--;
+            } else {
+                disjuntor->timerTiro = 90;
+                dispararTiroInimigo(disjuntor, tirosInimigo, playerX, playerY);
+            }
+        } else {
+            if (disjuntor->timerRespawn > 0) {
+                disjuntor->timerRespawn--;
+            } else {
+                spawnDisjuntor(disjuntor);
+            }
+        }
+    }
+
+    // 4. Movimento dos tiros inimigos e colisão com o jogador
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
         if (tirosInimigo[i].ativo) {
             tirosInimigo[i].x += tirosInimigo[i].vx;
