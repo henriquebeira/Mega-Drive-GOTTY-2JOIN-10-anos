@@ -121,6 +121,10 @@ void inicializarTilesBarraCombo(void) {
 }
 
 void atualizarBarraCombo(Player* p) {
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));  // Fundo vazio da barra
+    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));  // Preenchimento roxo da barra
+    PAL_setColor(34, RGB24_TO_VDPCOLOR(0xFFEE00)); // Amarelo vivo para o 2X na PAL2
+
     u8 alturaTotal = 12;
     u8 blocosCheios = 0;
 
