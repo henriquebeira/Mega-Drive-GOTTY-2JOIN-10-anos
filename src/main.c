@@ -14,6 +14,23 @@ typedef struct {
     bool ativo;
 } Tiro;
 
+typedef struct {
+    Sprite* sprite;
+    s16 x;
+    s16 y;
+    bool ativo;
+    u16 timerRespawn;
+} Inimigo;
+
+// Posiciona o inimigo aleatoriamente na metade superior da tela (abaixo de "Fase 1!")
+void spawnInimigo(Inimigo* inimigo) {
+    inimigo->x = 16 + (random() % 265); // Entre 16 e 280 (320 - 24 - 16)
+    inimigo->y = 28 + (random() % 77);  // Entre 28 e 104 (metade superior)
+    inimigo->ativo = TRUE;
+    SPR_setPosition(inimigo->sprite, inimigo->x, inimigo->y);
+    SPR_setVisibility(inimigo->sprite, VISIBLE);
+}
+
 int main(bool hard)
 {
     JOY_init();
@@ -35,6 +52,8 @@ int main(bool hard)
     // Aguarda apertar START e mantém a música em loop
     while(TRUE)
     {
+        random(); // Varia a semente aleatória conforme o tempo até apertar START
+
         if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
         }
@@ -55,6 +74,7 @@ int main(bool hard)
 
     PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
     PAL_setPalette(PAL2, spr_tiro.palette->data, DMA);
+    PAL_setPalette(PAL3, spr_n64.palette->data, DMA);
 
     // Centralizado em X: (320 - 48) / 2 = 136
     // Mais próximo da borda inferior: 224 - 48 - 2 = 174
@@ -73,6 +93,12 @@ int main(bool hard)
         tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
         SPR_setVisibility(tiros[i].sprite, HIDDEN);
     }
+
+    // Inicializa o inimigo N64 (24x24) e faz o primeiro aparecer
+    Inimigo n64;
+    n64.timerRespawn = 0;
+    n64.sprite = SPR_addSprite(&spr_n64, 0, -24, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+    spawnInimigo(&n64);
 
     while(TRUE)
     {
@@ -135,6 +161,7 @@ int main(bool hard)
             botaoTiroTravado = FALSE;
         }
 
+        // Atualiza tiros e verifica colisão com o N64
         for (u8 i = 0; i < MAX_TIROS; i++) {
             if (tiros[i].ativo) {
                 tiros[i].y += tiros[i].vy;
@@ -144,7 +171,30 @@ int main(bool hard)
                     tiros[i].ativo = FALSE;
                 } else {
                     SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
+
+                    // Colisão entre a área útil do tiro (12x12) e o N64 (24x24)
+                    if (n64.ativo &&
+                        tiros[i].x + 14 > n64.x && tiros[i].x + 2 < n64.x + 24 &&
+                        tiros[i].y + 14 > n64.y && tiros[i].y + 2 < n64.y + 24)
+                    {
+                        // Destrói o tiro e o inimigo
+                        tiros[i].ativo = FALSE;
+                        SPR_setVisibility(tiros[i].sprite, HIDDEN);
+
+                        n64.ativo = FALSE;
+                        n64.timerRespawn = 20; // Aguarda ~0,3s para surgir o próximo
+                        SPR_setVisibility(n64.sprite, HIDDEN);
+                    }
                 }
+            }
+        }
+
+        // Faz o próximo N64 surgir após o anterior ser destruído
+        if (!n64.ativo) {
+            if (n64.timerRespawn > 0) {
+                n64.timerRespawn--;
+            } else {
+                spawnInimigo(&n64);
             }
         }
 
