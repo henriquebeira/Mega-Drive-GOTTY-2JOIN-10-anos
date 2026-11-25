@@ -26,19 +26,13 @@ int main(bool hard)
     XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
     XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
 
-    // --- TELA INICIAL (MENU ANIMADO SEGURO) ---
-    const Image* framesTitulo[8] = {
-        &img_titulo_01, &img_titulo_02, &img_titulo_03, &img_titulo_04,
-        &img_titulo_05, &img_titulo_06, &img_titulo_07, &img_titulo_08
-    };
-
-    // Carrega a paleta e a imagem do primeiro quadro
-    PAL_setPalette(PAL0, framesTitulo[0]->palette->data, CPU);
-    VDP_drawImageEx(BG_B, framesTitulo[0], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
+    // --- TELA INICIAL (ESTÁTICA E NÍTIDA COM TEXTO PISCANDO) ---
+    PAL_setPalette(PAL0, img_titulo.palette->data, CPU);
+    VDP_drawImageEx(BG_B, &img_titulo, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
     XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
 
-    u8 frameAtual = 0;
-    u8 timerAnimTitulo = 0;
+    u8 timerPisca = 0;
+    bool mostraTexto = TRUE;
 
     while(TRUE)
     {
@@ -48,16 +42,17 @@ int main(bool hard)
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
         }
 
-        // Troca o quadro e aplica a paleta exata daquele quadro usando CPU
-        timerAnimTitulo++;
-        if (timerAnimTitulo >= 8) {
-            timerAnimTitulo = 0;
-            frameAtual++;
-            if (frameAtual >= 8) {
-                frameAtual = 0;
+        // Faz o "PRESS START 2 JOIN" piscar a cada 25 frames sem mexer na imagem de fundo
+        timerPisca++;
+        if (timerPisca >= 25) {
+            timerPisca = 0;
+            mostraTexto = !mostraTexto;
+
+            if (mostraTexto) {
+                VDP_drawText("PRESS START 2 JOIN", 11, 18);
+            } else {
+                VDP_clearText(11, 18, 18);
             }
-            PAL_setPalette(PAL0, framesTitulo[frameAtual]->palette->data, CPU);
-            VDP_drawImageEx(BG_B, framesTitulo[frameAtual], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
         }
 
         if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
