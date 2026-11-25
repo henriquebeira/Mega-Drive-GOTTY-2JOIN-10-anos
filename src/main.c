@@ -27,10 +27,24 @@ int main(bool hard)
     XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
 
     // --- TELA INICIAL (MENU) ---
-    PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
-    VDP_drawText("MEU JOGO MEGA DRIVE", 10, 10);
-    VDP_drawText("PRESS START", 14, 14);
+    VDP_drawImageEx(BG_B, &img_titulo, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, TRUE, TRUE);
     XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
+
+    while(TRUE)
+    {
+        random();
+        if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
+            XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
+        }
+        if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
+        SYS_doVBlankProcess();
+    }
+
+    // Limpa a imagem da tela inicial antes de começar a fase
+    XGM_stopPlayPCM(SOUND_PCM_CH2);
+    VDP_clearPlane(BG_B, TRUE);
+    VDP_clearTextArea(0, 0, 40, 28);
+    XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
 
     while(TRUE)
     {
