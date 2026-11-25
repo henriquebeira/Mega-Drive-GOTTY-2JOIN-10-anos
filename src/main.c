@@ -1,23 +1,5 @@
 #include "jogo.h"
 
-void atualizarPlacar(u16 pontos) {
-    char textoPontos[12];
-    uintToStr(pontos, textoPontos, 1);
-    VDP_drawText(textoPontos, 38 - strlen(textoPontos), 2);
-}
-
-void atualizarContadorEdicao(u16 edicao) {
-    char textoEdicao[16];
-    char numStr[8];
-    uintToStr(edicao, numStr, 1);
-
-    strcpy(textoEdicao, numStr);
-    strcat(textoEdicao, " 2JOIN");
-
-    VDP_clearText(2, 2, 10);
-    VDP_drawText(textoEdicao, 2, 2);
-}
-
 int main(bool hard)
 {
     JOY_init();
@@ -27,57 +9,13 @@ int main(bool hard)
     XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
     XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
 
-    // Loop geral permite reiniciar a partida quantas vezes quiser
     while(TRUE)
     {
-        // --- TELA INICIAL (ESTÁTICA E NÍTIDA COM TEXTO PISCANDO) ---
-        PAL_setPalette(PAL0, img_titulo.palette->data, CPU);
-        PAL_setColor(31, RGB24_TO_VDPCOLOR(0xFFFFFF));
-        VDP_setTextPalette(PAL1);
-        VDP_drawImageEx(BG_B, &img_titulo, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
-        XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
-
-        u8 timerPisca = 0;
-        bool mostraTexto = TRUE;
-        VDP_drawText("PRESS START 2 JOIN", 11, 15);
-
-        // Garante que o jogador soltou o START antes de aceitar um novo clique
-        while (JOY_readJoypad(JOY_1) & BUTTON_START) {
-            SYS_doVBlankProcess();
-        }
-
-        while(TRUE)
-        {
-            random();
-
-            if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
-                XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
-            }
-
-            timerPisca++;
-            if (timerPisca >= 25) {
-                timerPisca = 0;
-                mostraTexto = !mostraTexto;
-
-                if (mostraTexto) {
-                    VDP_drawText("PRESS START 2 JOIN", 11, 15);
-                } else {
-                    VDP_clearText(11, 15, 18);
-                }
-            }
-
-            if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
-            SYS_doVBlankProcess();
-        }
-
-        // Limpa a tela inicial antes de começar a fase
-        XGM_stopPlayPCM(SOUND_PCM_CH2);
-        VDP_clearPlane(BG_B, TRUE);
-        VDP_clearTextArea(0, 0, 40, 28);
-        VDP_setTextPalette(PAL0);
-        XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
+        executarTelaInicial();
 
         // --- INÍCIO DA FASE ---
+        XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
+
         u16 pontos = 0;
         u16 edicao = 1;
         u16 timerEdicao = 0;
@@ -118,26 +56,29 @@ int main(bool hard)
             SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
         }
 
-        Inimigo inimigo;
-        inimigo.timerRespawn = 0;
-        inimigo.sprite = SPR_addSprite(&spr_n64, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
-        spawnInimigo(&inimigo, edicao);
+        Inimigo n64;
+        n64.timerRespawn = 0;
+        n64.sprite = SPR_addSprite(&spr_n64, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+        spawnN64(&n64);
+
+        Inimigo aranha;
+        aranha.ativo = FALSE;
+        aranha.timerRespawn = 0;
+        aranha.sprite = SPR_addSprite(&spr_aranha, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
+        SPR_setVisibility(aranha.sprite, HIDDEN);
 
         while(TRUE)
         {
-            // Segurança caso a música termine antes
             if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
                 break;
             }
 
-            // Incrementa o contador de 1 até 98 (1 por segundo)
             timerEdicao++;
             if (timerEdicao >= 60) {
                 timerEdicao = 0;
                 edicao++;
                 atualizarContadorEdicao(edicao);
 
-                // Ao chegar no 98, congela toda a ação da fase
                 if (edicao >= 98) {
                     break;
                 }
@@ -169,7 +110,6 @@ int main(bool hard)
                 andando = FALSE;
             }
 
-            // Atira com A, B ou C
             if (controle & (BUTTON_A | BUTTON_B | BUTTON_C)) {
                 if (!botaoTiroTravado) {
                     botaoTiroTravado = TRUE;
@@ -192,7 +132,7 @@ int main(bool hard)
                 botaoTiroTravado = FALSE;
             }
 
-            // Tiros do jogador e acerto no inimigo (N64 ou Aranha)
+            // Tiros do jogador e acerto no N64 ou na Aranha
             for (u8 i = 0; i < MAX_TIROS; i++) {
                 if (tiros[i].ativo) {
                     tiros[i].y += tiros[i].vy;
@@ -203,16 +143,30 @@ int main(bool hard)
                     } else {
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
 
-                        if (inimigo.ativo &&
-                            tiros[i].x + 14 > inimigo.x && tiros[i].x + 2 < inimigo.x + inimigo.largura &&
-                            tiros[i].y + 14 > inimigo.y && tiros[i].y + 2 < inimigo.y + inimigo.altura)
+                        if (n64.ativo &&
+                            tiros[i].x + 14 > n64.x && tiros[i].x + 2 < n64.x + n64.largura &&
+                            tiros[i].y + 14 > n64.y && tiros[i].y + 2 < n64.y + n64.altura)
                         {
                             tiros[i].ativo = FALSE;
                             SPR_setVisibility(tiros[i].sprite, HIDDEN);
 
-                            inimigo.ativo = FALSE;
-                            inimigo.timerRespawn = 20;
-                            SPR_setVisibility(inimigo.sprite, HIDDEN);
+                            n64.ativo = FALSE;
+                            n64.timerRespawn = 20;
+                            SPR_setVisibility(n64.sprite, HIDDEN);
+
+                            pontos++;
+                            atualizarPlacar(pontos);
+                        }
+                        else if (aranha.ativo &&
+                            tiros[i].x + 14 > aranha.x && tiros[i].x + 2 < aranha.x + aranha.largura &&
+                            tiros[i].y + 14 > aranha.y && tiros[i].y + 2 < aranha.y + aranha.altura)
+                        {
+                            tiros[i].ativo = FALSE;
+                            SPR_setVisibility(tiros[i].sprite, HIDDEN);
+
+                            aranha.ativo = FALSE;
+                            aranha.timerRespawn = 30;
+                            SPR_setVisibility(aranha.sprite, HIDDEN);
 
                             pontos++;
                             atualizarPlacar(pontos);
@@ -221,7 +175,7 @@ int main(bool hard)
                 }
             }
 
-            atualizarInimigoETiros(&inimigo, tirosInimigo, x, y, &timerPiscaDano, edicao);
+            atualizarInimigosETiros(&n64, &aranha, tirosInimigo, x, y, &timerPiscaDano, edicao);
 
             if (timerPiscaDano > 0) {
                 timerPiscaDano--;
@@ -239,37 +193,12 @@ int main(bool hard)
             SYS_doVBlankProcess();
         }
 
-        // --- AGUARDA A MÚSICA TERMINAR COM TUDO PARADO NO 98 2JOIN ---
+        // Aguarda a música terminar com a tela congelada no 98 2JOIN
         while (XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             SYS_doVBlankProcess();
         }
 
-        // --- TELA FINAL (SCORE) ---
-        XGM_stopPlayPCM(SOUND_PCM_CH2);
-
-        SPR_reset();
-        SPR_update();
-
-        VDP_clearTextArea(0, 0, 40, 28);
-        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
-
-        char textoFinal[32];
-        char numFinal[12];
-        uintToStr(pontos, numFinal, 1);
-        strcpy(textoFinal, "PONTUACAO FINAL: ");
-        strcat(textoFinal, numFinal);
-
-        VDP_drawText("98 2JOIN - FIM DE JOGO!", 12, 10);
-        VDP_drawText(textoFinal, (40 - strlen(textoFinal)) / 2, 13);
-        VDP_drawText("PRESS START TO RESTART", 9, 17);
-
-        while(TRUE)
-        {
-            if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
-            SYS_doVBlankProcess();
-        }
-
-        VDP_clearTextArea(0, 0, 40, 28);
+        executarTelaFinal(pontos);
     }
 
     return 0;
