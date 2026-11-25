@@ -1,14 +1,14 @@
 #include "jogo.h"
 
 void atualizarPlacar(u16 pontos) {
-    char textoPontos;
+    char textoPontos[16];
     uintToStr(pontos, textoPontos, 1);
     VDP_drawText(textoPontos, 38 - strlen(textoPontos), 2);
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    char textoEdicao;
-    char numStr;
+    char textoEdicao[20];
+    char numStr[8];
     uintToStr(edicao, numStr, 1);
 
     strcpy(textoEdicao, numStr);
@@ -222,8 +222,8 @@ int main(bool hard)
     VDP_clearTextArea(0, 0, 40, 28);
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
 
-    char textoFinal;
-    char numFinal;
+    char textoFinal[32];
+    char numFinal[16];
     uintToStr(pontos, numFinal, 1);
     strcpy(textoFinal, "PONTUACAO FINAL: ");
     strcat(textoFinal, numFinal);
