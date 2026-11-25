@@ -79,7 +79,7 @@ int main(bool hard)
 
         // --- INÍCIO DA FASE ---
         u16 pontos = 0;
-        u16 edicao = 0;
+        u16 edicao = 1;
         u16 timerEdicao = 0;
 
         PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
@@ -125,18 +125,21 @@ int main(bool hard)
 
         while(TRUE)
         {
-            // Encerra a fase exatamente quando a música de 1m40s terminar por completo
+            // Segurança caso a música termine antes
             if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
                 break;
             }
 
-            // Incrementa o contador de 0 até 98 acompanhando os 100 segundos da música
-            if (edicao < 98) {
-                timerEdicao++;
-                if (timerEdicao >= 61) {
-                    timerEdicao = 0;
-                    edicao++;
-                    atualizarContadorEdicao(edicao);
+            // Incrementa o contador de 1 até 98 (1 por segundo)
+            timerEdicao++;
+            if (timerEdicao >= 60) {
+                timerEdicao = 0;
+                edicao++;
+                atualizarContadorEdicao(edicao);
+
+                // Ao chegar no 98, congela toda a ação da fase
+                if (edicao >= 98) {
+                    break;
                 }
             }
 
@@ -236,7 +239,12 @@ int main(bool hard)
             SYS_doVBlankProcess();
         }
 
-        // --- TELA FINAL (CHEGOU NO 99) ---
+        // --- AGUARDA A MÚSICA TERMINAR COM TUDO PARADO NO 98 2JOIN ---
+        while (XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
+            SYS_doVBlankProcess();
+        }
+
+        // --- TELA FINAL (SCORE) ---
         XGM_stopPlayPCM(SOUND_PCM_CH2);
 
         SPR_reset();
@@ -251,7 +259,7 @@ int main(bool hard)
         strcpy(textoFinal, "PONTUACAO FINAL: ");
         strcat(textoFinal, numFinal);
 
-        VDP_drawText("98 2JOIN - FIM!", 12, 10);
+        VDP_drawText("98 2JOIN - FIM DE JOGO!", 12, 10);
         VDP_drawText(textoFinal, (40 - strlen(textoFinal)) / 2, 13);
         VDP_drawText("PRESS START TO RESTART", 9, 17);
 
