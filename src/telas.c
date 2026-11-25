@@ -126,7 +126,7 @@ void atualizarBarraCombo(Player* p) {
     PAL_setColor(34, RGB24_TO_VDPCOLOR(0xFFEE00)); // Amarelo vivo para o 2X
 
     // Garante cores vibrantes para 4X, 5X, 6X, 7X e 8X sem afetar a Aranha
-    u16 corDestaque = 0xFFEE00;
+    u32 corDestaque = 0xFFEE00;
     if (p->multiplicador == 4) corDestaque = 0x44AAFF; // Azul claro vibrante
     else if (p->multiplicador == 5) corDestaque = 0x00FFEE; // Ciano neon
     else if (p->multiplicador == 6) corDestaque = 0x44FF44; // Verde limão
