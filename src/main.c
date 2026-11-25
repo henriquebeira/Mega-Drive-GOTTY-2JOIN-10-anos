@@ -29,13 +29,16 @@ int main(bool hard)
     VDP_drawText("MEU JOGO MEGA DRIVE", 10, 10);
     VDP_drawText("PRESS START", 14, 14);
 
-    // Toca a música do menu em loop infinito no Canal 2
-    XGM_setLoopNumber(-1);
+    // Inicia a música do menu no Canal 2
     XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
 
-    // Aguarda apertar START
+    // Aguarda apertar START e mantém a música em loop
     while(TRUE)
     {
+        if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
+            XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
+        }
+
         u16 controle = JOY_readJoypad(JOY_1);
         if (controle & BUTTON_START) break;
         SYS_doVBlankProcess();
@@ -53,22 +56,30 @@ int main(bool hard)
     PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
     PAL_setPalette(PAL2, spr_tiro.palette->data, DMA);
 
-    s16 x = 144;
-    s16 y = 180;
+    // Centralizado em X (320 - 64) / 2 = 128 e inteiro acima da borda inferior (224 - 64 - 4 = 156)
+    s16 x = 128;
+    s16 y = 156;
     bool andando = FALSE;
     bool olhandoDireita = TRUE;
     bool botaoTiroTravado = FALSE;
 
     Sprite* player = SPR_addSprite(&spr_idle, x, y, TILE_ATTR(PAL1, FALSE, FALSE, TRUE));
 
+    // Pré-aloca os sprites dos tiros para evitar fragmentação de memória
     Tiro tiros[MAX_TIROS];
     for (u8 i = 0; i < MAX_TIROS; i++) {
         tiros[i].ativo = FALSE;
-        tiros[i].sprite = NULL;
+        tiros[i].sprite = SPR_addSprite(&spr_tiro, 0, -16, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+        SPR_setVisibility(tiros[i].sprite, HIDDEN);
     }
 
     while(TRUE)
     {
+        // Garante o loop contínuo da música da fase
+        if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
+            XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
+        }
+
         u16 controle = JOY_readJoypad(JOY_1);
         bool movendoAgora = FALSE;
 
@@ -103,13 +114,15 @@ int main(bool hard)
                         tiros[i].y = y - 2;
                         tiros[i].vy = -5;
 
+                        // Alinha o tiro com o canhão no sprite de 64px (espelhado quando vira à esquerda)
                         if (olhandoDireita) {
                             tiros[i].x = x + 5;
                         } else {
-                            tiros[i].x = x + 19;
+                            tiros[i].x = x + 51;
                         }
 
-                        tiros[i].sprite = SPR_addSprite(&spr_tiro, tiros[i].x, tiros[i].y, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+                        SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
+                        SPR_setVisibility(tiros[i].sprite, VISIBLE);
                         XGM_startPlayPCM(SFX_TIRO_ID, 10, SOUND_PCM_CH1);
                         break;
                     }
@@ -124,7 +137,7 @@ int main(bool hard)
                 tiros[i].y += tiros[i].vy;
 
                 if (tiros[i].y < -8) {
-                    SPR_releaseSprite(tiros[i].sprite);
+                    SPR_setVisibility(tiros[i].sprite, HIDDEN);
                     tiros[i].ativo = FALSE;
                 } else {
                     SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
@@ -132,8 +145,9 @@ int main(bool hard)
             }
         }
 
+        // Limites laterais para sprite de 64px na tela de 320px (320 - 64 = 256)
         if (x < 0)   x = 0;
-        if (x > 288) x = 288;
+        if (x > 256) x = 256;
 
         SPR_setPosition(player, x, y);
         SPR_update();
