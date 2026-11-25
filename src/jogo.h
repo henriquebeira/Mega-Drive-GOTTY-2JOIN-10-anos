@@ -46,7 +46,7 @@ void executarTelaFinal(u16 pontos);
 // Funções de inimigos (src/inimigos.c)
 void spawnN64(Inimigo* n64);
 void spawnAranha(Inimigo* aranha);
-void spawnDisjuntor(Inimigo* disjuntor);
+void spawnDisjuntor(Inimigo* disjuntor, s16 playerX);
 void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Tiro tirosInimigo[], s16 playerX, s16 playerY, u16* timerPiscaDano, u16 edicao);
 
 #endif
