@@ -23,6 +23,7 @@ void spawnAranha(Inimigo* aranha) {
     aranha->y = 28 + (random() % 69);
     aranha->ativo = TRUE;
     aranha->timerTiro = 75;
+    aranha->timerPisca = 0;
 
     SPR_setPosition(aranha->sprite, aranha->x, aranha->y);
     SPR_setVisibility(aranha->sprite, VISIBLE);
@@ -37,6 +38,7 @@ void spawnDisjuntor(Inimigo* disjuntor) {
     disjuntor->y = 137;                   // Base em 169 (5px acima do canhão em 174)
     disjuntor->ativo = TRUE;
     disjuntor->timerTiro = 0;
+    disjuntor->timerPisca = 0;
 
     SPR_setPosition(disjuntor->sprite, disjuntor->x, disjuntor->y);
     SPR_setVisibility(disjuntor->sprite, VISIBLE);
@@ -121,34 +123,48 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
         }
     }
 
-    // 2. Aranha (após 30 2JOIN)
-    if (edicao > 30) {
-        if (aranha->ativo) {
-            if (aranha->timerTiro > 0) {
-                aranha->timerTiro--;
-            } else {
-                aranha->timerTiro = 75;
-                dispararTiroInimigo(aranha, tirosInimigo, playerX, playerY);
-            }
-        } else {
-            if (aranha->timerRespawn > 0) {
-                aranha->timerRespawn--;
-            } else {
-                spawnAranha(aranha);
-            }
-        }
-    }
+     // 2. Aranha (após 30 2JOIN)
+ if (edicao > 30) {
+     if (aranha->ativo) {
+         if (aranha->timerPisca > 0) {
+             aranha->timerPisca--;
+             SPR_setVisibility(aranha->sprite, (aranha->timerPisca % 4 < 2) ? HIDDEN : VISIBLE);
+         } else {
+             SPR_setVisibility(aranha->sprite, VISIBLE);
+         }
 
-    // 3. Disjuntor (a partir do 60 2JOIN, parado no chão e sem atirar)
-    if (edicao >= 60) {
-        if (!disjuntor->ativo) {
-            if (disjuntor->timerRespawn > 0) {
-                disjuntor->timerRespawn--;
-            } else {
-                spawnDisjuntor(disjuntor);
-            }
-        }
-    }
+         if (aranha->timerTiro > 0) {
+             aranha->timerTiro--;
+         } else {
+             aranha->timerTiro = 75;
+             dispararTiroInimigo(aranha, tirosInimigo, playerX, playerY);
+         }
+     } else {
+         if (aranha->timerRespawn > 0) {
+             aranha->timerRespawn--;
+         } else {
+             spawnAranha(aranha);
+         }
+     }
+ }
+
+ // 3. Disjuntor (a partir do 60 2JOIN, parado no chão e sem atirar)
+ if (edicao >= 60) {
+     if (disjuntor->ativo) {
+         if (disjuntor->timerPisca > 0) {
+             disjuntor->timerPisca--;
+             SPR_setVisibility(disjuntor->sprite, (disjuntor->timerPisca % 4 < 2) ? HIDDEN : VISIBLE);
+         } else {
+             SPR_setVisibility(disjuntor->sprite, VISIBLE);
+         }
+     } else {
+         if (disjuntor->timerRespawn > 0) {
+             disjuntor->timerRespawn--;
+         } else {
+             spawnDisjuntor(disjuntor);
+         }
+     }
+ }
 
     // 4. Movimento dos tiros inimigos e colisão com o jogador
     for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
