@@ -26,21 +26,42 @@ int main(bool hard)
     XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
     XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
 
-    // --- TELA INICIAL (MENU) ---
-    VDP_drawImageEx(BG_B, &img_titulo, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, TRUE, TRUE);
+    // --- TELA INICIAL (MENU ANIMADO COM 8 QUADROS) ---
+    const Image* framesTitulo[8] = {
+        &img_titulo_01, &img_titulo_02, &img_titulo_03, &img_titulo_04,
+        &img_titulo_05, &img_titulo_06, &img_titulo_07, &img_titulo_08
+    };
+    u8 frameAtual = 0;
+    u8 timerAnimTitulo = 0;
+
+    // Desenha o primeiro quadro e carrega a paleta
+    VDP_drawImageEx(BG_B, framesTitulo[0], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, TRUE, TRUE);
     XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
 
     while(TRUE)
     {
         random();
+
         if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
         }
+
+        // Troca o quadro a cada 7 frames (~8,5 FPS, ótimo ritmo para os raios e texto piscando)
+        timerAnimTitulo++;
+        if (timerAnimTitulo >= 7) {
+            timerAnimTitulo = 0;
+            frameAtual++;
+            if (frameAtual >= 8) {
+                frameAtual = 0;
+            }
+            VDP_drawImageEx(BG_B, framesTitulo[frameAtual], TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, TRUE, DMA);
+        }
+
         if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
         SYS_doVBlankProcess();
     }
 
-    // Limpa a imagem da tela inicial antes de começar a fase
+    // Limpa a tela inicial antes de começar a fase
     XGM_stopPlayPCM(SOUND_PCM_CH2);
     VDP_clearPlane(BG_B, TRUE);
     VDP_clearTextArea(0, 0, 40, 28);
