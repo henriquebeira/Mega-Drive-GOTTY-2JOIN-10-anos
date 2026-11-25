@@ -1,19 +1,20 @@
 #include "jogo.h"
 
 void atualizarPlacar(u16 pontos) {
-    char textoPontos[10];
+    char textoPontos[12];
     uintToStr(pontos, textoPontos, 1);
     VDP_drawText(textoPontos, 38 - strlen(textoPontos), 2);
 }
 
 void atualizarContadorEdicao(u16 edicao) {
     char textoEdicao[16];
-    char numStr[6];
+    char numStr[8];
     uintToStr(edicao, numStr, 1);
 
     strcpy(textoEdicao, numStr);
     strcat(textoEdicao, " 2JOIN");
 
+    VDP_clearText(2, 2, 10);
     VDP_drawText(textoEdicao, 2, 2);
 }
 
@@ -78,7 +79,7 @@ int main(bool hard)
 
         // --- INÍCIO DA FASE ---
         u16 pontos = 0;
-        u16 edicao = 1;
+        u16 edicao = 0;
         u16 timerEdicao = 0;
 
         PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
@@ -128,13 +129,13 @@ int main(bool hard)
                 XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
             }
 
-            // Incrementa o contador a cada 1 segundo (60 frames)
+            // Incrementa o contador de 0 até 98 (encerra ao atingir 99)
             timerEdicao++;
             if (timerEdicao >= 60) {
                 timerEdicao = 0;
                 edicao++;
 
-                if (edicao >= 98) {
+                if (edicao >= 99) {
                     break;
                 }
 
@@ -167,7 +168,8 @@ int main(bool hard)
                 andando = FALSE;
             }
 
-            if (controle & (BUTTON_B | BUTTON_A)) {
+            // Atira com A, B ou C
+            if (controle & (BUTTON_A | BUTTON_B | BUTTON_C)) {
                 if (!botaoTiroTravado) {
                     botaoTiroTravado = TRUE;
 
@@ -236,18 +238,17 @@ int main(bool hard)
             SYS_doVBlankProcess();
         }
 
-        // --- TELA FINAL (CHEGOU NO 98) ---
+        // --- TELA FINAL (CHEGOU NO 99) ---
         XGM_stopPlayPCM(SOUND_PCM_CH2);
 
-        // Libera todos os sprites da partida para reiniciar sem vazar memória
         SPR_reset();
         SPR_update();
 
         VDP_clearTextArea(0, 0, 40, 28);
         PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
 
-        char textoFinal[28];
-        char numFinal[8];
+        char textoFinal[32];
+        char numFinal[12];
         uintToStr(pontos, numFinal, 1);
         strcpy(textoFinal, "PONTUACAO FINAL: ");
         strcat(textoFinal, numFinal);
@@ -256,7 +257,6 @@ int main(bool hard)
         VDP_drawText(textoFinal, (40 - strlen(textoFinal)) / 2, 13);
         VDP_drawText("PRESS START TO RESTART", 9, 17);
 
-        // Aguarda apertar START para reiniciar o jogo do zero
         while(TRUE)
         {
             if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
