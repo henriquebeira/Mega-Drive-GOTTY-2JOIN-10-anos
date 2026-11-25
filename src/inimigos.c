@@ -18,7 +18,7 @@ void spawnAranha(Inimigo* aranha) {
     aranha->tipo = TIPO_ARANHA;
     aranha->largura = 32;
     aranha->altura = 32;
-    aranha->hp = 1;
+    aranha->hp = 2; // Leva 2 tiros para ser destruída
     aranha->x = 16 + (random() % 257);
     aranha->y = 28 + (random() % 69);
     aranha->ativo = TRUE;
