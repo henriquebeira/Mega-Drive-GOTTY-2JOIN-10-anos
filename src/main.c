@@ -1,9 +1,20 @@
 #include "jogo.h"
 
 void atualizarPlacar(u16 pontos) {
-    char textoPontos[6];
+    char textoPontos[12];
     uintToStr(pontos, textoPontos, 1);
     VDP_drawText(textoPontos, 38 - strlen(textoPontos), 2);
+}
+
+void atualizarContadorEdicao(u16 edicao) {
+    char textoEdicao[16];
+    char numStr[8];
+    uintToStr(edicao, numStr, 1);
+
+    strcpy(textoEdicao, numStr);
+    strcat(textoEdicao, " 2JOIN");
+
+    VDP_drawText(textoEdicao, 2, 2);
 }
 
 int main(bool hard)
@@ -37,6 +48,8 @@ int main(bool hard)
 
     // --- INÍCIO DA FASE ---
     u16 pontos = 0;
+    u16 edicao = 1;
+    u16 timerEdicao = 0;
 
     PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
     PAL_setPalette(PAL2, spr_tiro.palette->data, DMA);
@@ -46,6 +59,7 @@ int main(bool hard)
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
+    atualizarContadorEdicao(edicao);
     atualizarPlacar(pontos);
 
     s16 x = 136;
@@ -80,6 +94,20 @@ int main(bool hard)
     {
         if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
+        }
+
+        // Incrementa o contador a cada 1 segundo (60 frames)
+        timerEdicao++;
+        if (timerEdicao >= 60) {
+            timerEdicao = 0;
+            edicao++;
+
+            // Quando chegar no 98, encerra a partida
+            if (edicao >= 98) {
+                break;
+            }
+
+            atualizarContadorEdicao(edicao);
         }
 
         u16 controle = JOY_readJoypad(JOY_1);
@@ -159,7 +187,6 @@ int main(bool hard)
             }
         }
 
-        // Atualiza inimigo e projéteis inimigos (código isolado em inimigos.c)
         atualizarInimigoETiros(&n64, tirosInimigo, x, y, &timerPiscaDano);
 
         if (timerPiscaDano > 0) {
@@ -175,6 +202,39 @@ int main(bool hard)
         SPR_setPosition(player, x, y);
         SPR_update();
 
+        SYS_doVBlankProcess();
+    }
+
+    // --- TELA FINAL (CHEGOU NO 98) ---
+    XGM_stopPlayPCM(SOUND_PCM_CH2);
+
+    // Oculta todos os sprites da tela
+    SPR_setVisibility(player, HIDDEN);
+    SPR_setVisibility(n64.sprite, HIDDEN);
+    for (u8 i = 0; i < MAX_TIROS; i++) {
+        SPR_setVisibility(tiros[i].sprite, HIDDEN);
+    }
+    for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
+        SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
+    }
+    SPR_update();
+
+    // Limpa os textos anteriores e exibe o resultado
+    VDP_clearTextArea(0, 0, 40, 28);
+    PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
+
+    char textoFinal[28];
+    char numFinal[8];
+    uintToStr(pontos, numFinal, 1);
+    strcpy(textoFinal, "PONTUACAO FINAL: ");
+    strcat(textoFinal, numFinal);
+
+    VDP_drawText("98 2JOIN - FIM!", 12, 10);
+    VDP_drawText(textoFinal, (40 - strlen(textoFinal)) / 2, 13);
+
+    // Mantém a tela final parada
+    while(TRUE)
+    {
         SYS_doVBlankProcess();
     }
 
