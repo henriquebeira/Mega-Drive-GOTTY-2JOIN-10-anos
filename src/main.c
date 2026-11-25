@@ -119,7 +119,7 @@ int main(bool hard)
 
                         // Alinha o tiro (16x16) com o canhão no sprite de 48x48
                         if (olhandoDireita) {
-                            tiros[i].x = x + 6;
+                            tiros[i].x = x + 8;
                         } else {
                             tiros[i].x = x + 26;
                         }
