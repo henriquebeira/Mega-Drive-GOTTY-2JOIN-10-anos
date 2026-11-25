@@ -56,9 +56,10 @@ int main(bool hard)
     PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
     PAL_setPalette(PAL2, spr_tiro.palette->data, DMA);
 
-    // Centralizado em X (320 - 64) / 2 = 128 e inteiro acima da borda inferior (224 - 64 - 4 = 156)
-    s16 x = 128;
-    s16 y = 156;
+    // Centralizado em X: (320 - 48) / 2 = 136
+    // Mais próximo da borda inferior: 224 - 48 - 2 = 174
+    s16 x = 136;
+    s16 y = 174;
     bool andando = FALSE;
     bool olhandoDireita = TRUE;
     bool botaoTiroTravado = FALSE;
@@ -111,14 +112,14 @@ int main(bool hard)
                 for (u8 i = 0; i < MAX_TIROS; i++) {
                     if (!tiros[i].ativo) {
                         tiros[i].ativo = TRUE;
-                        tiros[i].y = y - 3;
+                        tiros[i].y = y - 2;
                         tiros[i].vy = -5;
 
-                        // Alinha o centro do tiro (16x16) com o centro do canhão azul
+                        // Alinha o tiro (16x16) com o canhão no sprite de 48x48
                         if (olhandoDireita) {
-                            tiros[i].x = x + 14;
+                            tiros[i].x = x + 10;
                         } else {
-                            tiros[i].x = x + 34;
+                            tiros[i].x = x + 22;
                         }
 
                         SPR_setPosition(tiros[i].sprite, tiros[i].x, tiros[i].y);
@@ -145,9 +146,9 @@ int main(bool hard)
             }
         }
 
-        // Limites laterais para sprite de 64px na tela de 320px (320 - 64 = 256)
+        // Limites laterais para sprite de 48px na tela de 320px (320 - 48 = 272)
         if (x < 0)   x = 0;
-        if (x > 256) x = 256;
+        if (x > 272) x = 272;
 
         SPR_setPosition(player, x, y);
         SPR_update();
