@@ -272,12 +272,10 @@ static const u32 tileEstilhaco[8] = {
 static u8 timerEstilhacos = 0;
 
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
-    // Carrega o fragmento 8x8 no slot TILE_USER_INDEX + 3 da VRAM (logo após os 3 tiles da barra de combo)
     VDP_loadTileData(tileEstilhaco, TILE_USER_INDEX + 3, 1, CPU);
 
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
         estilhacos[i].sprite = SPR_addSpriteEx(&spr_tiros, 0, -16, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, TILE_USER_INDEX + 3), SPR_FLAG_AUTO_VISIBILITY);
-        SPR_setAutoAnimation(estilhacos[i].sprite, FALSE);
         SPR_setVRAMTileIndex(estilhacos[i].sprite, TILE_USER_INDEX + 3);
         SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
     }
