@@ -21,6 +21,10 @@ void inicializarPlayer(Player* p, Tiro tiros[]) {
     p->metaProximoNivel = 4;  
     p->spriteMult = SPR_addSprite(&spr_mult, 288, 44, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
     SPR_setVisibility(p->spriteMult, HIDDEN);
+    
+    p->timerToasty = 0;
+    p->spriteToasty = SPR_addSprite(&spr_toasty, 248, 224, TILE_ATTR(PAL1, TRUE, FALSE, FALSE));
+    SPR_setVisibility(p->spriteToasty, HIDDEN);
 
 }
 
@@ -179,4 +183,5 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
     if (p->x > 272) p->x = 272;
 
     SPR_setPosition(p->sprite, p->x, p->y);
+    atualizarAnimacaoToasty(p);
 }
