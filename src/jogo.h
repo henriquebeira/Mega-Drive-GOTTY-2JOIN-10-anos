@@ -80,7 +80,7 @@ void executarTelaFinal(u16 pontos);
 
 // Funções do jogador e tiros (src/player.c)
 void inicializarPlayer(Player* p, Tiro tiros[]);
-void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, u16* pontos);
+void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Estilhaco estilhacos[], u16* pontos);
 
 // Funções de inimigos (src/inimigos.c)
 void spawnN64(Inimigo* n64);
