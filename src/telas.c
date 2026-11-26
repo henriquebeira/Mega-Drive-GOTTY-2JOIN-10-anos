@@ -178,22 +178,27 @@ void resetarCombo(Player* p) {
 
 void atualizarAnimacaoToasty(Player* p) {
     if (p->timerToasty > 0) {
+        if (p->timerToasty == 64) {
+            PAL_setPalette(PAL3, spr_toasty.palette->data, DMA);
+        }
+
         p->timerToasty--;
 
-        s16 posY = 224; // Começa escondido abaixo da tela
+        s16 posY = 224;
         if (p->timerToasty > 50) {
-            // Primeiros 15 frames: sobe de y=224 até y=160
             posY = 160 + ((p->timerToasty - 50) * 4);
         } else if (p->timerToasty > 15) {
-            // Fica visível no canto inferior direito por ~0,6s
             posY = 160;
         } else {
-            // Últimos 15 frames: desce de volta até y=224
             posY = 160 + ((15 - p->timerToasty) * 4);
         }
 
         SPR_setPosition(p->spriteToasty, 248, posY);
         SPR_setVisibility(p->spriteToasty, VISIBLE);
+
+        if (p->timerToasty == 0) {
+            PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
+        }
     } else {
         SPR_setVisibility(p->spriteToasty, HIDDEN);
     }
