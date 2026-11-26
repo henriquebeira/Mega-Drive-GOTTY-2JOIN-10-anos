@@ -175,12 +175,12 @@ void executarTelaFinal(u32 pontos) {
     sprintf(txtScore, "%05lu", pontos);
     sprintf(txtHiScore, "%05lu", hiScore);
 
-    // Posiciona "Score", o valor, "Hi-Score" e o recorde centralizados abaixo do logo (colunas 24..31)
-    VDP_drawText("Score",      25, 14);
-    VDP_drawText(txtScore,   25, 16);
+    // Desce 2 linhas para não encostar na faixa "GAME OF THE TEN YEARS!"
+    VDP_drawText("Score",      25, 16);
+    VDP_drawText(txtScore,   25, 18);
 
-    VDP_drawText("Hi-Score",   24, 19);
-    VDP_drawText(txtHiScore, 25, 21);
+    VDP_drawText("Hi-Score",   24, 21);
+    VDP_drawText(txtHiScore, 25, 23);
 
     // Pisca "PRESS START" discreto na última linha
     u8 timerPisca = 0;
@@ -196,9 +196,9 @@ void executarTelaFinal(u32 pontos) {
             timerPisca = 0;
             mostra = !mostra;
             if (mostra) {
-                VDP_drawText("PRESS START", 22, 25);
+                VDP_drawText("PRESS START", 22, 26);
             } else {
-                VDP_clearText(22, 25, 11);
+                VDP_clearText(22, 26, 11);
             }
         }
 
