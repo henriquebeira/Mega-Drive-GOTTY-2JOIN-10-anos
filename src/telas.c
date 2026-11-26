@@ -51,7 +51,7 @@ void inicializarFonteHUD(void) {
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF));
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u8 dez = (edicao / 10) % 10;
@@ -67,7 +67,7 @@ void atualizarContadorEdicao(u16 edicao) {
 }
 
 void atualizarPlacar(u32 pontos) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF));
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u32 temp = pontos;
@@ -161,8 +161,14 @@ static const u32 tileMoldura[8] = {
     0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
 };
 static const u32 tileVazio[8] = {
-    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F,
-    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F
+    0xFEEEEEEF,
+    0xFEEEEEEF,
+    0xFEEEEEEF,
+    0xFEEEEEEF,
+    0xFEEEEEEF,
+    0xFEEEEEEF,
+    0xFEEEEEEF,
+    0xFEEEEEEF
 };
 static const u32 tileCheio[8] = {
     0xF999999F, 0xF999999F, 0xF999999F, 0xF999999F,
@@ -176,13 +182,13 @@ void inicializarTilesBarraCombo(void) {
     VDP_loadTileData(tileCheio,   TILE_USER_INDEX + 2, 1, CPU);
 
     // Cor 1 da PAL0 = cinza escuro (vazio) | Cor 9 da PAL0 = roxo/magenta vibrante (cheio)
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));
-    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
 }
 
 void atualizarBarraCombo(Player* p) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));
-    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF)); // Preenchimento roxo da barra
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
 
     u8 alturaTotal = 12;
     u8 blocosCheios = 0;
