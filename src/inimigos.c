@@ -268,12 +268,11 @@ void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[
             pneu->vx = -2;
         }
 
-        // Quica alto ao tocar o chão (y >= 176)
-        if (pneu->y >= 176) {
-            pneu->y = 176;
+        // Quica exatamente na linha dos pés do jogador (y >= 190)
+        if (pneu->y >= 190) {
+            pneu->y = 190;
             pneu->vy = -7;
         } else if (pneu->timerTiro % 3 == 0) {
-            // Aplica gravidade suavemente a cada 3 frames
             pneu->vy++;
         }
 
