@@ -49,11 +49,12 @@ int main(bool hard)
 
         Player player;
         Tiro tiros[MAX_TIROS];
-     inicializarTilesBarraCombo();
-     inicializarPlayer(&player, tiros);
-    Estilhaco estilhacos[MAX_ESTILHACOS];
-    inicializarEstilhacos(estilhacos);
-     atualizarBarraCombo(&player);        
+        inicializarTilesBarraCombo();
+        inicializarPlayer(&player, tiros);
+        Estilhaco estilhacos[MAX_ESTILHACOS];
+        inicializarEstilhacos(estilhacos);
+        atualizarBarraCombo(&player);
+        XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
 
         while(TRUE)
         {
