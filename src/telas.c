@@ -146,34 +146,70 @@ void executarTelaInicial(void) {
     VDP_setTextPalette(PAL0);
 }
 
+static u32 hiScore = 0;
+
 void executarTelaFinal(u32 pontos) {
     XGM_stopPlayPCM(SOUND_PCM_CH2);
 
     SPR_reset();
     SPR_update();
 
+    VDP_clearPlane(BG_A, TRUE);
+    VDP_clearPlane(BG_B, TRUE);
     VDP_clearTextArea(0, 0, 40, 28);
-    PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
 
-    const char* tituloFim = "100 2JOIN - FIM DE JOGO!";
-    char textoFinal[32];
-    char numFinal[8];
-    uintToStr(pontos, numFinal, 1);
-    strcpy(textoFinal, "PONTUACAO FINAL: ");
-    strcat(textoFinal, numFinal);
-    const char* textoRestart = "PRESS START TO RESTART";
+    // Atualiza o Hi-Score se a pontuação atual for maior
+    if (pontos > hiScore) {
+        hiScore = pontos;
+    }
 
-    VDP_drawText(tituloFim, (40 - strlen(tituloFim)) / 2, 10);
-    VDP_drawText(textoFinal, (40 - strlen(textoFinal)) / 2, 13);
-    VDP_drawText(textoRestart, (40 - strlen(textoRestart)) / 2, 17);
+    // Reutiliza a arte principal (GOTTY - GAME OF THE TEN YEARS!) no fundo BG_B
+    PAL_setPalette(PAL0, img_titulo.palette->data, CPU);
+    // Define a cor do texto na PAL1 como amarelo-ouro/laranja (igual à referência!)
+    PAL_setColor(31, RGB24_TO_VDPCOLOR(0xFFAA00));
+    VDP_setTextPalette(PAL1);
 
-    while(TRUE)
-    {
+    VDP_drawImageEx(BG_B, &img_titulo, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
+
+    char txtScore[12];
+    char txtHiScore[12];
+    sprintf(txtScore, "%05lu", pontos);
+    sprintf(txtHiScore, "%05lu", hiScore);
+
+    // Posiciona "Score", o valor, "Hi-Score" e o recorde centralizados abaixo do logo (colunas 24..31)
+    VDP_drawText("Score",      25, 14);
+    VDP_drawText(txtScore,   25, 16);
+
+    VDP_drawText("Hi-Score",   24, 19);
+    VDP_drawText(txtHiScore, 25, 21);
+
+    // Pisca "PRESS START" discreto na última linha
+    u8 timerPisca = 0;
+    bool mostra = TRUE;
+
+    while (JOY_readJoypad(JOY_1) & BUTTON_START) {
+        SYS_doVBlankProcess();
+    }
+
+    while (TRUE) {
+        timerPisca++;
+        if (timerPisca >= 25) {
+            timerPisca = 0;
+            mostra = !mostra;
+            if (mostra) {
+                VDP_drawText("PRESS START", 22, 25);
+            } else {
+                VDP_clearText(22, 25, 11);
+            }
+        }
+
         if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
         SYS_doVBlankProcess();
     }
 
+    VDP_clearPlane(BG_B, TRUE);
     VDP_clearTextArea(0, 0, 40, 28);
+    VDP_setTextPalette(PAL0);
 }
 
 // Tiles sólidos coloridos para desenhar a barra vertical no BG_A
