@@ -205,32 +205,38 @@ static u8 timerSomDanoPSG = 0;
 
 void tocarSomDanoPSG(void) {
     timerSomDanoPSG = 14; // Duração de 14 frames (~0,23s)
-    // Canal 3 (Ruído grave) no volume máximo (0)
-    PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK8);
-    PSG_setEnvelope(3, PSG_ENVELOPE_MAX);
 
-    // Canal 2 (Tom grave de impacto) no volume máximo (0) para dar peso ao dano
-    PSG_setFrequency(2, 110);
-    PSG_setEnvelope(2, PSG_ENVELOPE_MAX);
+    // Canal 3 (Ruído grave) em volume moderado (6, onde 0 = máx e 15 = mudo)
+    PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK8);
+    PSG_setEnvelope(3, 6);
+
+    // Canal 2 (Tom bem grave de impacto: 65 Hz) em volume moderado (4)
+    PSG_setFrequency(2, 65);
+    PSG_setEnvelope(2, 4);
 }
 
 void atualizarSomDanoPSG(void) {
     if (timerSomDanoPSG > 0) {
         timerSomDanoPSG--;
 
-        // Mantém no volume máximo nos primeiros 8 frames e depois atenua suavemente até 15 (silêncio)
-        u8 atenuacao = (timerSomDanoPSG > 6) ? 0 : ((6 - timerSomDanoPSG) * 2);
-        PSG_setEnvelope(3, atenuacao);
-        PSG_setEnvelope(2, atenuacao);
+        // Atenua suavemente a partir do volume moderado até o silêncio (15)
+        u8 queda = (timerSomDanoPSG > 6) ? 0 : ((6 - timerSomDanoPSG) * 2);
+        u8 envTom = 4 + queda;
+        u8 envRuido = 6 + queda;
+        if (envTom > 15) envTom = 15;
+        if (envRuido > 15) envRuido = 15;
 
-        // Cai o tom grave na metade para dar sensação de golpe
+        PSG_setEnvelope(2, envTom);
+        PSG_setEnvelope(3, envRuido);
+
+        // Desce ainda mais o grave (para 45 Hz) na metade do impacto
         if (timerSomDanoPSG == 7) {
-            PSG_setFrequency(2, 75);
+            PSG_setFrequency(2, 45);
         }
 
         if (timerSomDanoPSG == 0) {
-            PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
             PSG_setEnvelope(2, PSG_ENVELOPE_MIN);
+            PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
         }
     }
 }
