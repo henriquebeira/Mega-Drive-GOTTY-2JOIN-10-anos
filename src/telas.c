@@ -1,21 +1,67 @@
 #include "jogo.h"
 
-void atualizarPlacar(u16 pontos) {
-    char textoPontos[12];
-    uintToStr(pontos, textoPontos, 1);
-    VDP_drawText(textoPontos, 38 - strlen(textoPontos), 2);
+// Cada caractere 8x8 usa: 0 = transparente, E = cinza interno, F = contorno branco
+static const u32 glyphsHUD = {
+    // '0'
+    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    // '1'
+    { 0x00FFFF00, 0x0FFEEF00, 0xFFEEEFF0, 0x00FEEF00, 0x00FEEF00, 0x00FEEF00, 0xFEEEEEEF, 0xFFFFFFFF },
+    // '2'
+    { 0x0FFFFFF0, 0xFEEEEEEF, 0xF0000EEF, 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE0000F, 0xFEEEEEEF, 0xFFFFFFFF },
+    // '3'
+    { 0x0FFFFFF0, 0xFEEEEEEF, 0x00000EEF, 0x00FFFFEF, 0x00000EEF, 0xF0000EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    // '4'
+    { 0x00FFFFF0, 0x0FFEEEF0, 0xFEE0EEF0, 0xFEEEEEEF, 0xFFFFFFFF, 0x0000EEF0, 0x0000EEF0, 0x0000FFF0 },
+    // '5'
+    { 0xFFFFFFFF, 0xFEEEEEEF, 0xFEE00000, 0xFEEEEEE0, 0x00000EEF, 0xF0000EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    // '6'
+    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00000, 0xFEEEEEE0, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    // '7'
+    { 0xFFFFFFFF, 0xFEEEEEEF, 0x00000EEF, 0x0000FEEF, 0x000FEEF0, 0x00FEEF00, 0x00FEEF00, 0x00FFFF00 },
+    // '8'
+    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0x0FFFFFF0, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    // '9'
+    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEEEEEEF, 0x00000EEF, 0xF0000EEF, 0xFEEEEEEF, 0x0FFFFFF0 }
+};
+
+static const u32 glyphsJOIN = {
+    // 'J'
+    { 0x00FFFFFF, 0x0000FEEF, 0x0000FEEF, 0x0000FEEF, 0xFEE0FEEF, 0xFEE0FEEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    // 'O'
+    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    // 'I'
+    { 0xFFFFFFFF, 0xFEEEEEEF, 0x00FEEF00, 0x00FEEF00, 0x00FEEF00, 0x00FEEF00, 0xFEEEEEEF, 0xFFFFFFFF },
+    // 'N'
+    { 0xFFF00FFF, 0xFEEF0EEF, 0xFEEEFEFF, 0xFEEFEEEF, 0xFEE0FEEF, 0xFEE00EEF, 0xFEE00EEF, 0xFFF00FFF }
+};
+
+void inicializarFonteHUD(void) {
+    // Define cor 14 como cinza médio/escuro (interior) e cor 15 como branco puro (contorno)
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x666677));
+    PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+
+    // Sobrescreve os dígitos '0'..'9' na tabela da fonte padrão do SGDK
+    for (u8 d = 0; d < 10; d++) {
+        VDP_loadTileData(glyphsHUD[d], TILE_FONT_INDEX + ('0' - 32) + d, 1, CPU);
+    }
+
+    // Sobrescreve as letras 'J', 'O', 'I', 'N' na tabela da fonte padrão
+    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('J' - 32), 1, CPU);
+    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('O' - 32), 1, CPU);
+    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('I' - 32), 1, CPU);
+    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('N' - 32), 1, CPU);
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    char textoEdicao[16];
-    char numStr[8];
-    uintToStr(edicao, numStr, 1);
+    char texto;
+    sprintf(texto, "%02u 2JOIN", edicao);
+    VDP_drawText(texto, 2, 1);
+}
 
-    strcpy(textoEdicao, numStr);
-    strcat(textoEdicao, " 2JOIN");
-
-    VDP_clearText(2, 2, 10);
-    VDP_drawText(textoEdicao, 2, 2);
+void atualizarPlacar(u32 pontos) {
+    char texto;
+    sprintf(texto, "%010lu", pontos);
+    VDP_drawText(texto, 28, 1);
 }
 
 void executarTelaInicial(void) {
