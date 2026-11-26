@@ -15,6 +15,7 @@ int main(bool hard)
     while(TRUE)
     {
         executarTelaInicial();
+        SPR_reset();
 
         // --- INÍCIO DA FASE ---
         XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
