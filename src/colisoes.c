@@ -45,7 +45,6 @@ void verificarColisoesPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimi
                     registrarAbateCombo(p);
                 } else {
                     aranha[j].timerPisca = 12;
-                    tocarSomDanoPSG();
                 }
                 break;
             }
@@ -71,7 +70,6 @@ void verificarColisoesPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimi
                     registrarAbateCombo(p);
                 } else {
                     disjuntor[j].timerPisca = 12;
-                    tocarSomDanoPSG();
                 }
                 break;
             }
