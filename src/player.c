@@ -23,7 +23,7 @@ void inicializarPlayer(Player* p, Tiro tiros[]) {
     SPR_setVisibility(p->spriteMult, HIDDEN);
     
     p->timerToasty = 0;
-    p->spriteToasty = SPR_addSprite(&spr_toasty, 248, 224, TILE_ATTR(PAL1, TRUE, FALSE, FALSE));
+    p->spriteToasty = SPR_addSprite(&spr_toasty, 248, 224, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
     SPR_setVisibility(p->spriteToasty, HIDDEN);
 
 }
