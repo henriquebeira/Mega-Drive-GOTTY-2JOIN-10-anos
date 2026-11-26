@@ -176,12 +176,12 @@ void inicializarTilesBarraCombo(void) {
     VDP_loadTileData(tileCheio,   TILE_USER_INDEX + 2, 1, CPU);
 
     // Cor 1 da PAL0 = cinza escuro (vazio) | Cor 9 da PAL0 = roxo/magenta vibrante (cheio)
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));
     PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
 }
 
 void atualizarBarraCombo(Player* p) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122)); // Fundo vazio da barra
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));
     PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF)); // Preenchimento roxo da barra
 
     u8 alturaTotal = 12;
