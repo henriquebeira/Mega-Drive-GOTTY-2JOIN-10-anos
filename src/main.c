@@ -16,7 +16,6 @@ int main(bool hard)
     {
         executarTelaInicial();
         SPR_reset();
-        tileHudBase = 0; // (Se resetar o sprite engine, recarrega os 14 tiles protegidos)
 
         // --- INÍCIO DA FASE ---
         XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
