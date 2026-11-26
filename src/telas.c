@@ -57,13 +57,13 @@ void atualizarContadorEdicao(u16 edicao) {
     u8 dez = (edicao / 10) % 10;
     u8 uni = edicao % 10;
 
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + dez), 2, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + uni), 3, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + 2),   5, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + 10),  6, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + 11),  7, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + 12),  8, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + 13),  9, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + dez), 2, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + uni), 3, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 2),   5, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 10),  6, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 11),  7, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 12),  8, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 13),  9, 1);
 }
 
 void atualizarPlacar(u32 pontos) {
@@ -74,7 +74,7 @@ void atualizarPlacar(u32 pontos) {
     for (s8 i = 9; i >= 0; i--) {
         u8 digito = temp % 10;
         temp /= 10;
-        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, TRUE, FALSE, tileHudBase + digito), 28 + i, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + digito), 28 + i, 1);
     }
 }
 
