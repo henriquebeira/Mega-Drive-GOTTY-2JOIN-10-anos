@@ -22,8 +22,8 @@ int main(bool hard)
         Inimigo aranha[MAX_ARANHA];
         Inimigo disjuntor[MAX_DISJUNTOR];
         Inimigo pneu;
-        TiroInimigo tirosInimigo[MAX_TIROS_INIMIGO];
-        inicializarInimigos(n64, aranha, disjuntor, &pneu, tirosInimigo);        
+        Tiro tirosInimigo[MAX_TIROS_INIMIGO];
+        inicializarInimigos(n64, aranha, disjuntor, &pneu, tirosInimigo);     
 
         // --- INÍCIO DA FASE ---
         XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
@@ -54,41 +54,6 @@ int main(bool hard)
     Estilhaco estilhacos[MAX_ESTILHACOS];
     inicializarEstilhacos(estilhacos);
      atualizarBarraCombo(&player);        
-
-        Tiro tirosInimigo[MAX_TIROS_INIMIGO];
-        for (u8 i = 0; i < MAX_TIROS_INIMIGO; i++) {
-            tirosInimigo[i].ativo = FALSE;
-            tirosInimigo[i].vx = 0;
-            tirosInimigo[i].sprite = SPR_addSprite(&spr_tiros, 0, -16, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
-            SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
-        }
-
-        Inimigo n64;
-        n64.timerRespawn = 0;
-        n64.timerPisca = 0;
-        n64.sprite = SPR_addSprite(&spr_n64, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
-        spawnN64(&n64);
-
-        Inimigo aranha;
-        aranha.ativo = FALSE;
-        aranha.timerRespawn = 0;
-        aranha.timerPisca = 0;
-        aranha.sprite = SPR_addSprite(&spr_aranha, 0, -32, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
-        SPR_setVisibility(aranha.sprite, HIDDEN);
-
-        Inimigo disjuntor;
-        disjuntor.ativo = FALSE;
-        disjuntor.timerRespawn = 0;
-        disjuntor.timerPisca = 0;
-        disjuntor.sprite = SPR_addSprite(&spr_disjuntor, 0, -32, TILE_ATTR(PAL3, FALSE, FALSE, FALSE));
-        SPR_setVisibility(disjuntor.sprite, HIDDEN);
-
-        Inimigo pneu;
-        pneu.ativo = FALSE;
-        pneu.timerRespawn = 0;
-        pneu.timerPisca = 0;
-        pneu.sprite = SPR_addSprite(&spr_pneu, 0, -32, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
-        SPR_setVisibility(pneu.sprite, HIDDEN);
 
         while(TRUE)
         {
