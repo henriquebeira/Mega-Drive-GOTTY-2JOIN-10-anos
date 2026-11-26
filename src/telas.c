@@ -177,10 +177,10 @@ void executarTelaFinal(u32 pontos) {
 
     // Desce 2 linhas para não encostar na faixa "GAME OF THE TEN YEARS!"
     VDP_drawText("Score",      25, 16);
-    VDP_drawText(txtScore,   25, 18);
+    VDP_drawText(txtScore,   25, 17);
 
-    VDP_drawText("Hi-Score",   24, 21);
-    VDP_drawText(txtHiScore, 25, 23);
+    VDP_drawText("Hi-Score",   24, 20);
+    VDP_drawText(txtHiScore, 25, 21);
 
     // Pisca "PRESS START" discreto na última linha
     u8 timerPisca = 0;
