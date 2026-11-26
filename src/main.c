@@ -42,6 +42,8 @@ int main(bool hard)
         Tiro tiros[MAX_TIROS];
      inicializarTilesBarraCombo();
      inicializarPlayer(&player, tiros);
+    Estilhaco estilhacos[MAX_ESTILHACOS];
+    inicializarEstilhacos(estilhacos);
      atualizarBarraCombo(&player);        
 
         Tiro tirosInimigo[MAX_TIROS_INIMIGO];
@@ -97,6 +99,7 @@ int main(bool hard)
             }
 
             atualizarPlayerETiros(&player, tiros, &n64, &aranha, &disjuntor, &pneu, estilhacos, &pontos);
+            atualizarEstilhacos(estilhacos);
             atualizarInimigosETiros(&n64, &aranha, &disjuntor, &pneu, tirosInimigo, &player, edicao);
 
              atualizarSomDanoPSG();
