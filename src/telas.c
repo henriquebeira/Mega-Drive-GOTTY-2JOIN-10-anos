@@ -260,8 +260,8 @@ void atualizarSomDanoPSG(void) {
 static u8 timerEstilhacos = 0;
 
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY) {
-    static const s8 velX = { -3,  3, -2,  2 };
-    static const s8 velY = { -3, -3,  1,  1 };
+    static const s8 velX[] = { -3,  3, -2,  2 };
+    static const s8 velY[] = { -3, -3,  1,  1 };
 
     timerEstilhacos = 14; // Duração do estilhaço (~0,23s)
 
