@@ -81,5 +81,6 @@ void registrarAbateCombo(Player* p);
 void resetarCombo(Player* p);
 
 void atualizarAnimacaoToasty(Player* p);
+HINTERRUPT_CALLBACK onHBlankToasty(void);
 
 #endif
