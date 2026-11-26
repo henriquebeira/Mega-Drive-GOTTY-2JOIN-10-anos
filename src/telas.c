@@ -200,39 +200,37 @@ void atualizarAnimacaoToasty(Player* p) {
         SPR_setVisibility(p->spriteToasty, HIDDEN);
     }
 }
-
 static u8 timerSomDanoPSG = 0;
 
 void tocarSomDanoPSG(void) {
-    timerSomDanoPSG = 14; // Duração de 14 frames (~0,23s)
+    timerSomDanoPSG = 10; // Pancada curta e seca (~0,16s)
 
-    // Canal 3 (Ruído grave) em volume moderado (6, onde 0 = máx e 15 = mudo)
-    PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK8);
-    PSG_setEnvelope(3, 6);
+    // Canal 2: Subgrave forte (90 Hz) que vai despencar de tom
+    PSG_setFrequency(2, 90);
+    PSG_setEnvelope(2, 3);
 
-    // Canal 2 (Tom bem grave de impacto: 65 Hz) em volume moderado (4)
-    PSG_setFrequency(2, 65);
-    PSG_setEnvelope(2, 4);
+    // Canal 3: Ruído periódico grave (soa como bumbo/pancada, sem chiado agudo)
+    PSG_setNoise(PSG_NOISE_TYPE_PERIODIC, PSG_NOISE_FREQ_TONE2);
+    PSG_setEnvelope(3, 5);
 }
 
 void atualizarSomDanoPSG(void) {
     if (timerSomDanoPSG > 0) {
         timerSomDanoPSG--;
 
-        // Atenua suavemente a partir do volume moderado até o silêncio (15)
-        u8 queda = (timerSomDanoPSG > 6) ? 0 : ((6 - timerSomDanoPSG) * 2);
-        u8 envTom = 4 + queda;
-        u8 envRuido = 6 + queda;
+        // Despenca a frequência rapidamente nos primeiros frames (efeito "thump" de pancada)
+        if (timerSomDanoPSG == 8) PSG_setFrequency(2, 65);
+        else if (timerSomDanoPSG == 6) PSG_setFrequency(2, 50);
+        else if (timerSomDanoPSG == 4) PSG_setFrequency(2, 45);
+
+        // Decaimento rápido de volume até silenciar (15)
+        u8 envTom = 3 + ((10 - timerSomDanoPSG) * 1);
+        u8 envRuido = 5 + ((10 - timerSomDanoPSG) * 1);
         if (envTom > 15) envTom = 15;
         if (envRuido > 15) envRuido = 15;
 
         PSG_setEnvelope(2, envTom);
         PSG_setEnvelope(3, envRuido);
-
-        // Desce ainda mais o grave (para 45 Hz) na metade do impacto
-        if (timerSomDanoPSG == 7) {
-            PSG_setFrequency(2, 45);
-        }
 
         if (timerSomDanoPSG == 0) {
             PSG_setEnvelope(2, PSG_ENVELOPE_MIN);
