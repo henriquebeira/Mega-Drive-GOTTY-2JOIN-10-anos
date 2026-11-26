@@ -74,7 +74,7 @@ void executarTelaFinal(u16 pontos) {
     VDP_clearTextArea(0, 0, 40, 28);
     PAL_setColor(0, RGB24_TO_VDPCOLOR(0x001133));
 
-    const char* tituloFim = "98 2JOIN - FIM DE JOGO!";
+    const char* tituloFim = "100 2JOIN - FIM DE JOGO!";
     char textoFinal[32];
     char numFinal[8];
     uintToStr(pontos, numFinal, 1);
