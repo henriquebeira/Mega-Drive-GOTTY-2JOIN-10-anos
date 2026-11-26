@@ -121,23 +121,8 @@ void inicializarTilesBarraCombo(void) {
 }
 
 void atualizarBarraCombo(Player* p) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));  // Fundo vazio da barra
-    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));  // Preenchimento roxo da barra
-
-    // Garante cores vibrantes para 4X, 5X, 6X, 7X e 8X sem afetar a Aranha
-    u32 corDestaque = 0xFFEE00;
-    if (p->multiplicador == 4) corDestaque = 0x44AAFF; // Azul claro vibrante
-    else if (p->multiplicador == 5) corDestaque = 0x00FFEE; // Ciano neon
-    else if (p->multiplicador == 6) corDestaque = 0x44FF44; // Verde limão
-    else if (p->multiplicador == 7) corDestaque = 0xFF55FF; // Rosa/Magenta
-    else if (p->multiplicador >= 8) corDestaque = 0xFF3333; // Vermelho vivo
-
-    if (p->multiplicador >= 4) {
-        PAL_setColor(35, RGB24_TO_VDPCOLOR(corDestaque));
-        PAL_setColor(36, RGB24_TO_VDPCOLOR(corDestaque));
-        PAL_setColor(37, RGB24_TO_VDPCOLOR(corDestaque));
-        PAL_setColor(38, RGB24_TO_VDPCOLOR(corDestaque));
-    }
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122)); // Fundo vazio da barra
+    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF)); // Preenchimento roxo da barra
 
     u8 alturaTotal = 12;
     u8 blocosCheios = 0;
