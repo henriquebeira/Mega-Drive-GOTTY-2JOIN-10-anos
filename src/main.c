@@ -1,5 +1,12 @@
 #include "jogo.h"
 
+Inimigo n64[MAX_N64];
+Inimigo aranha[MAX_ARANHA];
+Inimigo disjuntor[MAX_DISJUNTOR];
+Inimigo pneu;
+TiroInimigo tirosInimigo[MAX_TIROS_INIMIGO];
+inicializarInimigos(n64, aranha, disjuntor, &pneu, tirosInimigo);
+
 int main(bool hard)
 {
     JOY_init();
@@ -100,9 +107,9 @@ int main(bool hard)
                 }
             }
 
-            atualizarPlayerETiros(&player, tiros, &n64, &aranha, &disjuntor, &pneu, estilhacos, &pontos);
+            atualizarPlayerETiros(&player, tiros, n64, aranha, disjuntor, &pneu, estilhacos, &pontos);
+            atualizarInimigosETiros(n64, aranha, disjuntor, &pneu, tirosInimigo, &player, edicao);
             atualizarEstilhacos(estilhacos);
-            atualizarInimigosETiros(&n64, &aranha, &disjuntor, &pneu, tirosInimigo, &player, edicao);
 
              atualizarSomDanoPSG();
              PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
