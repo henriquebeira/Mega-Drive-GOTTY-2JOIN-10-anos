@@ -73,14 +73,14 @@ typedef struct {
 } Estilhaco;
 
 // Funções de telas e HUD (src/telas.c)
-void atualizarPlacar(u16 pontos);
+void atualizarPlacar(u32 pontos);
 void atualizarContadorEdicao(u16 edicao);
 void executarTelaInicial(void);
-void executarTelaFinal(u16 pontos);
+void executarTelaFinal(u32);
 
 // Funções do jogador e tiros (src/player.c)
 void inicializarPlayer(Player* p, Tiro tiros[]);
-void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Estilhaco estilhacos[], u16* pontos);
+void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Estilhaco estilhacos[], u32* pontos);
 
 // Funções de inimigos (src/inimigos.c)
 void spawnN64(Inimigo* n64);
@@ -103,5 +103,7 @@ void atualizarSomDanoPSG(void);
 void inicializarEstilhacos(Estilhaco estilhacos[]);
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY);
 void atualizarEstilhacos(Estilhaco estilhacos[]);
+
+void inicializarFonteHUD(void);
 
 #endif
