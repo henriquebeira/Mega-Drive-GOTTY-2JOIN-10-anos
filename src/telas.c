@@ -57,6 +57,7 @@ void atualizarContadorEdicao(u16 edicao) {
     u8 dez = (edicao / 10) % 10;
     u8 uni = edicao % 10;
 
+    // Ordem da macro TILE_ATTR_FULL: (paleta, prioridade, flipV, flipH, index)
     VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + dez), 2, 1);
     VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + uni), 3, 1);
     VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + 2),   5, 1);
