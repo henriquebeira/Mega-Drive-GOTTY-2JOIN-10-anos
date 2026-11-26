@@ -156,7 +156,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
                 aranha->timerTiro = 75;
                 dispararTiroInimigo(aranha, tirosInimigo, player->x, player->y);
             }
-        }
+        
             }
         } else {
             if (aranha->timerRespawn > 0) {
