@@ -97,10 +97,9 @@ int main(bool hard)
             atualizarPlayerETiros(&player, tiros, &n64, &aranha, &disjuntor, &pneu, &pontos);
             atualizarInimigosETiros(&n64, &aranha, &disjuntor, &pneu, tirosInimigo, &player, edicao);
 
+            PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
             SPR_update();
-         PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
-         SPR_update();
-         SYS_doVBlankProcess();
+            SYS_doVBlankProcess();
         }
 
         VDP_setHInterrupt(FALSE);
