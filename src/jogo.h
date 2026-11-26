@@ -85,4 +85,7 @@ void resetarCombo(Player* p);
 void atualizarAnimacaoToasty(Player* p);
 HINTERRUPT_CALLBACK onHBlankToasty(void);
 
+void tocarSomDanoPSG(void);
+void atualizarSomDanoPSG(void);
+
 #endif
