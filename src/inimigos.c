@@ -242,7 +242,7 @@ void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[
         }
     }
 
-    // 3. Atualiza Disjuntor ativo
+    // 3. Atualiza Disjuntor ativo (sem atirar)
     for (u8 i = 0; i < MAX_DISJUNTOR; i++) {
         if (disjuntor[i].ativo) {
             if (disjuntor[i].timerPisca > 0) {
@@ -250,12 +250,6 @@ void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[
                 SPR_setVisibility(disjuntor[i].sprite, (disjuntor[i].timerPisca % 4 < 2) ? HIDDEN : VISIBLE);
             } else {
                 SPR_setVisibility(disjuntor[i].sprite, VISIBLE);
-            }
-            if (disjuntor[i].timerTiro > 0) {
-                disjuntor[i].timerTiro--;
-            } else {
-                disjuntor[i].timerTiro = 85;
-                dispararTiroInimigo(&disjuntor[i], tirosInimigo, player->x, player->y);
             }
         }
     }
