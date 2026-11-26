@@ -257,11 +257,29 @@ void atualizarSomDanoPSG(void) {
     }
 }
 
+// Desenho de um fragmento irregular de 8x8 pixels usando as cores 1, 2 e 3 da paleta do inimigo
+static const u32 tileEstilhaco[8] = {
+    0x00111000,
+    0x01223100,
+    0x12332210,
+    0x13223310,
+    0x01232100,
+    0x00121000,
+    0x00010000,
+    0x00000000
+};
+
 static u8 timerEstilhacos = 0;
 
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
+    // Carrega o fragmento 8x8 no slot TILE_USER_INDEX + 3 da VRAM (logo após os 3 tiles da barra de combo)
+    VDP_loadTileData(tileEstilhaco, TILE_USER_INDEX + 3, 1, CPU);
+
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        estilhacos[i].sprite = NULL;
+        estilhacos[i].sprite = SPR_addSpriteEx(&spr_tiros, 0, -16, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, TILE_USER_INDEX + 3), SPR_FLAG_AUTO_VISIBILITY);
+        SPR_setAutoAnimation(estilhacos[i].sprite, FALSE);
+        SPR_setVRAMTileIndex(estilhacos[i].sprite, TILE_USER_INDEX + 3);
+        SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
     }
 }
 
@@ -271,21 +289,20 @@ void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDe
     static const bool hFlip[] = { FALSE, TRUE, FALSE, TRUE };
     static const bool vFlip[] = { FALSE, FALSE, TRUE, TRUE };
 
-    timerEstilhacos = 14; // Duração do estilhaço (~0,23s)
+    timerEstilhacos = 14;
 
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        if (estilhacos[i].sprite != NULL) {
-            SPR_releaseSprite(estilhacos[i].sprite);
-        }
-
-        estilhacos[i].x = centroX - 12;
-        estilhacos[i].y = centroY - 12;
+        estilhacos[i].x = centroX - 4;
+        estilhacos[i].y = centroY - 4;
         estilhacos[i].vx = velX[i];
         estilhacos[i].vy = velY[i];
 
-        // Cria o pedaço usando a própria arte e paleta do inimigo derrotado
-        estilhacos[i].sprite = SPR_addSprite(spriteDef, estilhacos[i].x, estilhacos[i].y, TILE_ATTR(paleta, TRUE, vFlip[i], hFlip[i]));
-        SPR_setAnim(estilhacos[i].sprite, 0);
+        SPR_setPalette(estilhacos[i].sprite, paleta);
+        SPR_setVRAMTileIndex(estilhacos[i].sprite, TILE_USER_INDEX + 3);
+        SPR_setHFlip(estilhacos[i].sprite, hFlip[i]);
+        SPR_setVFlip(estilhacos[i].sprite, vFlip[i]);
+        SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
+        SPR_setVisibility(estilhacos[i].sprite, VISIBLE);
     }
 }
 
@@ -294,24 +311,19 @@ void atualizarEstilhacos(Estilhaco estilhacos[]) {
         timerEstilhacos--;
 
         for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-            if (estilhacos[i].sprite != NULL) {
-                estilhacos[i].x += estilhacos[i].vx;
-                estilhacos[i].y += estilhacos[i].vy;
-                estilhacos[i].vy++;
+            estilhacos[i].x += estilhacos[i].vx;
+            estilhacos[i].y += estilhacos[i].vy;
+            estilhacos[i].vy++;
 
-                SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
-                if (timerEstilhacos < 6) {
-                    SPR_setVisibility(estilhacos[i].sprite, (timerEstilhacos % 2 == 0) ? VISIBLE : HIDDEN);
-                }
+            SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
+            if (timerEstilhacos < 6) {
+                SPR_setVisibility(estilhacos[i].sprite, (timerEstilhacos % 2 == 0) ? VISIBLE : HIDDEN);
             }
         }
 
         if (timerEstilhacos == 0) {
             for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-                if (estilhacos[i].sprite != NULL) {
-                    SPR_releaseSprite(estilhacos[i].sprite);
-                    estilhacos[i].sprite = NULL;
-                }
+                SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
             }
         }
     }
