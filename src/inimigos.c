@@ -135,13 +135,18 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
 
  // 2. Aranha (balança suavemente para a direita e para a esquerda)
  if (edicao > 25) {
-     if (aranha->ativo) {
-         if (aranha->timerTiro % 2 == 0) {
-             aranha->x += aranha->vx;
-             if (aranha->x >= aranha->baseX + 20) aranha->vx = -1;
-             else if (aranha->x <= aranha->baseX - 20) aranha->vx = 1;
-             SPR_setPosition(aranha->sprite, aranha->x, aranha->y);
-         }else {
+        if (aranha->ativo) {
+            if (aranha->timerTiro % 2 == 0) {
+                aranha->x += aranha->vx;
+                if (aranha->x >= aranha->baseX + 20) aranha->vx = -1;
+                else if (aranha->x <= aranha->baseX - 20) aranha->vx = 1;
+                SPR_setPosition(aranha->sprite, aranha->x, aranha->y);
+            }
+
+            if (aranha->timerPisca > 0) {
+                aranha->timerPisca--;
+                SPR_setVisibility(aranha->sprite, (aranha->timerPisca % 4 < 2) ? HIDDEN : VISIBLE);
+            } else {
                 SPR_setVisibility(aranha->sprite, VISIBLE);
             }
 
@@ -150,6 +155,8 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
             } else {
                 aranha->timerTiro = 75;
                 dispararTiroInimigo(aranha, tirosInimigo, player->x, player->y);
+            }
+        }
             }
         } else {
             if (aranha->timerRespawn > 0) {
