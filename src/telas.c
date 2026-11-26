@@ -1,68 +1,81 @@
 #include "jogo.h"
 
-// Cada caractere 8x8 usa: 0 = transparente, E = cinza interno, F = contorno branco
-static const u32 glyphsHUD[10][8] = {
+#define TILE_HUD_BASE (TILE_USER_INDEX + 7)
+
+// Desenho mais fino e arredondado (0 = transparente, 1 = cinza interno, F = contorno branco)
+static const u32 glyphsHUD = {
     // '0'
-    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    { 0x00FFFF00, 0x0F1111F0, 0xF1F00F1F, 0xF1F00F1F, 0xF1F00F1F, 0xF1F00F1F, 0x0F1111F0, 0x00FFFF00 },
     // '1'
-    { 0x00FFFF00, 0x0FFEEF00, 0xFFEEEFF0, 0x00FEEF00, 0x00FEEF00, 0x00FEEF00, 0xFEEEEEEF, 0xFFFFFFFF },
+    { 0x000FF000, 0x00F11F00, 0x0FF11F00, 0x00F11F00, 0x00F11F00, 0x00F11F00, 0x0FF11FF0, 0x0FFFFFF0 },
     // '2'
-    { 0x0FFFFFF0, 0xFEEEEEEF, 0xF0000EEF, 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE0000F, 0xFEEEEEEF, 0xFFFFFFFF },
+    { 0x0FFFFF00, 0xF11111F0, 0x0F000F1F, 0x00FFFFF0, 0x0F1111F0, 0xF1F00000, 0xF11111F0, 0xFFFFFFF0 },
     // '3'
-    { 0x0FFFFFF0, 0xFEEEEEEF, 0x00000EEF, 0x00FFFFEF, 0x00000EEF, 0xF0000EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    { 0x0FFFFF00, 0xF11111F0, 0x00000F1F, 0x00FFFFF0, 0x00000F1F, 0x0F000F1F, 0xF11111F0, 0x0FFFFF00 },
     // '4'
-    { 0x00FFFFF0, 0x0FFEEEF0, 0xFEE0EEF0, 0xFEEEEEEF, 0xFFFFFFFF, 0x0000EEF0, 0x0000EEF0, 0x0000FFF0 },
+    { 0x000FFF00, 0x00F11F00, 0x0F1F1F00, 0xF1F01F00, 0xF11111F0, 0x00001F00, 0x00001F00, 0x0000FF00 },
     // '5'
-    { 0xFFFFFFFF, 0xFEEEEEEF, 0xFEE00000, 0xFEEEEEE0, 0x00000EEF, 0xF0000EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    { 0xFFFFFFF0, 0xF11111F0, 0xF1F00000, 0xF11111F0, 0x00000F1F, 0x0F000F1F, 0xF11111F0, 0x0FFFFF00 },
     // '6'
-    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00000, 0xFEEEEEE0, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    { 0x0FFFFF00, 0xF11111F0, 0xF1F00000, 0xF11111F0, 0xF1F00F1F, 0xF1F00F1F, 0xF11111F0, 0x0FFFFF00 },
     // '7'
-    { 0xFFFFFFFF, 0xFEEEEEEF, 0x00000EEF, 0x0000FEEF, 0x000FEEF0, 0x00FEEF00, 0x00FEEF00, 0x00FFFF00 },
+    { 0xFFFFFFF0, 0xF11111F0, 0x00000F1F, 0x0000F1F0, 0x000F1F00, 0x00F1F000, 0x00F1F000, 0x00FF0000 },
     // '8'
-    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0x0FFFFFF0, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    { 0x0FFFFF00, 0xF11111F0, 0xF1F00F1F, 0x0FFFFF00, 0xF1F00F1F, 0xF1F00F1F, 0xF11111F0, 0x0FFFFF00 },
     // '9'
-    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEEEEEEF, 0x00000EEF, 0xF0000EEF, 0xFEEEEEEF, 0x0FFFFFF0 }
+    { 0x0FFFFF00, 0xF11111F0, 0xF1F00F1F, 0xF11111F0, 0x00000F1F, 0x0F000F1F, 0xF11111F0, 0x0FFFFF00 }
 };
 
-static const u32 glyphsJOIN[4][8] = {
+static const u32 glyphsJOIN = {
     // 'J'
-    { 0x00FFFFFF, 0x0000FEEF, 0x0000FEEF, 0x0000FEEF, 0xFEE0FEEF, 0xFEE0FEEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    { 0x000FFFF0, 0x0000F1F0, 0x0000F1F0, 0x0000F1F0, 0x0F00F1F0, 0xF1F0F1F0, 0x0F111F00, 0x00FFF000 },
     // 'O'
-    { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
+    { 0x00FFFF00, 0x0F1111F0, 0xF1F00F1F, 0xF1F00F1F, 0xF1F00F1F, 0xF1F00F1F, 0x0F1111F0, 0x00FFFF00 },
     // 'I'
-    { 0xFFFFFFFF, 0xFEEEEEEF, 0x00FEEF00, 0x00FEEF00, 0x00FEEF00, 0x00FEEF00, 0xFEEEEEEF, 0xFFFFFFFF },
+    { 0x0FFFFF00, 0x0F111F00, 0x00F1F000, 0x00F1F000, 0x00F1F000, 0x00F1F000, 0x0F111F00, 0x0FFFFF00 },
     // 'N'
-    { 0xFFF00FFF, 0xFEEF0EEF, 0xFEEEFEFF, 0xFEEFEEEF, 0xFEE0FEEF, 0xFEE00EEF, 0xFEE00EEF, 0xFFF00FFF }
+    { 0xFF000FF0, 0xF1F00F1F, 0xF11F0F1F, 0xF1F1FF1F, 0xF1F0F11F, 0xF1F00F1F, 0xF1F00F1F, 0xFF000FF0 }
 };
 
 void inicializarFonteHUD(void) {
-    // Define cor 14 como cinza médio/escuro (interior) e cor 15 como branco puro (contorno)
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x666677));
-    PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
-
-    // Sobrescreve os dígitos '0'..'9' na tabela da fonte padrão do SGDK
+    // Carrega os 10 dígitos e as 4 letras "JOIN" em slots próprios sem alterar a fonte padrão
     for (u8 d = 0; d < 10; d++) {
-        VDP_loadTileData(glyphsHUD[d], TILE_FONT_INDEX + ('0' - 32) + d, 1, CPU);
+        VDP_loadTileData(glyphsHUD[d], TILE_HUD_BASE + d, 1, CPU);
     }
-
-    // Sobrescreve as letras 'J', 'O', 'I', 'N' na tabela da fonte padrão
-    VDP_loadTileData(glyphsJOIN[0], TILE_FONT_INDEX + ('J' - 32), 1, CPU);
-    VDP_loadTileData(glyphsJOIN[1], TILE_FONT_INDEX + ('O' - 32), 1, CPU);
-    VDP_loadTileData(glyphsJOIN[2], TILE_FONT_INDEX + ('I' - 32), 1, CPU);
-    VDP_loadTileData(glyphsJOIN[3], TILE_FONT_INDEX + ('N' - 32), 1, CPU);
-
+    for (u8 c = 0; c < 4; c++) {
+        VDP_loadTileData(glyphsJOIN[c], TILE_HUD_BASE + 10 + c, 1, CPU);
+    }
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    char texto[20];
-    sprintf(texto, "%02u 2JOIN", edicao);
-    VDP_drawText(texto, 2, 1);
+    // Garante cor 1 da PAL0 = cinza azulado escuro e cor 15 = branco puro durante a fase
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x555566));
+    PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+
+    u8 dez = (edicao / 10) % 10;
+    u8 uni = edicao % 10;
+
+    // Desenha "XX 2JOIN" usando os tiles personalizados (x = 2..9, y = 1)
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + dez), 2, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + uni), 3, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 2),   5, 1); // '2'
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 10),  6, 1); // 'J'
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 11),  7, 1); // 'O'
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 12),  8, 1); // 'I'
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 13),  9, 1); // 'N'
 }
 
 void atualizarPlacar(u32 pontos) {
-    char texto[20];
-    sprintf(texto, "%010lu", pontos);
-    VDP_drawText(texto, 28, 1);
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x555566));
+    PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+
+    u32 temp = pontos;
+    // Desenha os 10 dígitos da direita para a esquerda (x = 37 até x = 28, y = 1)
+    for (s8 i = 9; i >= 0; i--) {
+        u8 digito = temp % 10;
+        temp /= 10;
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + digito), 28 + i, 1);
+    }
 }
 
 void executarTelaInicial(void) {
