@@ -116,7 +116,7 @@ static void dispararTiroInimigo(Inimigo* inimigo, Tiro tirosInimigo[], s16 playe
 
 static u16 timerOnda = 0;
 
-void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, TiroInimigo tirosInimigo[]) {
+void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Tiro tirosInimigo[]) {
     timerOnda = 90;
 
     for (u8 i = 0; i < MAX_N64; i++) {
@@ -155,7 +155,7 @@ void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], I
     spawnN64(&n64[0]);
 }
 
-void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, TiroInimigo tirosInimigo[], Player* player, u16 edicao) {
+void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao) {
     // Define limites simultâneos por onda (1 a menos que no Construct 3)
     u8 limN64 = 1;
     u8 limAranha = 0;
