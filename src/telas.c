@@ -111,7 +111,7 @@ void executarTelaInicial(void) {
     VDP_setTextPalette(PAL0);
 }
 
-void executarTelaFinal(u16 pontos) {
+void executarTelaFinal(u32 pontos) {
     XGM_stopPlayPCM(SOUND_PCM_CH2);
 
     SPR_reset();
