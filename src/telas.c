@@ -163,13 +163,12 @@ void executarTelaFinal(u32 pontos) {
         hiScore = pontos;
     }
 
-    // Reutiliza a arte principal (GOTTY - GAME OF THE TEN YEARS!) no fundo BG_B
-    PAL_setPalette(PAL0, img_titulo.palette->data, CPU);
-    // Define a cor do texto na PAL1 como amarelo-ouro/laranja (igual à referência!)
+    // Carrega a paleta e a arte da tela final (Gotty à esquerda + logo à direita)
+    PAL_setPalette(PAL0, img_final.palette->data, CPU);
     PAL_setColor(31, RGB24_TO_VDPCOLOR(0xFFAA00));
     VDP_setTextPalette(PAL1);
 
-    VDP_drawImageEx(BG_B, &img_titulo, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
+    VDP_drawImageEx(BG_B, &img_final, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
 
     char txtScore[12];
     char txtHiScore[12];
