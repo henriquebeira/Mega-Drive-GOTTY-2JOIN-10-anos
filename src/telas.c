@@ -68,6 +68,7 @@ void atualizarContadorEdicao(u16 edicao) {
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 1),  2, 1); // '1'
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 0),  3, 1); // '0'
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 0),  4, 1); // '0'
+        VDP_setTileMapXY(BG_A, 0, 5, 1); 
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 2),  6, 1); // '2'
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 10), 7, 1); // 'J'
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 11), 8, 1); // 'O'
