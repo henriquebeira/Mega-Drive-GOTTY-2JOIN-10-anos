@@ -4,6 +4,7 @@ int main(bool hard)
 {
     JOY_init();
     SPR_init();
+    inicializarFonteHUD();
 
     XGM_setPCM(SFX_TIRO_ID, sfx_tiro, sizeof(sfx_tiro));
     XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
@@ -20,7 +21,7 @@ int main(bool hard)
         // --- INÍCIO DA FASE ---
         XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
 
-        u16 pontos = 0;
+        u32 pontos = 0;
         u16 edicao = 1;
         u16 timerEdicao = 0;
 
