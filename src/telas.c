@@ -1,7 +1,7 @@
 #include "jogo.h"
 
 // Cada caractere 8x8 usa: 0 = transparente, E = cinza interno, F = contorno branco
-static const u32 glyphsHUD = {
+static const u32 glyphsHUD[10][8] = {
     // '0'
     { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEE00EEF, 0xFEEEEEEF, 0x0FFFFFF0 },
     // '1'
@@ -24,7 +24,7 @@ static const u32 glyphsHUD = {
     { 0x0FFFFFF0, 0xFEEEEEEF, 0xFEE00EEF, 0xFEEEEEEF, 0x00000EEF, 0xF0000EEF, 0xFEEEEEEF, 0x0FFFFFF0 }
 };
 
-static const u32 glyphsJOIN = {
+static const u32 glyphsJOIN[4][8] = {
     // 'J'
     { 0x00FFFFFF, 0x0000FEEF, 0x0000FEEF, 0x0000FEEF, 0xFEE0FEEF, 0xFEE0FEEF, 0xFEEEEEEF, 0x0FFFFFF0 },
     // 'O'
