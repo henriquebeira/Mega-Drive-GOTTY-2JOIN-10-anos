@@ -140,7 +140,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
     }
 
     // 2. Aranha (balança suavemente para a direita e para a esquerda após 25 2JOIN)
-    if (edicao > 25) {
+    if (edicao > 20) {
         if (aranha->ativo) {
             if (aranha->timerTiro % 2 == 0) {
                 aranha->x += aranha->vx;
@@ -172,7 +172,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
     }
     
     // 3. Disjuntor (a partir do 55 2JOIN — 5s antes)
-    if (edicao >= 55) {
+    if (edicao >= 50) {
         if (disjuntor->ativo) {
             if (disjuntor->timerPisca > 0) {
                 disjuntor->timerPisca--;
@@ -190,7 +190,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
     }
 
     // 4. Pneu (a partir do 75 2JOIN — 5s antes)
-    if (edicao >= 75) {
+    if (edicao >= 70) {
         if (pneu->ativo) {
             pneu->x += pneu->vx;
             pneu->y += pneu->vy;
