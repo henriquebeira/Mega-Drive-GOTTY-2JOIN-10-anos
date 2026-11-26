@@ -25,6 +25,10 @@ int main(bool hard)
         PAL_setPalette(PAL2, spr_aranha.palette->data, DMA);
         PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
 
+        SYS_setHIntCallback(onHBlankToasty);
+        VDP_setHIntCounter(164);
+        VDP_setHInterrupt(TRUE);
+
         PAL_setPalette(PAL0, spr_tiros.palette->data, DMA);
         PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));
         PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
@@ -94,8 +98,12 @@ int main(bool hard)
             atualizarInimigosETiros(&n64, &aranha, &disjuntor, &pneu, tirosInimigo, &player, edicao);
 
             SPR_update();
-            SYS_doVBlankProcess();
+         PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
+         SPR_update();
+         SYS_doVBlankProcess();
         }
+
+        VDP_setHInterrupt(FALSE);
 
         while (XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             SYS_doVBlankProcess();
