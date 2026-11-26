@@ -3,7 +3,8 @@
 #define TILE_HUD_BASE (TILE_USER_INDEX + 7)
 
 // Desenho mais fino e arredondado (0 = transparente, 1 = cinza interno, F = contorno branco)
-static const u32 glyphsHUD = {
+static const u32 glyphsHUD[10][8] = {
+
     // '0'
     { 0x00FFFF00, 0x0F1111F0, 0xF1F00F1F, 0xF1F00F1F, 0xF1F00F1F, 0xF1F00F1F, 0x0F1111F0, 0x00FFFF00 },
     // '1'
@@ -26,7 +27,8 @@ static const u32 glyphsHUD = {
     { 0x0FFFFF00, 0xF11111F0, 0xF1F00F1F, 0xF11111F0, 0x00000F1F, 0x0F000F1F, 0xF11111F0, 0x0FFFFF00 }
 };
 
-static const u32 glyphsJOIN = {
+static const u32 glyphsJOIN[4][8] = {
+
     // 'J'
     { 0x000FFFF0, 0x0000F1F0, 0x0000F1F0, 0x0000F1F0, 0x0F00F1F0, 0xF1F0F1F0, 0x0F111F00, 0x00FFF000 },
     // 'O'
