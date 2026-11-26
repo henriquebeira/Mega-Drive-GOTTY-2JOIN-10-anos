@@ -40,7 +40,7 @@ static const u32 glyphsJOIN[4][8] = {
 };
 
 void inicializarFonteHUD(void) {
-    tileHudBase = VRAM_alloc(14);
+    tileHudBase = TILE_SYSTEM_INDEX - 16;
 
     for (u8 d = 0; d < 10; d++) {
         VDP_loadTileData(glyphsHUD[d], tileHudBase + d, 1, CPU);
