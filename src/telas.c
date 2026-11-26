@@ -46,10 +46,11 @@ void inicializarFonteHUD(void) {
     }
 
     // Sobrescreve as letras 'J', 'O', 'I', 'N' na tabela da fonte padrão
-    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('J' - 32), 1, CPU);
-    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('O' - 32), 1, CPU);
-    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('I' - 32), 1, CPU);
-    VDP_loadTileData(glyphsJOIN, TILE_FONT_INDEX + ('N' - 32), 1, CPU);
+    VDP_loadTileData(glyphsJOIN[0], TILE_FONT_INDEX + ('J' - 32), 1, CPU);
+    VDP_loadTileData(glyphsJOIN[1], TILE_FONT_INDEX + ('O' - 32), 1, CPU);
+    VDP_loadTileData(glyphsJOIN[2], TILE_FONT_INDEX + ('I' - 32), 1, CPU);
+    VDP_loadTileData(glyphsJOIN[3], TILE_FONT_INDEX + ('N' - 32), 1, CPU);
+
 }
 
 void atualizarContadorEdicao(u16 edicao) {
