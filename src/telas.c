@@ -176,12 +176,13 @@ void resetarCombo(Player* p) {
     atualizarBarraCombo(p);
 }
 
+// Interrupção horizontal na linha 164: troca a PAL3 para o Toasty apenas na parte inferior da tela
+HINTERRUPT_CALLBACK onHBlankToasty(void) {
+    PAL_setPalette(PAL3, spr_toasty.palette->data, CPU);
+}
+
 void atualizarAnimacaoToasty(Player* p) {
     if (p->timerToasty > 0) {
-        if (p->timerToasty == 64) {
-            PAL_setPalette(PAL3, spr_toasty.palette->data, DMA);
-        }
-
         p->timerToasty--;
 
         s16 posY = 224;
@@ -195,10 +196,6 @@ void atualizarAnimacaoToasty(Player* p) {
 
         SPR_setPosition(p->spriteToasty, 248, posY);
         SPR_setVisibility(p->spriteToasty, VISIBLE);
-
-        if (p->timerToasty == 0) {
-            PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
-        }
     } else {
         SPR_setVisibility(p->spriteToasty, HIDDEN);
     }
