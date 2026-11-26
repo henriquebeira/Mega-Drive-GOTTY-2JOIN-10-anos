@@ -200,3 +200,26 @@ void atualizarAnimacaoToasty(Player* p) {
         SPR_setVisibility(p->spriteToasty, HIDDEN);
     }
 }
+
+static u8 timerSomDanoPSG = 0;
+
+void tocarSomDanoPSG(void) {
+    timerSomDanoPSG = 12; // Duração de 12 frames (~0,2s)
+    PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK4);
+    PSG_setEnvelope(3, PSG_ENVELOPE_MAX);
+}
+
+void atualizarSomDanoPSG(void) {
+    if (timerSomDanoPSG > 0) {
+        timerSomDanoPSG--;
+        // Diminui o volume gradualmente e alterna a frequência para dar peso ao impacto
+        if (timerSomDanoPSG == 6) {
+            PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK8);
+        }
+        PSG_setEnvelope(3, 15 - timerSomDanoPSG);
+
+        if (timerSomDanoPSG == 0) {
+            PSG_setEnvelope(3, PSG_ENVELOPE_MIN); // Silencia o canal PSG ao terminar
+        }
+    }
+}
