@@ -259,32 +259,33 @@ void atualizarSomDanoPSG(void) {
 
 static u8 timerEstilhacos = 0;
 
-void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY) {
-    static const s8 velX[] = { -3,  3, -2,  2 };
-    static const s8 velY[] = { -3, -3,  1,  1 };
-
-    timerEstilhacos = 14; // Duração do estilhaço (~0,23s)
-
-    // Usa esfera azul (anim 1) para N64/Pneu e esfera de fogo (anim 2) para Aranha/Disjuntor
-    u8 animParticula = (paleta == PAL2 || spriteDef == &spr_disjuntor) ? 2 : 1;
-
+void inicializarEstilhacos(Estilhaco estilhacos[]) {
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        SPR_setAnim(estilhacos[i].sprite, animParticula);
-        estilhacos[i].x = centroX - 8;
-        estilhacos[i].y = centroY - 8;
-        estilhacos[i].vx = velX[i];
-        estilhacos[i].vy = velY[i];
-
-        SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
-        SPR_setVisibility(estilhacos[i].sprite, VISIBLE);
+        estilhacos[i].sprite = NULL;
     }
 }
 
-void inicializarEstilhacos(Estilhaco estilhacos[]) {
+void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY) {
+    static const s8 velX[] = { -3,  3, -2,  2 };
+    static const s8 velY[] = { -3, -3,  1,  1 };
+    static const bool hFlip[] = { FALSE, TRUE, FALSE, TRUE };
+    static const bool vFlip[] = { FALSE, FALSE, TRUE, TRUE };
+
+    timerEstilhacos = 14; // Duração do estilhaço (~0,23s)
+
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        estilhacos[i].sprite = SPR_addSprite(&spr_tiros, 0, -16, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
-        SPR_setAnim(estilhacos[i].sprite, 2);
-        SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
+        if (estilhacos[i].sprite != NULL) {
+            SPR_releaseSprite(estilhacos[i].sprite);
+        }
+
+        estilhacos[i].x = centroX - 12;
+        estilhacos[i].y = centroY - 12;
+        estilhacos[i].vx = velX[i];
+        estilhacos[i].vy = velY[i];
+
+        // Cria o pedaço usando a própria arte e paleta do inimigo derrotado
+        estilhacos[i].sprite = SPR_addSprite(spriteDef, estilhacos[i].x, estilhacos[i].y, TILE_ATTR(paleta, TRUE, vFlip[i], hFlip[i]));
+        SPR_setAnim(estilhacos[i].sprite, 0);
     }
 }
 
@@ -293,21 +294,25 @@ void atualizarEstilhacos(Estilhaco estilhacos[]) {
         timerEstilhacos--;
 
         for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-            estilhacos[i].x += estilhacos[i].vx;
-            estilhacos[i].y += estilhacos[i].vy;
-            estilhacos[i].vy++;
+            if (estilhacos[i].sprite != NULL) {
+                estilhacos[i].x += estilhacos[i].vx;
+                estilhacos[i].y += estilhacos[i].vy;
+                estilhacos[i].vy++;
 
-            SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
-            if (timerEstilhacos < 6) {
-                SPR_setVisibility(estilhacos[i].sprite, (timerEstilhacos % 2 == 0) ? VISIBLE : HIDDEN);
+                SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
+                if (timerEstilhacos < 6) {
+                    SPR_setVisibility(estilhacos[i].sprite, (timerEstilhacos % 2 == 0) ? VISIBLE : HIDDEN);
+                }
             }
         }
 
         if (timerEstilhacos == 0) {
             for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-                SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
+                if (estilhacos[i].sprite != NULL) {
+                    SPR_releaseSprite(estilhacos[i].sprite);
+                    estilhacos[i].sprite = NULL;
+                }
             }
         }
     }
 }
-
