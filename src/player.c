@@ -28,7 +28,8 @@ void inicializarPlayer(Player* p, Tiro tiros[]) {
 
 }
 
-void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Estilhaco estilhacos[], u32* pontos) {
+void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Estilhaco estilhacos[], u32* pontos) {
+
     u16 controle = JOY_readJoypad(JOY_1);
     bool movendoAgora = FALSE;
     bool segurandoTiro = (controle & (BUTTON_A | BUTTON_B | BUTTON_C)) != 0;
