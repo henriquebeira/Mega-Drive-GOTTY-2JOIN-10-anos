@@ -107,8 +107,8 @@ void inicializarEstilhacos(Estilhaco estilhacos[]);
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY);
 void atualizarEstilhacos(Estilhaco estilhacos[]);
 
-void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, TiroInimigo tirosInimigo[]);
-void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, TiroInimigo tirosInimigo[], Player* player, u16 edicao);
+void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Tiro tirosInimigo[]);
+void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao);
 void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Estilhaco estilhacos[], u32* pontos);
 
 #endif
