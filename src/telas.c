@@ -3,7 +3,7 @@
 static u16 tileHudBase = 0;
 
 // Desenho dos números 0-9 usando apenas 'F' (índice 15 = branco puro)
-static const u32 glyphsHUD = {
+static const u32 glyphsHUD[10][8] = {
     // '0'
     { 0x00FFFF00, 0x0FFFFFF0, 0xFFF00FFF, 0xFFF00FFF, 0xFFF00FFF, 0xFFF00FFF, 0x0FFFFFF0, 0x00FFFF00 },
     // '1'
@@ -27,7 +27,7 @@ static const u32 glyphsHUD = {
 };
 
 // Desenho das letras 'J', 'O', 'I', 'N' usando apenas 'F' (índice 15 = branco puro)
-static const u32 glyphsJOIN = {
+static const u32 glyphsJOIN[4][8] = {
     // 'J'
     { 0x000FFFF0, 0x0000FFF0, 0x0000FFF0, 0x0000FFF0, 0x0F00FFF0, 0xFFF0FFF0, 0x0FFFFF00, 0x00FFF000 },
     // 'O'
@@ -39,7 +39,7 @@ static const u32 glyphsJOIN = {
 };
 
 // Interior vazio da barra usando 'E' (índice 14 = escuro) e borda 'F' (índice 15 = branco)
-static const u32 tileVazio = {
+static const u32 tileVazio[8] = {
     0xFEEEEEEF,
     0xFEEEEEEF,
     0xFEEEEEEF,
