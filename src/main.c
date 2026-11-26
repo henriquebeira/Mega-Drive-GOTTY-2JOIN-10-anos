@@ -9,6 +9,8 @@ int main(bool hard)
     XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
     XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
     XGM_setPCM(SFX_TOASTY_ID, sfx_toasty, sizeof(sfx_toasty));
+    XGM_setPCM(SFX_DANO_ID, sfx_dano, sizeof(sfx_dano));
+    XGM_setPCM(SFX_EXPLOSAO_ID, sfx_explosao, sizeof(sfx_explosao));
 
     while(TRUE)
     {
