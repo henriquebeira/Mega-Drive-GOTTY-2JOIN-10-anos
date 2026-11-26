@@ -18,8 +18,8 @@ void inicializarPlayer(Player* p, Tiro tiros[]) {
 
     p->multiplicador = 1;
     p->killsNoNivel = 0;
-    p->metaProximoNivel = 4;
-    p->spriteMult = SPR_addSprite(&spr_mult, 288, 44, TILE_ATTR(PAL2, FALSE, FALSE, FALSE));    
+    p->metaProximoNivel = 4;  
+    p->spriteMult = SPR_addSprite(&spr_mult, 288, 44, TILE_ATTR(PAL0, FALSE, FALSE, FALSE));
     SPR_setVisibility(p->spriteMult, HIDDEN);
 
 }
