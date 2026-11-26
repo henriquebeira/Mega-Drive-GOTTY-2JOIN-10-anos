@@ -64,16 +64,27 @@ void inicializarFonteHUD(void) {
 void atualizarContadorEdicao(u16 edicao) {
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
-    u8 dez = (edicao / 10) % 10;
-    u8 uni = edicao % 10;
+    if (edicao >= 100) {
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 1),  2, 1); // '1'
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 0),  3, 1); // '0'
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 0),  4, 1); // '0'
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 2),  6, 1); // '2'
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 10), 7, 1); // 'J'
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 11), 8, 1); // 'O'
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 12), 9, 1); // 'I'
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 13), 10, 1); // 'N'
+    } else {
+        u8 dez = (edicao / 10) % 10;
+        u8 uni = edicao % 10;
 
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + dez), 2, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + uni), 3, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 2),   5, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 10),  6, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 11),  7, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 12),  8, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 13),  9, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + dez), 2, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + uni), 3, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 2),   5, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 10),  6, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 11),  7, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 12),  8, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + 13),  9, 1);
+    }
 }
 
 void atualizarPlacar(u32 pontos) {
