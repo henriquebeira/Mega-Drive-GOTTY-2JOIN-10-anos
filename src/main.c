@@ -1,12 +1,5 @@
 #include "jogo.h"
 
-Inimigo n64[MAX_N64];
-Inimigo aranha[MAX_ARANHA];
-Inimigo disjuntor[MAX_DISJUNTOR];
-Inimigo pneu;
-TiroInimigo tirosInimigo[MAX_TIROS_INIMIGO];
-inicializarInimigos(n64, aranha, disjuntor, &pneu, tirosInimigo);
-
 int main(bool hard)
 {
     JOY_init();
@@ -24,6 +17,13 @@ int main(bool hard)
         executarTelaInicial();
         SPR_reset();
         inicializarFonteHUD();
+
+        Inimigo n64[MAX_N64];
+        Inimigo aranha[MAX_ARANHA];
+        Inimigo disjuntor[MAX_DISJUNTOR];
+        Inimigo pneu;
+        TiroInimigo tirosInimigo[MAX_TIROS_INIMIGO];
+        inicializarInimigos(n64, aranha, disjuntor, &pneu, tirosInimigo);        
 
         // --- INÍCIO DA FASE ---
         XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
