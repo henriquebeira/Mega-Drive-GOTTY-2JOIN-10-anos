@@ -48,6 +48,8 @@ typedef struct {
     Sprite* sprite;
     s16 x;
     s16 y;
+    s16 baseX;
+    s16 baseY;
     s8 vx;
     s8 vy;
     u8 tipo;
@@ -87,5 +89,6 @@ HINTERRUPT_CALLBACK onHBlankToasty(void);
 
 void tocarSomDanoPSG(void);
 void atualizarSomDanoPSG(void);
+void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY);
 
 #endif
