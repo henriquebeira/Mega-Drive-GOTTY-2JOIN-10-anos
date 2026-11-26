@@ -161,6 +161,8 @@ void registrarAbateCombo(Player* p) {
             p->killsNoNivel = 0;
             // Meta sobe de 2 em 2: 4 (para 2x), 6 (para 3x), 8 (para 4x)...
             p->metaProximoNivel = 4 + (p->multiplicador - 1) * 2;
+            // Toca o "Toasty!" no canal 3 (prioridade 15) sem interromper música ou tiros
+            XGM_startPlayPCM(SFX_TOASTY_ID, 15, SOUND_PCM_CH3);            
         }
     }
     atualizarBarraCombo(p);
