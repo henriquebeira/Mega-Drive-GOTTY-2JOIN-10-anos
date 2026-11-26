@@ -162,7 +162,8 @@ void registrarAbateCombo(Player* p) {
             // Meta sobe de 2 em 2: 4 (para 2x), 6 (para 3x), 8 (para 4x)...
             p->metaProximoNivel = 4 + (p->multiplicador - 1) * 2;
             // Toca o "Toasty!" no canal 3 (prioridade 15) sem interromper música ou tiros
-            XGM_startPlayPCM(SFX_TOASTY_ID, 15, SOUND_PCM_CH3);            
+            XGM_startPlayPCM(SFX_TOASTY_ID, 15, SOUND_PCM_CH3);
+            p->timerToasty = 65; // Faz o Visio_Toasty subir no canto direito!
         }
     }
     atualizarBarraCombo(p);
@@ -173,4 +174,27 @@ void resetarCombo(Player* p) {
     p->killsNoNivel = 0;
     p->metaProximoNivel = 4;
     atualizarBarraCombo(p);
+}
+
+void atualizarAnimacaoToasty(Player* p) {
+    if (p->timerToasty > 0) {
+        p->timerToasty--;
+
+        s16 posY = 224; // Começa escondido abaixo da tela
+        if (p->timerToasty > 50) {
+            // Primeiros 15 frames: sobe de y=224 até y=160
+            posY = 160 + ((p->timerToasty - 50) * 4);
+        } else if (p->timerToasty > 15) {
+            // Fica visível no canto inferior direito por ~0,6s
+            posY = 160;
+        } else {
+            // Últimos 15 frames: desce de volta até y=224
+            posY = 160 + ((15 - p->timerToasty) * 4);
+        }
+
+        SPR_setPosition(p->spriteToasty, 248, posY);
+        SPR_setVisibility(p->spriteToasty, VISIBLE);
+    } else {
+        SPR_setVisibility(p->spriteToasty, HIDDEN);
+    }
 }
