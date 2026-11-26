@@ -158,15 +158,14 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
             }
         
             }
+    } else {
+        if (aranha->timerRespawn > 0) {
+            aranha->timerRespawn--;
         } else {
-            if (aranha->timerRespawn > 0) {
-                aranha->timerRespawn--;
-            } else {
-                spawnAranha(aranha);
-            }
+            spawnAranha(aranha);
         }
     }
-
+    
     // 3. Disjuntor (a partir do 55 2JOIN — 5s antes)
     if (edicao >= 55) {
         if (disjuntor->ativo) {
