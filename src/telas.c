@@ -51,7 +51,6 @@ void inicializarFonteHUD(void) {
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF));
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u8 dez = (edicao / 10) % 10;
@@ -67,7 +66,6 @@ void atualizarContadorEdicao(u16 edicao) {
 }
 
 void atualizarPlacar(u32 pontos) {
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF));
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u32 temp = pontos;
