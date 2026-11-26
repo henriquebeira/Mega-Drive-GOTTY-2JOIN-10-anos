@@ -18,6 +18,8 @@
 #define TIPO_DISJUNTOR 2
 #define TIPO_PNEU 3
 
+#define MAX_ESTILHACOS 4
+
 typedef struct {
     Sprite* sprite;
     s16 x;
@@ -62,6 +64,14 @@ typedef struct {
     u16 timerPisca;
 } Inimigo;
 
+typedef struct {
+    Sprite* sprite;
+    s16 x;
+    s16 y;
+    s8 vx;
+    s8 vy;
+} Estilhaco;
+
 // Funções de telas e HUD (src/telas.c)
 void atualizarPlacar(u16 pontos);
 void atualizarContadorEdicao(u16 edicao);
@@ -89,6 +99,9 @@ HINTERRUPT_CALLBACK onHBlankToasty(void);
 
 void tocarSomDanoPSG(void);
 void atualizarSomDanoPSG(void);
+
+void inicializarEstilhacos(Estilhaco estilhacos[]);
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY);
+void atualizarEstilhacos(Estilhaco estilhacos[]);
 
 #endif
