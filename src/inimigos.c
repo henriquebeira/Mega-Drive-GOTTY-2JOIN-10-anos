@@ -5,10 +5,12 @@ void spawnN64(Inimigo* n64) {
     n64->largura = 24;
     n64->altura = 24;
     n64->hp = 1;
-    n64->x = 16 + (random() % 265);
-    n64->y = 28 + (random() % 77);
-    n64->vx = 0;
-    n64->vy = 0;
+n64->x = 16 + (random() % 265);
+n64->y = 36 + (random() % 60);
+n64->baseX = n64->x;
+n64->baseY = n64->y;
+n64->vx = 0;
+n64->vy = 1;
     n64->ativo = TRUE;
     n64->timerTiro = 60;
     n64->timerPisca = 0;
@@ -22,10 +24,12 @@ void spawnAranha(Inimigo* aranha) {
     aranha->largura = 32;
     aranha->altura = 32;
     aranha->hp = 2;
-    aranha->x = 16 + (random() % 257);
-    aranha->y = 28 + (random() % 69);
-    aranha->vx = 0;
-    aranha->vy = 0;
+aranha->x = 32 + (random() % 225);
+aranha->y = 28 + (random() % 69);
+aranha->baseX = aranha->x;
+aranha->baseY = aranha->y;
+aranha->vx = 1;
+aranha->vy = 0;
     aranha->ativo = TRUE;
     aranha->timerTiro = 75;
     aranha->timerPisca = 0;
@@ -112,28 +116,32 @@ static void dispararTiroInimigo(Inimigo* inimigo, Tiro tirosInimigo[], s16 playe
 
 void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao) {
     // 1. N64 (sempre ativo)
-    if (n64->ativo) {
-        if (n64->timerTiro > 0) {
-            n64->timerTiro--;
-        } else {
-            n64->timerTiro = 60;
-            dispararTiroInimigo(n64, tirosInimigo, player->x, player->y);
-        }
-    } else {
-        if (n64->timerRespawn > 0) {
-            n64->timerRespawn--;
-        } else {
-            spawnN64(n64);
-        }
-    }
+ // 1. N64 (flutua suavemente para cima e para baixo)
+ if (n64->ativo) {
+     if (n64->timerTiro % 3 == 0) {
+         n64->y += n64->vy;
+         if (n64->y >= n64->baseY + 12) n64->vy = -1;
+         else if (n64->y <= n64->baseY - 12) n64->vy = 1;
+         SPR_setPosition(n64->sprite, n64->x, n64->y);
+     }
 
-    // 2. Aranha (após 25 2JOIN — 5s antes)
-    if (edicao > 25) {
-        if (aranha->ativo) {
-            if (aranha->timerPisca > 0) {
-                aranha->timerPisca--;
-                SPR_setVisibility(aranha->sprite, (aranha->timerPisca % 4 < 2) ? HIDDEN : VISIBLE);
-            } else {
+     if (n64->timerTiro > 0) {
+         n64->timerTiro--;
+     } else {
+         n64->timerTiro = 60;
+         dispararTiroInimigo(n64, tirosInimigo, player->x, player->y);
+     }
+ }
+
+ // 2. Aranha (balança suavemente para a direita e para a esquerda)
+ if (edicao > 25) {
+     if (aranha->ativo) {
+         if (aranha->timerTiro % 2 == 0) {
+             aranha->x += aranha->vx;
+             if (aranha->x >= aranha->baseX + 20) aranha->vx = -1;
+             else if (aranha->x <= aranha->baseX - 20) aranha->vx = 1;
+             SPR_setPosition(aranha->sprite, aranha->x, aranha->y);
+         }else {
                 SPR_setVisibility(aranha->sprite, VISIBLE);
             }
 
