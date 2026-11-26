@@ -73,6 +73,7 @@ typedef struct {
 } Estilhaco;
 
 // Funções de telas e HUD (src/telas.c)
+void inicializarFonteHUD(void);
 void atualizarPlacar(u32 pontos);
 void atualizarContadorEdicao(u16 edicao);
 void executarTelaInicial(void);
@@ -103,7 +104,5 @@ void atualizarSomDanoPSG(void);
 void inicializarEstilhacos(Estilhaco estilhacos[]);
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY);
 void atualizarEstilhacos(Estilhaco estilhacos[]);
-
-void inicializarFonteHUD(void);
 
 #endif
