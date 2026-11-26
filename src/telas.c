@@ -1,6 +1,6 @@
 #include "jogo.h"
 
-#define TILE_HUD_BASE (TILE_USER_INDEX + 7)
+#define TILE_HUD_BASE (TILE_FONT_INDEX - 20)
 
 // Desenho mais fino e arredondado (0 = transparente, 1 = cinza interno, F = contorno branco)
 static const u32 glyphsHUD[10][8] = {
