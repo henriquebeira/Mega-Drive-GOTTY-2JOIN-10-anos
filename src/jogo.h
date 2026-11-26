@@ -18,6 +18,10 @@
 #define TIPO_DISJUNTOR 2
 #define TIPO_PNEU 3
 
+#define MAX_N64 3
+#define MAX_ARANHA 2
+#define MAX_DISJUNTOR 1
+
 #define MAX_ESTILHACOS 4
 
 typedef struct {
@@ -81,7 +85,6 @@ void executarTelaFinal(u32);
 
 // Funções do jogador e tiros (src/player.c)
 void inicializarPlayer(Player* p, Tiro tiros[]);
-void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Estilhaco estilhacos[], u32* pontos);
 
 // Funções de inimigos (src/inimigos.c)
 void spawnN64(Inimigo* n64);
@@ -89,7 +92,6 @@ void spawnAranha(Inimigo* aranha);
 void spawnDisjuntor(Inimigo* disjuntor, s16 playerX);
 void spawnPneu(Inimigo* pneu);
 
-void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao);
 void inicializarTilesBarraCombo(void);
 void atualizarBarraCombo(Player* p);
 void registrarAbateCombo(Player* p);
@@ -104,5 +106,9 @@ void atualizarSomDanoPSG(void);
 void inicializarEstilhacos(Estilhaco estilhacos[]);
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY);
 void atualizarEstilhacos(Estilhaco estilhacos[]);
+
+void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, TiroInimigo tirosInimigo[]);
+void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, TiroInimigo tirosInimigo[], Player* player, u16 edicao);
+void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Estilhaco estilhacos[], u32* pontos);
 
 #endif
