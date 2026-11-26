@@ -16,6 +16,7 @@ int main(bool hard)
     {
         executarTelaInicial();
         SPR_reset();
+        inicializarFonteHUD();
 
         // --- INÍCIO DA FASE ---
         XGM_startPlayPCM(BGM_JOGO_ID, 1, SOUND_PCM_CH2);
