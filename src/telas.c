@@ -204,22 +204,33 @@ void atualizarAnimacaoToasty(Player* p) {
 static u8 timerSomDanoPSG = 0;
 
 void tocarSomDanoPSG(void) {
-    timerSomDanoPSG = 12; // Duração de 12 frames (~0,2s)
-    PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK4);
+    timerSomDanoPSG = 14; // Duração de 14 frames (~0,23s)
+    // Canal 3 (Ruído grave) no volume máximo (0)
+    PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK8);
     PSG_setEnvelope(3, PSG_ENVELOPE_MAX);
+
+    // Canal 2 (Tom grave de impacto) no volume máximo (0) para dar peso ao dano
+    PSG_setFrequency(2, 110);
+    PSG_setEnvelope(2, PSG_ENVELOPE_MAX);
 }
 
 void atualizarSomDanoPSG(void) {
     if (timerSomDanoPSG > 0) {
         timerSomDanoPSG--;
-        // Diminui o volume gradualmente e alterna a frequência para dar peso ao impacto
-        if (timerSomDanoPSG == 6) {
-            PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK8);
+
+        // Mantém no volume máximo nos primeiros 8 frames e depois atenua suavemente até 15 (silêncio)
+        u8 atenuacao = (timerSomDanoPSG > 6) ? 0 : ((6 - timerSomDanoPSG) * 2);
+        PSG_setEnvelope(3, atenuacao);
+        PSG_setEnvelope(2, atenuacao);
+
+        // Cai o tom grave na metade para dar sensação de golpe
+        if (timerSomDanoPSG == 7) {
+            PSG_setFrequency(2, 75);
         }
-        PSG_setEnvelope(3, 15 - timerSomDanoPSG);
 
         if (timerSomDanoPSG == 0) {
-            PSG_setEnvelope(3, PSG_ENVELOPE_MIN); // Silencia o canal PSG ao terminar
+            PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
+            PSG_setEnvelope(2, PSG_ENVELOPE_MIN);
         }
     }
 }
