@@ -203,14 +203,14 @@ void atualizarAnimacaoToasty(Player* p) {
 static u8 timerSomDanoPSG = 0;
 
 void tocarSomDanoPSG(void) {
-    timerSomDanoPSG = 10; // Pancada curta e seca (~0,16s)
+    timerSomDanoPSG = 8; // Impacto bem rápido (~0,13s), igual ao hitHurt.wav
 
-    // Canal 2: Subgrave forte (90 Hz) que vai despencar de tom
-    PSG_setFrequency(2, 90);
+    // Canal 2: Começa no estalo médio (380 Hz) e vai despencar rápido até o grave (50 Hz)
+    PSG_setFrequency(2, 380);
     PSG_setEnvelope(2, 3);
 
-    // Canal 3: Ruído periódico grave (soa como bumbo/pancada, sem chiado agudo)
-    PSG_setNoise(PSG_NOISE_TYPE_PERIODIC, PSG_NOISE_FREQ_TONE2);
+    // Canal 3: Estalo curto de ruído branco apenas no início da batida
+    PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK4);
     PSG_setEnvelope(3, 5);
 }
 
@@ -218,19 +218,23 @@ void atualizarSomDanoPSG(void) {
     if (timerSomDanoPSG > 0) {
         timerSomDanoPSG--;
 
-        // Despenca a frequência rapidamente nos primeiros frames (efeito "thump" de pancada)
-        if (timerSomDanoPSG == 8) PSG_setFrequency(2, 65);
-        else if (timerSomDanoPSG == 6) PSG_setFrequency(2, 50);
-        else if (timerSomDanoPSG == 4) PSG_setFrequency(2, 45);
+        // Queda rápida de frequência frame a frame (reproduz a curva exata do hitHurt.wav)
+        if (timerSomDanoPSG == 7)      PSG_setFrequency(2, 260);
+        else if (timerSomDanoPSG == 6) PSG_setFrequency(2, 180);
+        else if (timerSomDanoPSG == 5) PSG_setFrequency(2, 125);
+        else if (timerSomDanoPSG == 4) PSG_setFrequency(2, 90);
+        else if (timerSomDanoPSG == 3) PSG_setFrequency(2, 65);
+        else if (timerSomDanoPSG == 2) PSG_setFrequency(2, 50);
 
-        // Decaimento rápido de volume até silenciar (15)
-        u8 envTom = 3 + ((10 - timerSomDanoPSG) * 1);
-        u8 envRuido = 5 + ((10 - timerSomDanoPSG) * 1);
+        // Corta o ruído branco na metade para sobrar só o corpo grave no final
+        if (timerSomDanoPSG <= 4) {
+            PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
+        }
+
+        // Atenua o tom grave nos últimos frames até silenciar (15)
+        u8 envTom = 3 + ((8 - timerSomDanoPSG) * 1);
         if (envTom > 15) envTom = 15;
-        if (envRuido > 15) envRuido = 15;
-
         PSG_setEnvelope(2, envTom);
-        PSG_setEnvelope(3, envRuido);
 
         if (timerSomDanoPSG == 0) {
             PSG_setEnvelope(2, PSG_ENVELOPE_MIN);
