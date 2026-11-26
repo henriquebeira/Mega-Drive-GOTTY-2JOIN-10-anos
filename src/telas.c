@@ -260,21 +260,18 @@ void atualizarSomDanoPSG(void) {
 static u8 timerEstilhacos = 0;
 
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY) {
-    static const s8 velX[4] = { -3,  3, -2,  2 };
-    static const s8 velY[4] = { -3, -3,  1,  1 };
-    static const bool hFlip[4] = { FALSE, TRUE, FALSE, TRUE };
-    static const bool vFlip[4] = { FALSE, FALSE, TRUE, TRUE };
+    static const s8 velX = { -3,  3, -2,  2 };
+    static const s8 velY = { -3, -3,  1,  1 };
 
     timerEstilhacos = 14; // Duração do estilhaço (~0,23s)
 
-    for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        SPR_setDefinition(estilhacos[i].sprite, spriteDef);
-        SPR_setPalette(estilhacos[i].sprite, paleta);
-        SPR_setHFlip(estilhacos[i].sprite, hFlip[i]);
-        SPR_setVFlip(estilhacos[i].sprite, vFlip[i]);
+    // Usa esfera azul (anim 1) para N64/Pneu e esfera de fogo (anim 2) para Aranha/Disjuntor
+    u8 animParticula = (paleta == PAL2 || spriteDef == &spr_disjuntor) ? 2 : 1;
 
-        estilhacos[i].x = centroX - 12;
-        estilhacos[i].y = centroY - 12;
+    for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
+        SPR_setAnim(estilhacos[i].sprite, animParticula);
+        estilhacos[i].x = centroX - 8;
+        estilhacos[i].y = centroY - 8;
         estilhacos[i].vx = velX[i];
         estilhacos[i].vy = velY[i];
 
