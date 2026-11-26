@@ -8,6 +8,7 @@ int main(bool hard)
     XGM_setPCM(SFX_TIRO_ID, sfx_tiro, sizeof(sfx_tiro));
     XGM_setPCM(BGM_MENU_ID, bgm_menu, sizeof(bgm_menu));
     XGM_setPCM(BGM_JOGO_ID, bgm_jogo, sizeof(bgm_jogo));
+    XGM_setPCM(SFX_TOASTY_ID, sfx_toasty, sizeof(sfx_toasty));
 
     while(TRUE)
     {
