@@ -284,4 +284,33 @@ void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDe
 }
 
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
+    for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
+        estilhacos[i].sprite = SPR_addSprite(&spr_tiros, 0, -16, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
+        SPR_setAnim(estilhacos[i].sprite, 2);
+        SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
+    }
+}
+
+void atualizarEstilhacos(Estilhaco estilhacos[]) {
+    if (timerEstilhacos > 0) {
+        timerEstilhacos--;
+
+        for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
+            estilhacos[i].x += estilhacos[i].vx;
+            estilhacos[i].y += estilhacos[i].vy;
+            estilhacos[i].vy++;
+
+            SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
+            if (timerEstilhacos < 6) {
+                SPR_setVisibility(estilhacos[i].sprite, (timerEstilhacos % 2 == 0) ? VISIBLE : HIDDEN);
+            }
+        }
+
+        if (timerEstilhacos == 0) {
+            for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
+                SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
+            }
+        }
+    }
+}
 
