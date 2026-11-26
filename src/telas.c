@@ -51,8 +51,8 @@ void inicializarFonteHUD(void) {
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x555566));
-    PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));  // Interior da letra: branco puro
+    PAL_setColor(15, RGB24_TO_VDPCOLOR(0x0A0A1A)); // Contorno externo: preto azulado
 
     u8 dez = (edicao / 10) % 10;
     u8 uni = edicao % 10;
@@ -67,8 +67,8 @@ void atualizarContadorEdicao(u16 edicao) {
 }
 
 void atualizarPlacar(u32 pontos) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x555566));
-    PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xFFFFFF));  // Interior da letra: branco puro
+    PAL_setColor(15, RGB24_TO_VDPCOLOR(0x0A0A1A)); // Contorno externo: preto azulado
 
     u32 temp = pontos;
     for (s8 i = 9; i >= 0; i--) {
