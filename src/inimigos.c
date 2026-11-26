@@ -262,17 +262,27 @@ void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[
 
     // 4. Pneu a cada 10 segundos (600 frames) enquanto edicao < 98
     if (pneu->ativo) {
+        pneu->timerTiro++;
         pneu->x += pneu->vx;
         pneu->y += pneu->vy;
+
         if (pneu->x <= 0) {
-            pneu->x = 0; pneu->vx = 2;
+            pneu->x = 0;
+            pneu->vx = 2;
         } else if (pneu->x >= 288) {
-            pneu->x = 288; pneu->vx = -2;
+            pneu->x = 288;
+            pneu->vx = -2;
         }
+
+        // Quica alto ao tocar o chão (y >= 176)
         if (pneu->y >= 176) {
-            pneu->y = 176; pneu->vy = -6;
+            pneu->y = 176;
+            pneu->vy = -7;
+        } else if (pneu->timerTiro % 3 == 0) {
+            // Aplica gravidade suavemente a cada 3 frames
+            pneu->vy++;
         }
-        pneu->vy++;
+
         SPR_setPosition(pneu->sprite, pneu->x, pneu->y);
     } else if (edicao < 98) {
         if (pneu->timerRespawn > 0) {
