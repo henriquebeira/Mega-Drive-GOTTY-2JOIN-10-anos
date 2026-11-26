@@ -99,12 +99,14 @@ int main(bool hard)
             atualizarPlayerETiros(&player, tiros, &n64, &aranha, &disjuntor, &pneu, &pontos);
             atualizarInimigosETiros(&n64, &aranha, &disjuntor, &pneu, tirosInimigo, &player, edicao);
 
-            PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
-            SPR_update();
-            SYS_doVBlankProcess();
+             atualizarSomDanoPSG();
+             PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
+             SPR_update();
+             SYS_doVBlankProcess();
         }
 
         VDP_setHInterrupt(FALSE);
+        PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
 
         while (XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             SYS_doVBlankProcess();
