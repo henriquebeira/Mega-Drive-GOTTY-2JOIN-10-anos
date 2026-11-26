@@ -40,7 +40,7 @@ static const u32 glyphsJOIN[4][8] = {
 };
 
 void inicializarFonteHUD(void) {
-    tileHudBase = VDP_allocateVRAM(14);
+    tileHudBase = VRAM_alloc(14);
 
     for (u8 d = 0; d < 10; d++) {
         VDP_loadTileData(glyphsHUD[d], tileHudBase + d, 1, CPU);
@@ -51,21 +51,19 @@ void inicializarFonteHUD(void) {
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    // Garante cor 1 da PAL0 = cinza azulado escuro e cor 15 = branco puro durante a fase
     PAL_setColor(1, RGB24_TO_VDPCOLOR(0x555566));
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u8 dez = (edicao / 10) % 10;
     u8 uni = edicao % 10;
 
-    // Desenha "XX 2JOIN" usando os tiles personalizados (x = 2..9, y = 1)
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + dez), 2, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + uni), 3, 1);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 2),   5, 1); // '2'
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 10),  6, 1); // 'J'
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 11),  7, 1); // 'O'
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 12),  8, 1); // 'I'
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + 13),  9, 1); // 'N'
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + dez), 2, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + uni), 3, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + 2),   5, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + 10),  6, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + 11),  7, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + 12),  8, 1);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + 13),  9, 1);
 }
 
 void atualizarPlacar(u32 pontos) {
@@ -73,11 +71,10 @@ void atualizarPlacar(u32 pontos) {
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u32 temp = pontos;
-    // Desenha os 10 dígitos da direita para a esquerda (x = 37 até x = 28, y = 1)
     for (s8 i = 9; i >= 0; i--) {
         u8 digito = temp % 10;
         temp /= 10;
-        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, TILE_HUD_BASE + digito), 28 + i, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, FALSE, tileHudBase + digito), 28 + i, 1);
     }
 }
 
