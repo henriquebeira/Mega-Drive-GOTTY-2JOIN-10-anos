@@ -84,7 +84,7 @@ int main(bool hard)
                 edicao++;
                 atualizarContadorEdicao(edicao);
 
-                if (edicao >= 98) {
+                if (edicao >= 100) {
                     break;
                 }
             }
