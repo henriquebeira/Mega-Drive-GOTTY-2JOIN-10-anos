@@ -58,10 +58,9 @@ int main(bool hard)
 
         while(TRUE)
         {
-            if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
-                break;
-            }
-
+        if (edicao > 2 && !XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
+            break;
+        }
             timerEdicao++;
             if (timerEdicao >= 60) {
                 timerEdicao = 0;
