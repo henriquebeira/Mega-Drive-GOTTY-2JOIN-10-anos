@@ -92,10 +92,10 @@ void atualizarPlacar(u32 pontos) {
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u32 temp = pontos;
-    for (s8 i = 4; i >= 0; i--) {
+    for (s8 i = 3; i >= 0; i--) {
         u8 digito = temp % 10;
         temp /= 10;
-        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + digito), 33 + i, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + digito), 34 + i, 1);
     }
 }
 
@@ -172,8 +172,8 @@ void executarTelaFinal(u32 pontos) {
 
     char txtScore[12];
     char txtHiScore[12];
-    sprintf(txtScore, "%05lu", pontos);
-    sprintf(txtHiScore, "%05lu", hiScore);
+    sprintf(txtScore, "%04lu", pontos);
+    sprintf(txtHiScore, "%04lu", hiScore);
 
     // Desce Score e Hi-Score 1 linha (17, 18 e 21, 22)
     VDP_drawText("Score",      25, 17);
