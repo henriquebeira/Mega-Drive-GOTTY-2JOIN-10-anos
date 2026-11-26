@@ -10,5 +10,7 @@ SPRITE spr_toasty "toasty.png" 8 8 FAST 0
 IMAGE img_titulo "titulo_01.png" FAST
 WAV sfx_tiro "laserShoot.wav" XGM
 WAV sfx_toasty "toastyV3.wav" XGM
+WAV sfx_dano "hitHurt.wav" XGM
+WAV sfx_explosao "explosion.wav" XGM
 WAV bgm_menu "touhou_cavaco_menu.wav" XGM
 WAV bgm_jogo "touhou_cavaco_jogo.wav" XGM
