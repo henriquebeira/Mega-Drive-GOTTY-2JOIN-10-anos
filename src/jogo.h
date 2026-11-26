@@ -9,6 +9,7 @@
 #define SFX_TIRO_ID 64
 #define BGM_MENU_ID 65
 #define BGM_JOGO_ID 66
+#define SFX_TOASTY_ID 67
 
 #define TIPO_N64 0
 #define TIPO_ARANHA 1
