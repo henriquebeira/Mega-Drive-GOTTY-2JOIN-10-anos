@@ -194,7 +194,7 @@ void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[
             }
             if (ativosDisj < limDisjuntor) {
                 for (u8 i = 0; i < MAX_DISJUNTOR; i++) {
-                    if (!disjuntor[i].ativo) { spawnDisjuntor(&disjuntor[i]); break; }
+                    if (!disjuntor[i].ativo) { spawnDisjuntor(&disjuntor[i], player->x); break; }
                 }
             }
         }
@@ -294,12 +294,12 @@ void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[
                 SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
             } else {
                 SPR_setPosition(tirosInimigo[i].sprite, tirosInimigo[i].x, tirosInimigo[i].y);
-                if (player->timerInvencivel == 0 &&
-                    colidiu(tirosInimigo[i].x + 4, tirosInimigo[i].y + 4, 8, 8,
-                            player->x + 8, player->y + 8, 16, 24)) {
+                if (player->timerPiscaDano == 0 &&
+                    tirosInimigo[i].x + 12 > player->x + 8 && tirosInimigo[i].x + 4 < player->x + 24 &&
+                    tirosInimigo[i].y + 12 > player->y + 8 && tirosInimigo[i].y + 4 < player->y + 32) {
                     tirosInimigo[i].ativo = FALSE;
                     SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
-                    player->timerInvencivel = 60;
+                    player->timerPiscaDano = 60;
                     tocarSomDanoPSG();
                     resetarCombo(player);
                 }
