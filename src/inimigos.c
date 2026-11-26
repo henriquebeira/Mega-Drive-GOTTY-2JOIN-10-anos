@@ -202,6 +202,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
                     pneu->timerRespawn = 45;
                     SPR_setVisibility(pneu->sprite, HIDDEN);
                     player->timerPiscaDano = 30;
+                    XGM_startPlayPCM(SFX_DANO_ID, 12, SOUND_PCM_CH4);
                     resetarCombo(player);
                 }
             }
@@ -232,6 +233,7 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
                     tirosInimigo[i].ativo = FALSE;
                     SPR_setVisibility(tirosInimigo[i].sprite, HIDDEN);
                     player->timerPiscaDano = 30;
+                    XGM_startPlayPCM(SFX_DANO_ID, 12, SOUND_PCM_CH4);
                     resetarCombo(player);
                 }
             }
