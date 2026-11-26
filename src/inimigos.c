@@ -115,23 +115,29 @@ static void dispararTiroInimigo(Inimigo* inimigo, Tiro tirosInimigo[], s16 playe
 }
 
 void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao) {
-    // 1. N64 (sempre ativo)
- // 1. N64 (flutua suavemente para cima e para baixo)
- if (n64->ativo) {
-     if (n64->timerTiro % 3 == 0) {
-         n64->y += n64->vy;
-         if (n64->y >= n64->baseY + 12) n64->vy = -1;
-         else if (n64->y <= n64->baseY - 12) n64->vy = 1;
-         SPR_setPosition(n64->sprite, n64->x, n64->y);
-     }
+    
+    // 1. N64 (flutua suavemente para cima e para baixo)
+    if (n64->ativo) {
+        if (n64->timerTiro % 3 == 0) {
+            n64->y += n64->vy;
+            if (n64->y >= n64->baseY + 12) n64->vy = -1;
+            else if (n64->y <= n64->baseY - 12) n64->vy = 1;
+            SPR_setPosition(n64->sprite, n64->x, n64->y);
+        }
 
-     if (n64->timerTiro > 0) {
-         n64->timerTiro--;
-     } else {
-         n64->timerTiro = 60;
-         dispararTiroInimigo(n64, tirosInimigo, player->x, player->y);
-     }
- }
+        if (n64->timerTiro > 0) {
+            n64->timerTiro--;
+        } else {
+            n64->timerTiro = 60;
+            dispararTiroInimigo(n64, tirosInimigo, player->x, player->y);
+        }
+    } else {
+        if (n64->timerRespawn > 0) {
+            n64->timerRespawn--;
+        } else {
+            spawnN64(n64);
+        }
+    }
 
  // 2. Aranha (balança suavemente para a direita e para a esquerda)
  if (edicao > 25) {
