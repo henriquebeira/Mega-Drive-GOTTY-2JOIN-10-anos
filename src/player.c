@@ -50,7 +50,7 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranh
     if (p->x > 288) p->x = 288;
 
     if (movendoAgora && !p->andando) {
-        SPR_setDefinition(p->sprite, &spr_walk);
+        SPR_setDefinition(p->sprite, &spr_andar);
         p->andando = TRUE;
     } else if (!movendoAgora && p->andando) {
         SPR_setDefinition(p->sprite, &spr_idle);
