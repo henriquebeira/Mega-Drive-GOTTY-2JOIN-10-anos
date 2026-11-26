@@ -203,38 +203,54 @@ void atualizarAnimacaoToasty(Player* p) {
 static u8 timerSomDanoPSG = 0;
 
 void tocarSomDanoPSG(void) {
-    timerSomDanoPSG = 8; // Impacto bem rápido (~0,13s), igual ao hitHurt.wav
+    timerSomDanoPSG = 9; // Impacto rápido e com volume máximo
 
-    // Canal 2: Volume mais alto (atenuação 1, onde 0 = máximo)
-    PSG_setFrequency(2, 380);
-    PSG_setEnvelope(2, 1);
+    // Soma os 3 canais de onda quadrada (0, 1 e 2) + ruído (3) no volume máximo (0)
+    PSG_setFrequency(0, 380);
+    PSG_setFrequency(1, 385);
+    PSG_setFrequency(2, 190); // Uma oitava abaixo para dar peso
 
-    // Canal 3: Ruído de impacto um pouco mais forte (atenuação 3)
+    PSG_setEnvelope(0, PSG_ENVELOPE_MAX);
+    PSG_setEnvelope(1, PSG_ENVELOPE_MAX);
+    PSG_setEnvelope(2, PSG_ENVELOPE_MAX);
+
     PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK4);
-    PSG_setEnvelope(3, 3);
+    PSG_setEnvelope(3, PSG_ENVELOPE_MAX);
 }
 
 void atualizarSomDanoPSG(void) {
     if (timerSomDanoPSG > 0) {
         timerSomDanoPSG--;
 
-        if (timerSomDanoPSG == 7)      PSG_setFrequency(2, 260);
-        else if (timerSomDanoPSG == 6) PSG_setFrequency(2, 180);
-        else if (timerSomDanoPSG == 5) PSG_setFrequency(2, 125);
-        else if (timerSomDanoPSG == 4) PSG_setFrequency(2, 90);
-        else if (timerSomDanoPSG == 3) PSG_setFrequency(2, 65);
-        else if (timerSomDanoPSG == 2) PSG_setFrequency(2, 50);
+        u16 freq = 50;
+        if (timerSomDanoPSG == 8)      freq = 280;
+        else if (timerSomDanoPSG == 7) freq = 200;
+        else if (timerSomDanoPSG == 6) freq = 140;
+        else if (timerSomDanoPSG == 5) freq = 100;
+        else if (timerSomDanoPSG == 4) freq = 75;
+        else if (timerSomDanoPSG == 3) freq = 55;
+
+        PSG_setFrequency(0, freq);
+        PSG_setFrequency(1, freq + 4);
+        PSG_setFrequency(2, freq / 2);
+
+        // Mantém o volume máximo nos primeiros frames e atenua no final
+        u8 env = (timerSomDanoPSG > 4) ? 0 : ((4 - timerSomDanoPSG) * 3);
+        if (env > 15) env = 15;
+
+        PSG_setEnvelope(0, env);
+        PSG_setEnvelope(1, env);
+        PSG_setEnvelope(2, env);
 
         if (timerSomDanoPSG <= 4) {
             PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
+        } else {
+            PSG_setEnvelope(3, env);
         }
 
-        // Atenua a partir do volume 1 até silenciar (15)
-        u8 envTom = 1 + ((8 - timerSomDanoPSG) * 1);
-        if (envTom > 15) envTom = 15;
-        PSG_setEnvelope(2, envTom);
-
         if (timerSomDanoPSG == 0) {
+            PSG_setEnvelope(0, PSG_ENVELOPE_MIN);
+            PSG_setEnvelope(1, PSG_ENVELOPE_MIN);
             PSG_setEnvelope(2, PSG_ENVELOPE_MIN);
             PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
         }
