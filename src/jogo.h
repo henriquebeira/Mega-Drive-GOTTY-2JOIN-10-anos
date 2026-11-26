@@ -29,6 +29,8 @@ typedef struct {
     u8 killsNoNivel;      // Quantos inimigos derrotou no nível atual do combo
     u8 metaProximoNivel;  // 4 para 2x, 6 para 3x, 8 para 4x...
     Sprite* spriteMult;   // Ícone 2X..8X acima da barra
+    Sprite* spriteToasty;
+    u8 timerToasty;       // Controla a subida e descida no canto inferior direito
 } Player;
 
 typedef struct {
@@ -77,5 +79,7 @@ void inicializarTilesBarraCombo(void);
 void atualizarBarraCombo(Player* p);
 void registrarAbateCombo(Player* p);
 void resetarCombo(Player* p);
+
+void atualizarAnimacaoToasty(Player* p);
 
 #endif
