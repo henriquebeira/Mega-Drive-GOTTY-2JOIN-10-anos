@@ -106,6 +106,7 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                     atualizarPlacar(*pontos);
                     registrarAbateCombo(p);
                     XGM_startPlayPCM(SFX_EXPLOSAO_ID, 11, SOUND_PCM_CH4);
+                    dispararEstilhacos(estilhacos, &spr_n64, PAL3, n64->x + 12, n64->y + 12);
                 }
                 // 2. Aranha (2 pontos x multiplicador)
                 else if (aranha->ativo &&
@@ -128,6 +129,7 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                         atualizarPlacar(*pontos);
                         registrarAbateCombo(p);
                         XGM_startPlayPCM(SFX_EXPLOSAO_ID, 11, SOUND_PCM_CH4);
+                        dispararEstilhacos(estilhacos, &spr_aranha, PAL2, aranha->x + 16, aranha->y + 16);
                     }
                 }
                 // 3. Disjuntor (3 pontos x multiplicador)
@@ -151,6 +153,7 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                         atualizarPlacar(*pontos);
                         registrarAbateCombo(p);
                         XGM_startPlayPCM(SFX_EXPLOSAO_ID, 11, SOUND_PCM_CH4);
+                        dispararEstilhacos(estilhacos, &spr_disjuntor, PAL3, disjuntor->x + 24, disjuntor->y + 16);
                     }
                 }
                 // 4. Pneu (1 ponto x multiplicador)
@@ -170,6 +173,7 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo* n64, Inimigo* aranh
                     atualizarPlacar(*pontos);
                     registrarAbateCombo(p);
                     XGM_startPlayPCM(SFX_EXPLOSAO_ID, 11, SOUND_PCM_CH4);
+                    dispararEstilhacos(estilhacos, &spr_pneu, PAL1, pneu->x + 16, pneu->y + 12);
                 }
             }
         }
