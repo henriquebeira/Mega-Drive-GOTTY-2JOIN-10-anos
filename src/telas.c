@@ -53,13 +53,13 @@ void inicializarFonteHUD(void) {
 }
 
 void atualizarContadorEdicao(u16 edicao) {
-    char texto;
+    char texto[20];
     sprintf(texto, "%02u 2JOIN", edicao);
     VDP_drawText(texto, 2, 1);
 }
 
 void atualizarPlacar(u32 pontos) {
-    char texto;
+    char texto[20];
     sprintf(texto, "%010lu", pontos);
     VDP_drawText(texto, 28, 1);
 }
