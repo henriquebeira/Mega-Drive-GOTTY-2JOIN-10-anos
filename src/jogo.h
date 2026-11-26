@@ -111,4 +111,6 @@ void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], I
 void atualizarInimigosETiros(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Tiro tirosInimigo[], Player* player, u16 edicao);
 void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Estilhaco estilhacos[], u32* pontos);
 
+void verificarColisoesPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Estilhaco estilhacos[], u32* pontos);
+
 #endif
