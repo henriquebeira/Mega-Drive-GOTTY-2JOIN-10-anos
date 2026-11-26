@@ -205,20 +205,19 @@ static u8 timerSomDanoPSG = 0;
 void tocarSomDanoPSG(void) {
     timerSomDanoPSG = 8; // Impacto bem rápido (~0,13s), igual ao hitHurt.wav
 
-    // Canal 2: Começa no estalo médio (380 Hz) e vai despencar rápido até o grave (50 Hz)
+    // Canal 2: Volume mais alto (atenuação 1, onde 0 = máximo)
     PSG_setFrequency(2, 380);
-    PSG_setEnvelope(2, 3);
+    PSG_setEnvelope(2, 1);
 
-    // Canal 3: Estalo curto de ruído branco apenas no início da batida
+    // Canal 3: Ruído de impacto um pouco mais forte (atenuação 3)
     PSG_setNoise(PSG_NOISE_TYPE_WHITE, PSG_NOISE_FREQ_CLOCK4);
-    PSG_setEnvelope(3, 5);
+    PSG_setEnvelope(3, 3);
 }
 
 void atualizarSomDanoPSG(void) {
     if (timerSomDanoPSG > 0) {
         timerSomDanoPSG--;
 
-        // Queda rápida de frequência frame a frame (reproduz a curva exata do hitHurt.wav)
         if (timerSomDanoPSG == 7)      PSG_setFrequency(2, 260);
         else if (timerSomDanoPSG == 6) PSG_setFrequency(2, 180);
         else if (timerSomDanoPSG == 5) PSG_setFrequency(2, 125);
@@ -226,13 +225,12 @@ void atualizarSomDanoPSG(void) {
         else if (timerSomDanoPSG == 3) PSG_setFrequency(2, 65);
         else if (timerSomDanoPSG == 2) PSG_setFrequency(2, 50);
 
-        // Corta o ruído branco na metade para sobrar só o corpo grave no final
         if (timerSomDanoPSG <= 4) {
             PSG_setEnvelope(3, PSG_ENVELOPE_MIN);
         }
 
-        // Atenua o tom grave nos últimos frames até silenciar (15)
-        u8 envTom = 3 + ((8 - timerSomDanoPSG) * 1);
+        // Atenua a partir do volume 1 até silenciar (15)
+        u8 envTom = 1 + ((8 - timerSomDanoPSG) * 1);
         if (envTom > 15) envTom = 15;
         PSG_setEnvelope(2, envTom);
 
