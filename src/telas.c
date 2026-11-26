@@ -1,6 +1,6 @@
 #include "jogo.h"
 
-#define TILE_HUD_BASE (TILE_FONT_INDEX - 20)
+static u16 tileHudBase = 0;
 
 // Desenho mais fino e arredondado (0 = transparente, 1 = cinza interno, F = contorno branco)
 static const u32 glyphsHUD[10][8] = {
@@ -40,12 +40,15 @@ static const u32 glyphsJOIN[4][8] = {
 };
 
 void inicializarFonteHUD(void) {
-    // Carrega os 10 dígitos e as 4 letras "JOIN" em slots próprios sem alterar a fonte padrão
+    if (tileHudBase == 0) {
+        tileHudBase = VDP_allocateVRAM(14);
+    }
+
     for (u8 d = 0; d < 10; d++) {
-        VDP_loadTileData(glyphsHUD[d], TILE_HUD_BASE + d, 1, CPU);
+        VDP_loadTileData(glyphsHUD[d], tileHudBase + d, 1, CPU);
     }
     for (u8 c = 0; c < 4; c++) {
-        VDP_loadTileData(glyphsJOIN[c], TILE_HUD_BASE + 10 + c, 1, CPU);
+        VDP_loadTileData(glyphsJOIN[c], tileHudBase + 10 + c, 1, CPU);
     }
 }
 
