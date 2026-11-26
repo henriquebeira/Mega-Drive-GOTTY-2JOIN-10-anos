@@ -139,8 +139,8 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
         }
     }
 
- // 2. Aranha (balança suavemente para a direita e para a esquerda)
- if (edicao > 25) {
+    // 2. Aranha (balança suavemente para a direita e para a esquerda após 25 2JOIN)
+    if (edicao > 25) {
         if (aranha->ativo) {
             if (aranha->timerTiro % 2 == 0) {
                 aranha->x += aranha->vx;
@@ -162,13 +162,12 @@ void atualizarInimigosETiros(Inimigo* n64, Inimigo* aranha, Inimigo* disjuntor, 
                 aranha->timerTiro = 75;
                 dispararTiroInimigo(aranha, tirosInimigo, player->x, player->y);
             }
-        
-            }
-    } else {
-        if (aranha->timerRespawn > 0) {
-            aranha->timerRespawn--;
         } else {
-            spawnAranha(aranha);
+            if (aranha->timerRespawn > 0) {
+                aranha->timerRespawn--;
+            } else {
+                spawnAranha(aranha);
+            }
         }
     }
     
