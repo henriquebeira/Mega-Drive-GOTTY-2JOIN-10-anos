@@ -257,22 +257,21 @@ void atualizarSomDanoPSG(void) {
     }
 }
 
-// Desenho de um fragmento irregular de 8x8 pixels usando as cores 1, 2 e 3 da paleta do inimigo
-static const u32 tileEstilhaco[8] = {
-    0x00111000,
-    0x01223100,
-    0x12332210,
-    0x13223310,
-    0x01232100,
-    0x00121000,
-    0x00010000,
-    0x00000000
+// 4 tiles seguidos (16x16 total): 1º tile tem o fragmento 8x8, os outros 3 ficam transparentes (0)
+static const u32 tileEstilhaco[32] = {
+    // Tile 0 (canto superior esquerdo - o único visível!)
+    0x00111000, 0x01223100, 0x12332210, 0x13223310,
+    0x01232100, 0x00121000, 0x00010000, 0x00000000,
+    // Tiles 1, 2 e 3 (transparentes para não aparecer lixo ao lado)
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0
 };
 
 static u8 timerEstilhacos = 0;
 
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
-    VDP_loadTileData(tileEstilhaco, TILE_USER_INDEX + 3, 1, CPU);
+    VDP_loadTileData(tileEstilhaco, TILE_USER_INDEX + 3, 4, CPU);
 
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
         estilhacos[i].sprite = SPR_addSpriteEx(&spr_tiros, 0, -16, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, TILE_USER_INDEX + 3), SPR_FLAG_AUTO_VISIBILITY);
