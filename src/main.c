@@ -25,7 +25,7 @@ int main(bool hard)
         PAL_setPalette(PAL2, bg_stage1.palette->data, CPU);
         VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
 
-        SPR_initEx(380);
+        SPR_initEx(280);
         
         Inimigo n64[MAX_N64];
         Inimigo aranha[MAX_ARANHA];
