@@ -51,7 +51,7 @@ static const u32 tileVazio[8] = {
 };
 
 void inicializarFonteHUD(void) {
-    tileHudBase = TILE_SYSTEM_INDEX - 16;
+    tileHudBase = TILE_SYSTEM_INDEX - 40;
 
     for (u8 d = 0; d < 10; d++) {
         VDP_loadTileData(glyphsHUD[d], tileHudBase + d, 1, CPU);
