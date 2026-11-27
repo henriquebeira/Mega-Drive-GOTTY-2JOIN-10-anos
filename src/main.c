@@ -50,6 +50,13 @@ int main(bool hard)
         Player player;
         Tiro tiros[MAX_TIROS];
         inicializarTilesBarraCombo();
+
+        bool trocouFundo2 = FALSE;
+        PAL_setPalette(PAL0, bg_stage1.palette->data, CPU);
+        PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
+        PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+        VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX + 4), 0, 0, FALSE, CPU);
+
         inicializarPlayer(&player, tiros);
         Estilhaco estilhacos[MAX_ESTILHACOS];
         inicializarEstilhacos(estilhacos);
@@ -72,6 +79,14 @@ int main(bool hard)
                 }
             }
 
+            if (edicao >= 50 && !trocouFundo2) {
+                trocouFundo2 = TRUE;
+                PAL_setPalette(PAL0, bg_stage2.palette->data, DMA);
+                PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
+                PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+                VDP_drawImageEx(BG_B, &bg_stage2, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX + 4), 0, 0, FALSE, DMA);
+            }            
+
             atualizarPlayerETiros(&player, tiros, n64, aranha, disjuntor, &pneu, estilhacos, &pontos);
             atualizarInimigosETiros(n64, aranha, disjuntor, &pneu, tirosInimigo, &player, edicao);
             atualizarEstilhacos(estilhacos);
@@ -92,6 +107,7 @@ int main(bool hard)
             SYS_doVBlankProcess();
         }
 
+        VDP_clearPlane(BG_B, TRUE);
         executarTelaFinal(pontos);
     }
 
