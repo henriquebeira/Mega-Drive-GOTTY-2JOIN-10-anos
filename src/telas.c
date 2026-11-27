@@ -222,9 +222,9 @@ void executarTelaFinal(u32 pontos) {
             timerPisca = 0;
             mostra = !mostra;
             if (mostra) {
-                VDP_drawText("PRESS START", 22, 25);
+                VDP_drawText("PRESS START", 23, 25); // 11 letras (colunas 23..33)
             } else {
-                VDP_clearText(22, 25, 11);
+                VDP_clearText(23, 25, 11);
             }
         }
 
