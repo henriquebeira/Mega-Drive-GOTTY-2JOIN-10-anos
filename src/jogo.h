@@ -115,6 +115,8 @@ void verificarColisoesPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimi
 
 void iniciarMusicaSecretaJazz(void);
 void atualizarMusicaSecretaJazz(void);
-void pararMusicaSecretaJazz(void);
+void iniciarMusicaSecretaSynth80(void);
+void atualizarMusicaSecretaSynth80(void);
+void pararMusicaSecreta(void);
 
 #endif
