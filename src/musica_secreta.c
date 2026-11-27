@@ -193,10 +193,28 @@ void atualizarMusicaSecretaSynth80(void) {
 }
 
 void pararMusicaSecreta(void) {
-    fm_note_off(0);
-    fm_note_off(1);
-    fm_note_off(2);
+    // 1. Garante que o 68000 tem acesso ao YM2612
+    Z80_requestBus(TRUE);
+
+    // 2. Silencia imediatamente todos os 6 canais FM (Key Off + Volume máximo de atenuação 0x7F)
+    for (u8 ch = 0; ch < 3; ch++) {
+        ym_write(0x28, ch);       // Key Off canais 0..2
+        ym_write(0x28, 0x04 | ch); // Key Off canais 3..5
+
+        // Zera volume (Total Level = 0x7F) nos 4 operadores da Parte 1
+        ym_write(0x40 + ch, 0x7F);
+        ym_write(0x44 + ch, 0x7F);
+        ym_write(0x48 + ch, 0x7F);
+        ym_write(0x4C + ch, 0x7F);
+    }
+
+    // 3. Silencia os 4 canais do chip PSG (SN76489)
+    *PSG_PORT = 0x9F;
+    *PSG_PORT = 0xBF;
+    *PSG_PORT = 0xDF;
     *PSG_PORT = 0xFF;
+
+    // 4. Devolve o barramento para o Z80 / XGM
     Z80_releaseBus();
 }
 
