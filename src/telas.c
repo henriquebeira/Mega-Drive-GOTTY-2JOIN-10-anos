@@ -117,12 +117,11 @@ void executarTelaInicial(void) {
 
     bool modoJazz = FALSE;
 
-    while(TRUE)
-    {
+    while (TRUE) {
         random();
         u16 joy = JOY_readJoypad(JOY_1);
 
-        // Easter egg: apertar X troca a música do menu pelo Jazz Fusion FM!
+        // Easter egg: apertar X troca a música do menu pelo Jazz Fusion FM
         if ((joy & BUTTON_X) && !modoJazz) {
             modoJazz = TRUE;
             iniciarMusicaSecretaJazz();
@@ -157,7 +156,6 @@ void executarTelaInicial(void) {
     }
 
     // Limpa a tela inicial antes de iniciar a fase
-    XGM_stopPlayPCM(SOUND_PCM_CH2);
     VDP_clearPlane(BG_B, TRUE);
     VDP_clearTextArea(0, 0, 40, 28);
     VDP_setTextPalette(PAL0);
