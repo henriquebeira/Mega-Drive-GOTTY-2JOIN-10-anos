@@ -176,6 +176,7 @@ void executarTelaInicial(void) {
 static u32 hiScore = 0;
 
 void executarTelaFinal(u32 pontos) {
+    VDP_setBackgroundColor(0);
     XGM_stopPlayPCM(SOUND_PCM_CH2);
 
     SPR_reset();
