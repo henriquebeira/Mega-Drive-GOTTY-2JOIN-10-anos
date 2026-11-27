@@ -8,8 +8,8 @@ SPRITE spr_pneu "Pneu_32x24.png" 4 3 FAST 6
 SPRITE spr_mult "multiplicadores.png" 3 2 FAST 0
 SPRITE spr_toasty "toasty.png" 8 8 FAST 0
 IMAGE img_titulo "titulo_01.png" FAST
-IMAGE bg_stage1 "bg_stage1.png" NONE
-IMAGE bg_stage2 "bg_stage2.png" NONE
+IMAGE bg_stage1 "bg_stage1.png" BEST
+IMAGE bg_stage2 "bg_stage2.png" BEST
 IMAGE img_final "tela_final.png" BEST
 WAV sfx_tiro "laserShoot.wav" XGM
 WAV sfx_toasty "toastyV3.wav" XGM

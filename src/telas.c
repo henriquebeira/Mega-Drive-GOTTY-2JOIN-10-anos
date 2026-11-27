@@ -51,7 +51,7 @@ static const u32 tileVazio[8] = {
 };
 
 void inicializarFonteHUD(void) {
-    tileHudBase = TILE_SYSTEM_INDEX - 40;
+    tileHudBase = TILE_SYSTEM_INDEX - 16;
 
     for (u8 d = 0; d < 10; d++) {
         VDP_loadTileData(glyphsHUD[d], tileHudBase + d, 1, CPU);
@@ -176,7 +176,6 @@ void executarTelaInicial(void) {
 static u32 hiScore = 0;
 
 void executarTelaFinal(u32 pontos) {
-    VDP_setBackgroundColor(0);
     XGM_stopPlayPCM(SOUND_PCM_CH2);
 
     SPR_reset();
@@ -245,25 +244,26 @@ static const u32 tileMoldura[8] = {
 };
 
 static const u32 tileCheio[8] = {
-    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F,
-    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F
+    0xF999999F, 0xF999999F, 0xF999999F, 0xF999999F,
+    0xF999999F, 0xF999999F, 0xF999999F, 0xF999999F
 };
 
 void inicializarTilesBarraCombo(void) {
-    u16 baseBarra = TILE_SYSTEM_INDEX - 20;
-    VDP_loadTileData(tileMoldura, baseBarra,     1, CPU);
-    VDP_loadTileData(tileVazio,   baseBarra + 1, 1, CPU);
-    VDP_loadTileData(tileCheio,   baseBarra + 2, 1, CPU);
+    // Carrega os 3 blocos na área segura de usuário da VRAM (TILE_USER_INDEX)
+    VDP_loadTileData(tileMoldura, TILE_USER_INDEX,     1, CPU);
+    VDP_loadTileData(tileVazio,   TILE_USER_INDEX + 1, 1, CPU);
+    VDP_loadTileData(tileCheio,   TILE_USER_INDEX + 2, 1, CPU);
 
+    // Cor 1 da PAL0 = cinza escuro (vazio) | Cor 9 da PAL0 = roxo/magenta vibrante (cheio)
     PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
     PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
 }
 
 void atualizarBarraCombo(Player* p) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xCC33FF));  // Preenchimento roxo
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF)); // Fundo vazio branco
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
+    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF)); // Preenchimento roxo da barra
 
-    u16 baseBarra = TILE_SYSTEM_INDEX - 20;
     u8 alturaTotal = 12;
     u8 blocosCheios = 0;
 
@@ -274,13 +274,13 @@ void atualizarBarraCombo(Player* p) {
     }
 
     // Topo e base da moldura branca na coluna 37
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, baseBarra), 37, 8);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, baseBarra), 37, 21);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 37, 8);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 37, 21);
 
     // Preenche de baixo para cima (y = 20 até y = 9)
     for (u8 i = 0; i < alturaTotal; i++) {
         u8 linhaY = 20 - i;
-        u16 tileIdx = (i < blocosCheios) ? (baseBarra + 2) : (baseBarra + 1);
+        u16 tileIdx = (i < blocosCheios) ? (TILE_USER_INDEX + 2) : (TILE_USER_INDEX + 1);
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, tileIdx), 37, linhaY);
     }
 
@@ -411,28 +411,22 @@ static const u32 tileEstilhaco[32] = {
 static u8 timerEstilhacos = 0;
 
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
-    timerEstilhacos = 0;
-    u16 baseEstilhaco = TILE_SYSTEM_INDEX - 16;
-    VDP_loadTileData(tileEstilhaco, baseEstilhaco, 4, CPU);
+    VDP_loadTileData(tileEstilhaco, TILE_USER_INDEX + 3, 4, CPU);
 
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        estilhacos[i].x = -32;
-        estilhacos[i].y = -32;
-        estilhacos[i].sprite = SPR_addSprite(&spr_tiros, -32, -32, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, baseEstilhaco));
-        SPR_setAutoTileUpload(estilhacos[i].sprite, FALSE);
-        SPR_setVRAMTileIndex(estilhacos[i].sprite, baseEstilhaco);
+        estilhacos[i].sprite = SPR_addSpriteEx(&spr_tiros, 0, -16, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, TILE_USER_INDEX + 3), SPR_FLAG_AUTO_VISIBILITY);
+        SPR_setVRAMTileIndex(estilhacos[i].sprite, TILE_USER_INDEX + 3);
         SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
     }
 }
 
 void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDef, u8 paleta, s16 centroX, s16 centroY) {
-    static const s8 velX[] = { -3, 3, -2, 2 };
-    static const s8 velY[] = { -3, -3, 1, 1 };
+    static const s8 velX[] = { -3,  3, -2,  2 };
+    static const s8 velY[] = { -3, -3,  1,  1 };
     static const bool hFlip[] = { FALSE, TRUE, FALSE, TRUE };
     static const bool vFlip[] = { FALSE, FALSE, TRUE, TRUE };
 
     timerEstilhacos = 14;
-    u16 baseEstilhaco = TILE_SYSTEM_INDEX - 16;
 
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
         estilhacos[i].x = centroX - 4;
@@ -441,7 +435,7 @@ void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDe
         estilhacos[i].vy = velY[i];
 
         SPR_setPalette(estilhacos[i].sprite, paleta);
-        SPR_setVRAMTileIndex(estilhacos[i].sprite, baseEstilhaco);
+        SPR_setVRAMTileIndex(estilhacos[i].sprite, TILE_USER_INDEX + 3);
         SPR_setHFlip(estilhacos[i].sprite, hFlip[i]);
         SPR_setVFlip(estilhacos[i].sprite, vFlip[i]);
         SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
@@ -467,7 +461,6 @@ void atualizarEstilhacos(Estilhaco estilhacos[]) {
         if (timerEstilhacos == 0) {
             for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
                 SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
-                SPR_setPosition(estilhacos[i].sprite, -32, -32);
             }
         }
     }
