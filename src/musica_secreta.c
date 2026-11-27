@@ -199,3 +199,81 @@ void pararMusicaSecreta(void) {
     *PSG_PORT = 0xFF;
     Z80_releaseBus();
 }
+
+// --- MÚSICA 3: PLAYER PSGMOD NATIVO (BOTÃO Z) ---
+static const u8* psgData = NULL;
+static u32 psgSize = 0;
+static u32 psgPos = 0;
+static u32 psgLoopPos = 0;
+static u16 psgDelay = 0;
+
+void iniciarMusicaSecretaPSG(void) {
+    XGM_stopPlayPCM(SOUND_PCM_CH2);
+    // Para qualquer música FM anterior se estava tocando X ou Y
+    pararMusicaSecreta();
+
+    // Silencia os 4 canais do SN76489 (PSG)
+    *PSG_PORT = 0x9F;
+    *PSG_PORT = 0xBF;
+    *PSG_PORT = 0xDF;
+    *PSG_PORT = 0xFF;
+
+    psgData = psgmod_z;
+    psgSize = sizeof(psgmod_z);
+    psgPos = 0;
+    psgDelay = 0;
+
+    // Localiza a assinatura "PATT" no cabeçalho PSGMOD-2HEAD onde começam os dados das notas
+    for (u32 i = 0; i + 4 < psgSize; i++) {
+        if (psgData[i] == 'P' && psgData[i + 1] == 'A' &&
+            psgData[i + 2] == 'T' && psgData[i + 3] == 'T') {
+            psgPos = i + 4;
+            break;
+        }
+    }
+    psgLoopPos = psgPos;
+}
+
+void atualizarMusicaSecretaPSG(void) {
+    if (psgData == NULL || psgPos == 0) return;
+
+    if (psgDelay > 0) {
+        psgDelay--;
+        return;
+    }
+
+    // Lê os comandos do frame atual até encontrar o marcador de fim de frame/espera
+    while (psgPos < psgSize) {
+        u8 cmd = psgData[psgPos++];
+
+        if (cmd == 0xFF) {
+            // Fim da música -> volta para o início do padrão
+            psgPos = psgLoopPos;
+            break;
+        } else if (cmd == 0xFE) {
+            // Espera N frames
+            if (psgPos < psgSize) {
+                psgDelay = psgData[psgPos++];
+            }
+            break;
+        } else if (cmd & 0x80) {
+            // Comando de latch do SN76489 (escreve direto na porta 0xC00011)
+            *PSG_PORT = cmd;
+            // Se for comando de tom (bit 4 == 0 e canal < 3), envia também o 2º byte de frequência
+            if ((cmd & 0x10) == 0 && (cmd & 0x60) != 0x60 && psgPos < psgSize) {
+                *PSG_PORT = psgData[psgPos++];
+            }
+        } else {
+            // Atraso curto entre notas
+            psgDelay = cmd;
+            break;
+        }
+    }
+}
+
+void pararMusicaSecretaPSG(void) {
+    *PSG_PORT = 0x9F;
+    *PSG_PORT = 0xBF;
+    *PSG_PORT = 0xDF;
+    *PSG_PORT = 0xFF;
+}
