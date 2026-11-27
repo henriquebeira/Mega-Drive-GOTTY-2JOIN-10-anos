@@ -118,5 +118,8 @@ void atualizarMusicaSecretaJazz(void);
 void iniciarMusicaSecretaSynth80(void);
 void atualizarMusicaSecretaSynth80(void);
 void pararMusicaSecreta(void);
+void iniciarMusicaSecretaPSG(void);
+void atualizarMusicaSecretaPSG(void);
+void pararMusicaSecretaPSG(void);
 
 #endif
