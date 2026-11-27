@@ -253,14 +253,16 @@ void inicializarTilesBarraCombo(void) {
     VDP_loadTileData(tileMoldura, baseBarra,     1, CPU);
     VDP_loadTileData(tileVazio,   baseBarra + 1, 1, CPU);
     VDP_loadTileData(tileCheio,   baseBarra + 2, 1, CPU);
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x111122));
+
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
 }
 
 void atualizarBarraCombo(Player* p) {
     PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
     PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
-    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF)); // Preenchimento roxo da barra
 
+    u16 baseBarra = TILE_SYSTEM_INDEX - 20;
     u8 alturaTotal = 12;
     u8 blocosCheios = 0;
 
@@ -271,13 +273,13 @@ void atualizarBarraCombo(Player* p) {
     }
 
     // Topo e base da moldura branca na coluna 37
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 37, 8);
-    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX), 37, 21);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, baseBarra), 37, 8);
+    VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, baseBarra), 37, 21);
 
     // Preenche de baixo para cima (y = 20 até y = 9)
     for (u8 i = 0; i < alturaTotal; i++) {
         u8 linhaY = 20 - i;
-        u16 tileIdx = (i < blocosCheios) ? (TILE_USER_INDEX + 2) : (TILE_USER_INDEX + 1);
+        u16 tileIdx = (i < blocosCheios) ? (baseBarra + 2) : (baseBarra + 1);
         VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, tileIdx), 37, linhaY);
     }
 
