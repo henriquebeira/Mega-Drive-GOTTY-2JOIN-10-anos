@@ -22,22 +22,11 @@ int main(bool hard)
         VDP_clearPlane(BG_A, TRUE);
         VDP_clearPlane(BG_B, TRUE);
 
-        // 1. Carrega e desenha o fundo na PAL2
-        PAL_setPalette(PAL2, bg_stage1.palette->data, CPU);
-        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x000000));
-        VDP_setBackgroundColor(32);
-        VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
-
-        // Reserva área segura na VRAM para os sprites sem colidir com o fundo
-        SPR_initEx(280);
-
         Inimigo n64[MAX_N64];
         Inimigo aranha[MAX_ARANHA];
         Inimigo disjuntor[MAX_DISJUNTOR];
         Inimigo pneu;
         Tiro tirosInimigo[MAX_TIROS_INIMIGO];
-
-        bool trocouFundo2 = FALSE;
 
         inicializarInimigos(n64, aranha, disjuntor, &pneu, tirosInimigo);
 
@@ -46,12 +35,15 @@ int main(bool hard)
         u16 edicao = 1;
         u16 timerEdicao = 0;
 
-        // Paletas fixas da fase:
-        // PAL0 = Tiros e HUD | PAL1 = Gotty e Pneu | PAL2 = Cenário | PAL3 = Aranha, N64 e Disjuntor
+        // Paletas originais dedicadas:
+        // PAL0 = Tiros e HUD | PAL1 = Gotty e Pneu | PAL2 = Aranha e N64 | PAL3 = Disjuntor
         PAL_setPalette(PAL0, spr_tiros.palette->data, CPU);
         PAL_setPalette(PAL1, spr_idle.palette->data, CPU);
-        PAL_setPalette(PAL3, spr_aranha.palette->data, CPU);
-        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x000000));
+        PAL_setPalette(PAL2, spr_aranha.palette->data, CPU);
+        PAL_setPalette(PAL3, spr_disjuntor.palette->data, CPU);
+
+        VDP_setBackgroundColor(0);
+        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x002266));
         PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
         SYS_setHIntCallback(onHBlankToasty);
@@ -90,14 +82,6 @@ int main(bool hard)
                 }
             }
 
-            if (edicao >= 50 && !trocouFundo2) {
-                trocouFundo2 = TRUE;
-                PAL_setPalette(PAL2, bg_stage2.palette->data, DMA);
-                VDP_drawImageEx(BG_B, &bg_stage2, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, DMA);
-                inicializarTilesBarraCombo();
-                atualizarBarraCombo(&player);
-            }
-
             atualizarPlayerETiros(&player, tiros, n64, aranha, disjuntor, &pneu, estilhacos, &pontos);
             atualizarInimigosETiros(n64, aranha, disjuntor, &pneu, tirosInimigo, &player, edicao);
             atualizarEstilhacos(estilhacos);
@@ -117,7 +101,6 @@ int main(bool hard)
             SYS_doVBlankProcess();
         }
 
-        VDP_clearPlane(BG_B, TRUE);
         executarTelaFinal(pontos);
     }
 
