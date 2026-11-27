@@ -39,7 +39,6 @@ int main(bool hard)
         u16 timerEdicao = 0;
 
         PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
-        PAL_setPalette(PAL2, spr_aranha.palette->data, DMA);
         PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
 
         SYS_setHIntCallback(onHBlankToasty);
