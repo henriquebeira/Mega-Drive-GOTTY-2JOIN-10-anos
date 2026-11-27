@@ -127,6 +127,9 @@ void executarTelaInicial(void) {
         } else if ((joy & BUTTON_Y) && modoMusica != 2) {
             modoMusica = 2;
             iniciarMusicaSecretaSynth80();
+        } else if ((joy & BUTTON_Z) && modoMusica != 3) {
+            modoMusica = 3;
+            iniciarMusicaSecretaPSG();
         }
 
         if (modoMusica == 1) {
@@ -135,7 +138,8 @@ void executarTelaInicial(void) {
             atualizarMusicaSecretaSynth80();
         } else if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
-        }
+        } else if (modoMusica == 3) {
+            atualizarMusicaSecretaPSG();        
 
         timerPisca++;
         if (timerPisca >= 25) {
@@ -153,8 +157,10 @@ void executarTelaInicial(void) {
         SYS_doVBlankProcess();
     }
 
-    if (modoMusica != 0) {
+    if (modoMusica == 1 || modoMusica == 2) {
         pararMusicaSecreta();
+    } else if (modoMusica == 3) {
+        pararMusicaSecretaPSG();
     } else {
         XGM_stopPlayPCM(SOUND_PCM_CH2);
     }
