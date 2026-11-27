@@ -259,8 +259,8 @@ void inicializarTilesBarraCombo(void) {
 }
 
 void atualizarBarraCombo(Player* p) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xCC33FF));  // Preenchimento roxo
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF)); // Fundo vazio branco
 
     u16 baseBarra = TILE_SYSTEM_INDEX - 20;
     u8 alturaTotal = 12;
