@@ -19,7 +19,7 @@ int main(bool hard)
         inicializarFonteHUD();
 
         PAL_setPalette(PAL2, bg_stage1.palette->data, CPU);
-        VDP_drawImage(BG_B, &bg_stage1, 0, 0);
+        VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
         for (u16 y = 0; y < 28; y++) {
             for (u16 x = 0; x < 40; x++) {
                 u16 tile = VDP_getTileMapXY(BG_B, x, y);
@@ -86,21 +86,14 @@ int main(bool hard)
                     break;
                 }
             }
-
+    
             if (edicao >= 50 && !trocouFundo2) {
                 trocouFundo2 = TRUE;
-                VDP_clearPlane(BG_B, TRUE);
                 PAL_setPalette(PAL2, bg_stage2.palette->data, DMA);
-                VDP_drawImage(BG_B, &bg_stage2, 0, 0);
-                for (u16 y = 0; y < 28; y++) {
-                    for (u16 x = 0; x < 40; x++) {
-                        u16 tile = VDP_getTileMapXY(BG_B, x, y);
-                        VDP_setTileMapXY(BG_B, (tile & ~TILE_ATTR_PALETTE_MASK) | TILE_ATTR_PALETTE(PAL2), x, y);
-                    }
-                }
+                VDP_drawImageEx(BG_B, &bg_stage2, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, DMA);
                 inicializarTilesBarraCombo();
                 atualizarBarraCombo(&player);
-            }     
+            }   
 
             atualizarPlayerETiros(&player, tiros, n64, aranha, disjuntor, &pneu, estilhacos, &pontos);
             atualizarInimigosETiros(n64, aranha, disjuntor, &pneu, tirosInimigo, &player, edicao);
