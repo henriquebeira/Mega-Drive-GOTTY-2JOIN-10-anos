@@ -120,14 +120,14 @@ void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], I
     timerOnda = 90;
 
     for (u8 i = 0; i < MAX_N64; i++) {
-        n64[i].sprite = SPR_addSprite(&spr_n64, 0, -40, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
+        n64[i].sprite = SPR_addSprite(&spr_n64, 0, -40, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
         n64[i].ativo = FALSE;
         n64[i].timerRespawn = 0;
         SPR_setVisibility(n64[i].sprite, HIDDEN);
     }
 
     for (u8 i = 0; i < MAX_ARANHA; i++) {
-        aranha[i].sprite = SPR_addSprite(&spr_aranha, 0, -40, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
+        aranha[i].sprite = SPR_addSprite(&spr_aranha, 0, -40, TILE_ATTR(PAL2, TRUE, FALSE, FALSE));
         aranha[i].ativo = FALSE;
         aranha[i].timerRespawn = 0;
         SPR_setVisibility(aranha[i].sprite, HIDDEN);
