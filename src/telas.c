@@ -128,8 +128,12 @@ void executarTelaInicial(void) {
             modoMusica = 2;
             iniciarMusicaSecretaSynth80();
         } else if ((joy & BUTTON_Z) && modoMusica != 3) {
+            if (modoMusica == 1 || modoMusica == 2) {
+                pararMusicaSecreta();
+            }
             modoMusica = 3;
-            iniciarMusicaSecretaPSG();
+            XGM_stopPlayPCM(SOUND_PCM_CH2);
+            XGM_startPlay(bgm_secreta_z);
         }
 
         if (modoMusica == 1) {
