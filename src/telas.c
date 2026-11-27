@@ -140,11 +140,9 @@ void executarTelaInicial(void) {
             atualizarMusicaSecretaJazz();
         } else if (modoMusica == 2) {
             atualizarMusicaSecretaSynth80();
-        } else if (modoMusica == 3) {
-            atualizarMusicaSecretaPSG();
-        } else if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
+        } else if (modoMusica == 0 && !XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
-        }   
+        }  
 
         timerPisca++;
         if (timerPisca >= 25) {
