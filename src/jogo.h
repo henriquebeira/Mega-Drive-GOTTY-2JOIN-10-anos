@@ -113,4 +113,8 @@ void atualizarPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranh
 
 void verificarColisoesPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], Inimigo* pneu, Estilhaco estilhacos[], u32* pontos);
 
+void iniciarMusicaSecretaJazz(void);
+void atualizarMusicaSecretaJazz(void);
+void pararMusicaSecretaJazz(void);
+
 #endif
