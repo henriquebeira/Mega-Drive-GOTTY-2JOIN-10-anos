@@ -46,7 +46,6 @@ int main(bool hard)
 
         PAL_setPalette(PAL1, spr_idle.palette->data, DMA);
         PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
-        PAL_setPalette(PAL3, spr_aranha.palette->data, CPU);
 
         SYS_setHIntCallback(onHBlankToasty);
         VDP_setHIntCounter(164);
