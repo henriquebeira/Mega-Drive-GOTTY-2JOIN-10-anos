@@ -410,11 +410,12 @@ static const u32 tileEstilhaco[32] = {
 static u8 timerEstilhacos = 0;
 
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
+    timerEstilhacos = 0;
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
         estilhacos[i].ativo = FALSE;
         estilhacos[i].x = -32;
         estilhacos[i].y = -32;
-        estilhacos[i].sprite = SPR_addSprite(&spr_n64, -32, -32, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
+        estilhacos[i].sprite = SPR_addSprite(&spr_tiros, -32, -32, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
         SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
     }
 }
@@ -432,11 +433,11 @@ void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDe
         estilhacos[i].y = centroY - 4;
         estilhacos[i].vx = velX[i];
         estilhacos[i].vy = velY[i];
-
+        
+        SPR_setDefinition(estilhacos[i].sprite, spriteDef);
         SPR_setPalette(estilhacos[i].sprite, paleta);
-        SPR_setVRAMTileIndex(estilhacos[i].sprite, TILE_USER_INDEX + 3);
-        SPR_setHFlip(estilhacos[i].sprite, hFlip[i]);
-        SPR_setVFlip(estilhacos[i].sprite, vFlip[i]);
+        SPR_setHFlip(estilhacos[i].sprite, hflip[i]);
+        SPR_setVFlip(estilhacos[i].sprite, vflip[i]);
         SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
         SPR_setVisibility(estilhacos[i].sprite, VISIBLE);
     }
@@ -460,6 +461,7 @@ void atualizarEstilhacos(Estilhaco estilhacos[]) {
         if (timerEstilhacos == 0) {
             for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
                 SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
+                SPR_setPosition(estilhacos[i].sprite, -32, -32);
             }
         }
     }
