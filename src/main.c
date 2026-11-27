@@ -23,6 +23,13 @@ int main(bool hard)
         Inimigo disjuntor[MAX_DISJUNTOR];
         Inimigo pneu;
         Tiro tirosInimigo[MAX_TIROS_INIMIGO];
+        
+        bool trocouFundo2 = FALSE;
+        PAL_setPalette(PAL0, bg_stage1.palette->data, CPU);
+        PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
+        PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
+        VDP_drawImage(BG_B, &bg_stage1, 0, 0);
+        
         inicializarInimigos(n64, aranha, disjuntor, &pneu, tirosInimigo);     
 
         // --- INÍCIO DA FASE ---
@@ -55,7 +62,7 @@ int main(bool hard)
         PAL_setPalette(PAL0, bg_stage1.palette->data, CPU);
         PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
         PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
-        VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX + 4), 0, 0, FALSE, CPU);
+        VDP_drawImage(BG_B, &bg_stage1, 0, 0);
 
         inicializarPlayer(&player, tiros);
         Estilhaco estilhacos[MAX_ESTILHACOS];
@@ -81,11 +88,12 @@ int main(bool hard)
 
             if (edicao >= 50 && !trocouFundo2) {
                 trocouFundo2 = TRUE;
+                VDP_clearPlane(BG_B, TRUE);
                 PAL_setPalette(PAL0, bg_stage2.palette->data, DMA);
                 PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
                 PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
-                VDP_drawImageEx(BG_B, &bg_stage2, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, TILE_USER_INDEX + 4), 0, 0, FALSE, DMA);
-            }            
+                VDP_drawImage(BG_B, &bg_stage2, 0, 0);
+            }        
 
             atualizarPlayerETiros(&player, tiros, n64, aranha, disjuntor, &pneu, estilhacos, &pontos);
             atualizarInimigosETiros(n64, aranha, disjuntor, &pneu, tirosInimigo, &player, edicao);
