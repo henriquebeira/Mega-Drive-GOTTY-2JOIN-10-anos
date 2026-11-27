@@ -58,7 +58,6 @@ int main(bool hard)
         Tiro tiros[MAX_TIROS];
         inicializarTilesBarraCombo();
 
-        bool trocouFundo2 = FALSE;
         PAL_setPalette(PAL0, bg_stage1.palette->data, CPU);
         PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
         PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
