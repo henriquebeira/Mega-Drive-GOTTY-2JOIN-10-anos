@@ -115,11 +115,22 @@ void executarTelaInicial(void) {
         SYS_doVBlankProcess();
     }
 
+    bool modoJazz = FALSE;
+
     while(TRUE)
     {
         random();
+        u16 joy = JOY_readJoypad(JOY_1);
 
-        if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
+        // Easter egg: apertar X troca a música do menu pelo Jazz Fusion FM!
+        if ((joy & BUTTON_X) && !modoJazz) {
+            modoJazz = TRUE;
+            iniciarMusicaSecretaJazz();
+        }
+
+        if (modoJazz) {
+            atualizarMusicaSecretaJazz();
+        } else if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
         }
 
@@ -135,8 +146,14 @@ void executarTelaInicial(void) {
             }
         }
 
-        if (JOY_readJoypad(JOY_1) & BUTTON_START) break;
+        if (joy & BUTTON_START) break;
         SYS_doVBlankProcess();
+    }
+
+    if (modoJazz) {
+        pararMusicaSecretaJazz();
+    } else {
+        XGM_stopPlayPCM(SOUND_PCM_CH2);
     }
 
     // Limpa a tela inicial antes de iniciar a fase
