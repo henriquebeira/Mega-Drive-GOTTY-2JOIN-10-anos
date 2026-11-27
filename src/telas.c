@@ -244,19 +244,16 @@ static const u32 tileMoldura[8] = {
 };
 
 static const u32 tileCheio[8] = {
-    0xF999999F, 0xF999999F, 0xF999999F, 0xF999999F,
-    0xF999999F, 0xF999999F, 0xF999999F, 0xF999999F
+    0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+    0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
 };
 
 void inicializarTilesBarraCombo(void) {
-    // Carrega os 3 blocos na área segura de usuário da VRAM (TILE_USER_INDEX)
-    VDP_loadTileData(tileMoldura, TILE_USER_INDEX,     1, CPU);
-    VDP_loadTileData(tileVazio,   TILE_USER_INDEX + 1, 1, CPU);
-    VDP_loadTileData(tileCheio,   TILE_USER_INDEX + 2, 1, CPU);
-
-    // Cor 1 da PAL0 = cinza escuro (vazio) | Cor 9 da PAL0 = roxo/magenta vibrante (cheio)
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0x111122));
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x222233));
+    u16 baseBarra = TILE_SYSTEM_INDEX - 20;
+    VDP_loadTileData(tileMoldura, baseBarra,     1, CPU);
+    VDP_loadTileData(tileVazio,   baseBarra + 1, 1, CPU);
+    VDP_loadTileData(tileCheio,   baseBarra + 2, 1, CPU);
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0x111122));
 }
 
 void atualizarBarraCombo(Player* p) {
