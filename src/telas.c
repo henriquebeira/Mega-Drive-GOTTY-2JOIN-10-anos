@@ -412,7 +412,6 @@ static u8 timerEstilhacos = 0;
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
     timerEstilhacos = 0;
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        estilhacos[i].ativo = FALSE;
         estilhacos[i].x = -32;
         estilhacos[i].y = -32;
         estilhacos[i].sprite = SPR_addSprite(&spr_tiros, -32, -32, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
@@ -436,8 +435,8 @@ void dispararEstilhacos(Estilhaco estilhacos[], const SpriteDefinition* spriteDe
         
         SPR_setDefinition(estilhacos[i].sprite, spriteDef);
         SPR_setPalette(estilhacos[i].sprite, paleta);
-        SPR_setHFlip(estilhacos[i].sprite, hflip[i]);
-        SPR_setVFlip(estilhacos[i].sprite, vflip[i]);
+        SPR_setHFlip(estilhacos[i].sprite, hFlip[i]);
+        SPR_setVFlip(estilhacos[i].sprite, vFlip[i]);
         SPR_setPosition(estilhacos[i].sprite, estilhacos[i].x, estilhacos[i].y);
         SPR_setVisibility(estilhacos[i].sprite, VISIBLE);
     }
