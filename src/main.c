@@ -56,12 +56,11 @@ int main(bool hard)
 
         Player player;
         Tiro tiros[MAX_TIROS];
-        inicializarTilesBarraCombo();
 
         PAL_setPalette(PAL0, bg_stage1.palette->data, CPU);
-        PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
         PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
         VDP_drawImage(BG_B, &bg_stage1, 0, 0);
+        inicializarTilesBarraCombo();
 
         inicializarPlayer(&player, tiros);
         Estilhaco estilhacos[MAX_ESTILHACOS];
@@ -89,9 +88,10 @@ int main(bool hard)
                 trocouFundo2 = TRUE;
                 VDP_clearPlane(BG_B, TRUE);
                 PAL_setPalette(PAL0, bg_stage2.palette->data, DMA);
-                PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
                 PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
                 VDP_drawImage(BG_B, &bg_stage2, 0, 0);
+                inicializarTilesBarraCombo();
+                atualizarBarraCombo(&player);
             }        
 
             atualizarPlayerETiros(&player, tiros, n64, aranha, disjuntor, &pneu, estilhacos, &pontos);
