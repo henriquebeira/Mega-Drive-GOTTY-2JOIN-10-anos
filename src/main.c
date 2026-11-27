@@ -20,12 +20,6 @@ int main(bool hard)
 
         PAL_setPalette(PAL2, bg_stage1.palette->data, CPU);
         VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
-        for (u16 y = 0; y < 28; y++) {
-            for (u16 x = 0; x < 40; x++) {
-                u16 tile = VDP_getTileMapXY(BG_B, x, y);
-                VDP_setTileMapXY(BG_B, (tile & ~TILE_ATTR_PALETTE_MASK) | TILE_ATTR_PALETTE(PAL2), x, y);
-            }
-        }
         
         Inimigo n64[MAX_N64];
         Inimigo aranha[MAX_ARANHA];
