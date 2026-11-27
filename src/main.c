@@ -25,8 +25,7 @@ int main(bool hard)
         PAL_setPalette(PAL2, bg_stage1.palette->data, CPU);
         VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
 
-        // 2. Reserva a VRAM dos sprites logo APÓS os 1120 tiles do cenário (320x224 = 40x28 tiles)
-        SPR_initEx(TILE_USER_INDEX + 1120);
+        SPR_init();
         
         Inimigo n64[MAX_N64];
         Inimigo aranha[MAX_ARANHA];
