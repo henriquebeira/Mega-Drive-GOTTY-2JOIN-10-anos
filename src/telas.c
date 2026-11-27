@@ -92,10 +92,10 @@ void atualizarPlacar(u32 pontos) {
     PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
     u32 temp = pontos;
-    for (s8 i = 3; i >= 0; i--) {
+    for (s8 i = 4; i >= 0; i--) {
         u8 digito = temp % 10;
         temp /= 10;
-        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + digito), 34 + i, 1);
+        VDP_setTileMapXY(BG_A, TILE_ATTR_FULL(PAL0, TRUE, FALSE, TRUE, tileHudBase + digito), 33 + i, 1);
     }
 }
 
