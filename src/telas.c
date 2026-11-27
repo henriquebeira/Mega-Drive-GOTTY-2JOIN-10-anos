@@ -202,12 +202,12 @@ void executarTelaFinal(u32 pontos) {
     sprintf(txtScore, "%04lu", pontos);
     sprintf(txtHiScore, "%04lu", hiScore);
 
-    // Desce Score e Hi-Score 1 linha (17, 18 e 21, 22)
-    VDP_drawText("Score",      25, 17);
-    VDP_drawText(txtScore,   25, 18);
+    // Centraliza o número de 4 dígitos (0422) exatamente no meio de cada título
+    VDP_drawText("Score",      25, 17); // 5 letras (colunas 25..29)
+    VDP_drawText(txtScore,   25, 18); // 4 dígitos (colunas 25..28) -> ou 26 para puxar 1 pra direita
 
-    VDP_drawText("Hi-Score",   24, 21);
-    VDP_drawText(txtHiScore, 25, 22);
+    VDP_drawText("Hi-Score",   24, 21); // 8 letras (colunas 24..31)
+    VDP_drawText(txtHiScore, 26, 22); // 4 dígitos (colunas 26..29) -> perfeitamente centralizado no meio de Hi-Score!
 
     // Pisca "PRESS START" discreto na última linha
     u8 timerPisca = 0;
