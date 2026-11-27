@@ -17,9 +17,16 @@ int main(bool hard)
         executarTelaInicial();
         SPR_reset();
         inicializarFonteHUD();
+        
+        VDP_clearPlane(BG_A, TRUE);
+        VDP_clearPlane(BG_B, TRUE);
 
+        // 1. Carrega e desenha o fundo primeiro usando os tiles de usuário
         PAL_setPalette(PAL2, bg_stage1.palette->data, CPU);
         VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
+
+        // 2. Reserva a VRAM dos sprites logo APÓS os 1120 tiles do cenário (320x224 = 40x28 tiles)
+        SPR_initEx(TILE_USER_INDEX + 1120);
         
         Inimigo n64[MAX_N64];
         Inimigo aranha[MAX_ARANHA];
@@ -79,14 +86,14 @@ int main(bool hard)
                     break;
                 }
             }
-    
+        
             if (edicao >= 50 && !trocouFundo2) {
                 trocouFundo2 = TRUE;
                 PAL_setPalette(PAL2, bg_stage2.palette->data, DMA);
                 VDP_drawImageEx(BG_B, &bg_stage2, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, DMA);
                 inicializarTilesBarraCombo();
                 atualizarBarraCombo(&player);
-            }   
+            }
 
             atualizarPlayerETiros(&player, tiros, n64, aranha, disjuntor, &pneu, estilhacos, &pontos);
             atualizarInimigosETiros(n64, aranha, disjuntor, &pneu, tirosInimigo, &player, edicao);
