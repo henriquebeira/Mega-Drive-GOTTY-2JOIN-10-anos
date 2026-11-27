@@ -163,7 +163,7 @@ void executarTelaInicial(void) {
     if (modoMusica == 1 || modoMusica == 2) {
         pararMusicaSecreta();
     } else if (modoMusica == 3) {
-        pararMusicaSecretaPSG();
+        XGM_stopPlay();
     } else {
         XGM_stopPlayPCM(SOUND_PCM_CH2);
     }
