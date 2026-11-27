@@ -23,6 +23,8 @@ int main(bool hard)
 
         // 1. Carrega e desenha o fundo primeiro usando os tiles de usuário
         PAL_setPalette(PAL2, bg_stage1.palette->data, CPU);
+        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x000000));
+        VDP_setBackgroundColor(32);
         VDP_drawImageEx(BG_B, &bg_stage1, TILE_ATTR_FULL(PAL2, FALSE, FALSE, FALSE, TILE_USER_INDEX), 0, 0, FALSE, CPU);
 
         SPR_initEx(280);
