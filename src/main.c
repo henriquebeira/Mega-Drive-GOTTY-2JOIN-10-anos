@@ -54,7 +54,7 @@ int main(bool hard)
         VDP_setHInterrupt(TRUE);
 
         PAL_setPalette(PAL0, spr_tiros.palette->data, DMA);
-        PAL_setColor(0, RGB24_TO_VDPCOLOR(0xFFF4E0));
+        PAL_setColor(0, RGB24_TO_VDPCOLOR(0x000000));
         PAL_setColor(15, RGB24_TO_VDPCOLOR(0xFFFFFF));
 
         atualizarContadorEdicao(edicao);
@@ -101,7 +101,6 @@ int main(bool hard)
             atualizarEstilhacos(estilhacos);
 
              atualizarSomDanoPSG();
-             PAL_setPalette(PAL3, spr_disjuntor.palette->data, DMA);
              SPR_update();
              SYS_doVBlankProcess();
         }
