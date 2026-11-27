@@ -16,3 +16,4 @@ WAV sfx_explosao "explosion.wav" XGM
 WAV bgm_menu "touhou_cavaco_menu.wav" XGM
 WAV bgm_jogo "touhou_cavaco_jogo.wav" XGM
 BIN psgmod_z "musica_z.psgmod" 2
+XGM bgm_secreta_z "musica_z.vgm"
