@@ -127,7 +127,7 @@ void inicializarInimigos(Inimigo n64[], Inimigo aranha[], Inimigo disjuntor[], I
     }
 
     for (u8 i = 0; i < MAX_ARANHA; i++) {
-        aranha[i].sprite = SPR_addSprite(&spr_aranha, 0, -40, TILE_ATTR(PAL0, TRUE, FALSE, FALSE));
+        aranha[i].sprite = SPR_addSprite(&spr_aranha, 0, -40, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
         aranha[i].ativo = FALSE;
         aranha[i].timerRespawn = 0;
         SPR_setVisibility(aranha[i].sprite, HIDDEN);
