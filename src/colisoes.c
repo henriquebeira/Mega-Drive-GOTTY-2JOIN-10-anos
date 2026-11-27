@@ -16,7 +16,7 @@ void verificarColisoesPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimi
 
                 n64[j].ativo = FALSE;
                 SPR_setVisibility(n64[j].sprite, HIDDEN);
-                dispararEstilhacos(estilhacos, &spr_n64, PAL1, n64[j].x + 12, n64[j].y + 12);
+                dispararEstilhacos(estilhacos, &spr_n64, PAL3, n64[j].x + 12, n64[j].y + 12);
                 XGM_startPlayPCM(SFX_EXPLOSAO_ID, 12, SOUND_PCM_CH4);
                 *pontos += (1 * p->multiplicador);
                 atualizarPlacar(*pontos);
