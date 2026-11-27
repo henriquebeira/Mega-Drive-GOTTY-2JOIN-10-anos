@@ -410,11 +410,11 @@ static const u32 tileEstilhaco[32] = {
 static u8 timerEstilhacos = 0;
 
 void inicializarEstilhacos(Estilhaco estilhacos[]) {
-    VDP_loadTileData(tileEstilhaco, TILE_USER_INDEX + 3, 4, CPU);
-
     for (u8 i = 0; i < MAX_ESTILHACOS; i++) {
-        estilhacos[i].sprite = SPR_addSpriteEx(&spr_tiros, 0, -16, TILE_ATTR_FULL(PAL3, TRUE, FALSE, FALSE, TILE_USER_INDEX + 3), SPR_FLAG_AUTO_VISIBILITY);
-        SPR_setVRAMTileIndex(estilhacos[i].sprite, TILE_USER_INDEX + 3);
+        estilhacos[i].ativo = FALSE;
+        estilhacos[i].x = -32;
+        estilhacos[i].y = -32;
+        estilhacos[i].sprite = SPR_addSprite(&spr_n64, -32, -32, TILE_ATTR(PAL3, TRUE, FALSE, FALSE));
         SPR_setVisibility(estilhacos[i].sprite, HIDDEN);
     }
 }
