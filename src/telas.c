@@ -110,25 +110,29 @@ void executarTelaInicial(void) {
     bool mostraTexto = TRUE;
     VDP_drawText("PRESS START 2 JOIN", 11, 15);
 
-    // Garante que o jogador soltou o START antes de aceitar um novo clique
     while (JOY_readJoypad(JOY_1) & BUTTON_START) {
         SYS_doVBlankProcess();
     }
 
-    bool modoJazz = FALSE;
+    // 0 = Música padrão PCM | 1 = Jazz FM (X) | 2 = Synth 80s (Y)
+    u8 modoMusica = 0;
 
     while (TRUE) {
         random();
         u16 joy = JOY_readJoypad(JOY_1);
 
-        // Easter egg: apertar X troca a música do menu pelo Jazz Fusion FM
-        if ((joy & BUTTON_X) && !modoJazz) {
-            modoJazz = TRUE;
+        if ((joy & BUTTON_X) && modoMusica != 1) {
+            modoMusica = 1;
             iniciarMusicaSecretaJazz();
+        } else if ((joy & BUTTON_Y) && modoMusica != 2) {
+            modoMusica = 2;
+            iniciarMusicaSecretaSynth80();
         }
 
-        if (modoJazz) {
+        if (modoMusica == 1) {
             atualizarMusicaSecretaJazz();
+        } else if (modoMusica == 2) {
+            atualizarMusicaSecretaSynth80();
         } else if (!XGM_isPlayingPCM(SOUND_PCM_CH2_MSK)) {
             XGM_startPlayPCM(BGM_MENU_ID, 1, SOUND_PCM_CH2);
         }
@@ -149,13 +153,12 @@ void executarTelaInicial(void) {
         SYS_doVBlankProcess();
     }
 
-    if (modoJazz) {
-        pararMusicaSecretaJazz();
+    if (modoMusica != 0) {
+        pararMusicaSecreta();
     } else {
         XGM_stopPlayPCM(SOUND_PCM_CH2);
     }
 
-    // Limpa a tela inicial antes de iniciar a fase
     VDP_clearPlane(BG_B, TRUE);
     VDP_clearTextArea(0, 0, 40, 28);
     VDP_setTextPalette(PAL0);
