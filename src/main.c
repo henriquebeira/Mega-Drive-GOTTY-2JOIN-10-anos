@@ -63,6 +63,7 @@ int main(bool hard)
         inicializarTilesBarraCombo();
 
         inicializarPlayer(&player, tiros);
+        PAL_setPalette(PAL1, spr_idle.palette->data, CPU);
         Estilhaco estilhacos[MAX_ESTILHACOS];
         inicializarEstilhacos(estilhacos);
         atualizarBarraCombo(&player);
