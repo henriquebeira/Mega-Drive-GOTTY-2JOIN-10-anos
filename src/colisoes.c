@@ -38,7 +38,7 @@ void verificarColisoesPlayerETiros(Player* p, Tiro tiros[], Inimigo n64[], Inimi
                 if (aranha[j].hp == 0) {
                     aranha[j].ativo = FALSE;
                     SPR_setVisibility(aranha[j].sprite, HIDDEN);
-                    dispararEstilhacos(estilhacos, &spr_aranha, PAL3, aranha[j].x + 16, aranha[j].y + 16);
+                    dispararEstilhacos(estilhacos, &spr_aranha, PAL1, aranha[j].x + 16, aranha[j].y + 16);
                     XGM_startPlayPCM(SFX_EXPLOSAO_ID, 12, SOUND_PCM_CH4);
                     *pontos += (2 * p->multiplicador);
                     atualizarPlacar(*pontos);
