@@ -244,8 +244,8 @@ static const u32 tileMoldura[8] = {
 };
 
 static const u32 tileCheio[8] = {
-    0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
-    0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
+    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F,
+    0xF111111F, 0xF111111F, 0xF111111F, 0xF111111F
 };
 
 void inicializarTilesBarraCombo(void) {
@@ -259,9 +259,8 @@ void inicializarTilesBarraCombo(void) {
 }
 
 void atualizarBarraCombo(Player* p) {
-    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xCC33FF));
-    PAL_setColor(9, RGB24_TO_VDPCOLOR(0xCC33FF));
-    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF));
+    PAL_setColor(1, RGB24_TO_VDPCOLOR(0xCC33FF));  // Preenchimento roxo
+    PAL_setColor(14, RGB24_TO_VDPCOLOR(0xFFFFFF)); // Fundo vazio branco
 
     u16 baseBarra = TILE_SYSTEM_INDEX - 20;
     u8 alturaTotal = 12;
